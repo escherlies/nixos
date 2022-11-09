@@ -13,6 +13,9 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIINFV5Soberv3DZBGXE3RcIs+DAOMn+yWrzSXUAqjT4r enrico2"
   ];
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  system.stateVersion = "22.11";
+
   environment.systemPackages = [
     pkgs.fish
     pkgs.neovim
