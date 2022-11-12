@@ -10,11 +10,27 @@
     with inputs; {
       nixosConfigurations = {
 
-        my-hetzner-host = nixpkgs.lib.nixosSystem {
-
+        base = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-
           modules = [ ./configuration.nix ];
+        };
+
+        tunneln = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./configuration.nix
+            ./configs/ssh-gateway-ports.nix
+
+          ];
+        };
+
+        web-services = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./configuration.nix
+            ./configs/web-services.nix
+
+          ];
         };
       };
     };
