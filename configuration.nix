@@ -17,9 +17,10 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "22.11";
 
-  environment.systemPackages = [
-    pkgs.fish
-    pkgs.neovim
+  environment.systemPackages = with pkgs; [
+    fish
+    neovim
+    git
 
   ];
 
