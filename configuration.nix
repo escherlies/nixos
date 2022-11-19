@@ -21,6 +21,7 @@
     fish
     neovim
     git
+    tldr
 
   ];
 
