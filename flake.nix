@@ -32,6 +32,17 @@
 
           ];
         };
+
+        docker-compose = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./configuration.nix
+            ./configs/docker-compose.nix
+
+          ];
+        };
+
       };
+
     };
 }
