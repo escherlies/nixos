@@ -36,14 +36,14 @@
     neovim.enable = true;
     neovim.viAlias = true;
     neovim.vimAlias = true;
-    neovim.extraConfig = ''
-      set number
-      set relativenumber
-    '';
-
+    neovim.defaultEditor = true;
+    neovim.configure = {
+      customRC = ''
+        set number
+        set relativenumber
+      '';
+    };
   };
-
-  environment.variables.EDITOR = "nvim";
 
   users.defaultUserShell = pkgs.fish;
 }
