@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   imports = [
     ./hardware-configuration.nix
 
@@ -8,7 +8,7 @@
 
   zramSwap.enable = true;
 
-  networking.hostName = "nixe-base";
+  networking.hostName = lib.mkDefault "nixe-base";
 
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
