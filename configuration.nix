@@ -27,6 +27,7 @@
     neovim
     git
     tldr
+    neofetch
 
   ];
 
