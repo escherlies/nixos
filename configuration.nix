@@ -8,7 +8,7 @@
 
   zramSwap.enable = true;
 
-  networking.hostName = "nixe";
+  networking.hostName = "nixe-base";
 
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
