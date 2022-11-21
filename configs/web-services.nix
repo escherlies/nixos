@@ -1,5 +1,6 @@
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.hostName = "nixe"
   security.acme.defaults.email = "escherlies@pm.me";
   security.acme.acceptTerms = true;
   services.nginx.enable = true;

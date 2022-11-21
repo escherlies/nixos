@@ -2,6 +2,7 @@
 
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.hostName = "nixe-2";
 
   virtualisation.docker.enable = true;
 
