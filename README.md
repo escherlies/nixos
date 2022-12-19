@@ -1,3 +1,3 @@
-My very first NixOS configuration.
+My NixOS configuration files
 
-Currently using [NixOS-Infect](https://github.com/elitak/nixos-infect) to deploy for Hetzner Cloud.
+Using [NixOS-Infect](https://github.com/elitak/nixos-infect) to deploy on Hetzner Cloud.

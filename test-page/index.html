@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<head>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-weight: 500;
+    }
+
+    @media (prefers-color-scheme: light) {
+      body {
+        color: #04001f;
+        background-color: #edf0fd;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #f2f3f7;
+        background-color: #04001f;
+      }
+    }
+
+    a {
+      all: unset;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="margin: auto">
+    <h1>Hello, NixOS!</h1>
+    <a href="https://github.com/escherlies/nixos">Config files</a>
+  </div>
+</body>
