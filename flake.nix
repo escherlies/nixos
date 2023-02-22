@@ -15,6 +15,15 @@
           modules = [ ./configuration.nix ];
         };
 
+        test = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./configuration.nix
+            ./configs/test.nix
+
+          ];
+        };
+
         tunneln = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [

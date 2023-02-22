@@ -4,11 +4,17 @@
 
   ];
 
+  system.stateVersion = "22.11";
+
   boot.cleanTmpDir = true;
 
   zramSwap.enable = true;
 
   networking.hostName = lib.mkDefault "nixe-base";
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  # SSH Config
 
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
@@ -18,9 +24,10 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIINFV5Soberv3DZBGXE3RcIs+DAOMn+yWrzSXUAqjT4r enrico2"
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  system.stateVersion = "22.11";
+  programs.ssh.extraConfig = ''
+    Host *
+        IdentityFile /etc/ssh/ssh_host_ed25519_key
+  '';
 
   environment.systemPackages = with pkgs; [
     fish
