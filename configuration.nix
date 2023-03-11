@@ -35,6 +35,8 @@
     git
     tldr
     neofetch
+    ctop
+    bottom
 
   ];
 
