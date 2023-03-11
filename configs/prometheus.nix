@@ -5,9 +5,9 @@
     prometheus = {
       enable = true;
       scrapeConfigs = [{
-        jobName = "node";
-        scrapeInterval = "15s";
-        staticConfigs = [{ targets = [ "localhost:9100" ]; }];
+        job_name = "node";
+        scrape_interval = "15s";
+        static_configs = [{ targets = [ "localhost:9100" ]; }];
       }];
     };
   };
