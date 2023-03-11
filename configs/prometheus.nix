@@ -5,8 +5,8 @@
     # grafana configuration
     grafana = {
       enable = true;
-      port = 2342;
-      addr = "127.0.0.1";
+      settings.server.http_port = 2342;
+      settings.server.http_addr = "127.0.0.1";
     };
 
     # nginx reverse proxy
@@ -17,7 +17,7 @@
       };
     };
 
-    services.prometheus = {
+    prometheus = {
       enable = true;
       port = 9001;
 
