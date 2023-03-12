@@ -27,7 +27,7 @@
           }";
         proxyWebsockets = true;
         extraConfig = ''
-          proxy_set_header Host $http_host;
+          proxy_set_header Host $host;
         '';
       };
 
