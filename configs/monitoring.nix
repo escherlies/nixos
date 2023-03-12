@@ -2,7 +2,7 @@
 
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
-  networking.hostName = "prometheus";
+  networking.hostName = "nixos-monitoring";
   security.acme.defaults.email = "escherlies@pm.me";
   security.acme.acceptTerms = true;
 

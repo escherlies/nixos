@@ -51,11 +51,11 @@
           ];
         };
 
-        prometheus = nixpkgs.lib.nixosSystem {
+        monitoring = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
             ./configuration.nix
-            ./configs/prometheus.nix
+            ./configs/monitoring.nix
 
           ];
         };
