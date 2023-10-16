@@ -4,9 +4,9 @@
 
   ];
 
-  system.stateVersion = "22.11";
+  system.stateVersion = "23.05";
 
-  boot.cleanTmpDir = true;
+  boot.tmp.cleanOnBoot = true;
 
   zramSwap.enable = true;
 
@@ -17,7 +17,7 @@
   # SSH Config
 
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;
+  services.openssh.settings.PasswordAuthentication = false;
 
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINGOkHM4m0DhxJCGH4lkSaaun5RYXZg91LAO15RPeXyS enrico1"
