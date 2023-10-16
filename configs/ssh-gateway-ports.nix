@@ -1,4 +1,4 @@
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
-  services.openssh.gatewayPorts = "yes";
+  services.openssh.settings.GatewayPorts = "yes";
 }
