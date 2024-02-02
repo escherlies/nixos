@@ -18,9 +18,16 @@
     enableACME = true;
     root = "/var/www/binary-please";
   };
+
   services.nginx.virtualHosts."binaryplease.com" = {
     forceSSL = true;
     enableACME = true;
     root = "/var/www/binary-please";
+  };
+
+  services.nginx.virtualHosts."enryco.xyz" = {
+    forceSSL = true;
+    enableACME = true;
+    root = "/var/www/blog";
   };
 }
