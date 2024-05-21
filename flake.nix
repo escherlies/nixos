@@ -22,7 +22,7 @@
         vultr-base = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            ./hardware/hcloud.nix
+            ./hardware/vultr.nix
             ./configuration.nix
 
           ];
