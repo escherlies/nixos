@@ -58,6 +58,7 @@
     enableACME = true;
     forceSSL = true;
     root = "/var/www/nononote";
+
     locations."/api" = {
       proxyPass = "http://127.0.0.1:8000/api";
       proxyWebsockets = true;
@@ -65,12 +66,19 @@
         # required when the server wants to use HTTP Authentication
         "proxy_pass_header Authorization;";
     };
+
     locations."/auth" = {
       proxyPass = "http://127.0.0.1:8000/auth";
       proxyWebsockets = false;
       extraConfig =
         # required when the server wants to use HTTP Authentication
         "proxy_pass_header Authorization;";
+    };
+
+    locations."/" = {
+      extraConfig = ''
+        try_files $uri /index.html;
+      '';
     };
   };
 
