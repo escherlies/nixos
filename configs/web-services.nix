@@ -64,7 +64,15 @@
       proxyWebsockets = true;
       extraConfig =
         # required when the server wants to use HTTP Authentication
-        "proxy_pass_header Authorization;";
+        ''
+          proxy_pass_header Authorization;
+
+          proxy_connect_timeout 600;
+          proxy_send_timeout 600;
+          proxy_read_timeout 600;
+          send_timeout 600;
+        '';
+
     };
 
     locations."/auth" = {
