@@ -1,3 +1,5 @@
+{ pkgs, ... }:
+
 {
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   networking.hostName = "nixe";
