@@ -90,4 +90,33 @@
     };
   };
 
+  # Bebege9000
+  services.nginx.virtualHosts."bewirtungsbeleggenerator9000.ffilabs.com" = {
+    enableACME = true;
+    forceSSL = true;
+    root = "/var/www/bebege9000";
+
+    locations."/api" = {
+      proxyPass = "http://127.0.0.1:9000/api";
+      proxyWebsockets = true;
+      extraConfig =
+        # required when the server wants to use HTTP Authentication
+        ''
+          proxy_pass_header Authorization;
+
+          proxy_connect_timeout 600;
+          proxy_send_timeout 600;
+          proxy_read_timeout 600;
+          send_timeout 600;
+        '';
+
+    };
+
+    locations."/" = {
+      extraConfig = ''
+        try_files $uri /index.html;
+      '';
+    };
+  };
+
 }
