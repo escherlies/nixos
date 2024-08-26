@@ -4,6 +4,13 @@
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   networking.hostName = "nixe";
 
+  security.pam.loginLimits = [{
+    domain = "*";
+    type = "-";
+    item = "nofile";
+    value = "65536";
+  }];
+
   # Plain websites
 
   security.acme.defaults.email = "escherlies@pm.me";
