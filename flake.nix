@@ -69,9 +69,8 @@
           modules = [
             ./hardware/hcloud.nix
             ./configuration.nix
-            ./configs/stripe-datev-exporter.nix
             ./configs/web-services.nix
-            ({ pkgs, ... }: { stripe-datev-exporter.enable = true; })
+            ./configs/stripe-datev-exporter.nix
 
           ];
         };
