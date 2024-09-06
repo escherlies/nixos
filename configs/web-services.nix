@@ -11,6 +11,9 @@
     value = "65536";
   }];
 
+  # Stripe Datev Exporter
+  services.stripe-datev-exporter.enable = true;
+
   # Plain websites
 
   security.acme.defaults.email = "escherlies@pm.me";
