@@ -25,7 +25,7 @@ in {
     systemd.services."stripe-datev-exporter" = {
       script = ''
         set -eu
-        ${pkgs.docker}/bin/docker run --env-file /root/.data/stripe-datev-exporter.env ghcr.io/binaryplease/stripe-datev-exporter/app:latest /bin/bash -c "just run"
+        ${pkgs.docker}/bin/docker run --env-file /root/.data/stripe-datev-exporter.env ghcr.io/binaryplease/stripe-datev-exporter/app:latest
       '';
       requires = [
         "docker.service"
