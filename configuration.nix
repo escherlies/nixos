@@ -1,8 +1,9 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }:
+{
 
   imports = [ ];
 
-  system.stateVersion = "23.11";
+  system.stateVersion = "24.05";
 
   boot.tmp.cleanOnBoot = true;
 
@@ -10,7 +11,10 @@
 
   networking.hostName = lib.mkDefault "nixe-base";
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # SSH Config
 
