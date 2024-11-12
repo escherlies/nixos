@@ -72,6 +72,15 @@
           ];
         };
 
+        debug = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hardware/hcloud.nix
+            ./configuration.nix
+            ./configs/debug.nix
+          ];
+        };
+
         tunneln = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
