@@ -1,3 +1,4 @@
+{ pkgs, lib, ... }:
 {
   networking.firewall.allowedTCPPorts = [
     80
@@ -17,4 +18,10 @@
   networking.localCommands = ''
     ip addr add 5.75.209.107 dev enp1s0
   '';
+
+  environment.systemPackages = with pkgs; [
+    hello
+
+  ];
+
 }
