@@ -20,7 +20,9 @@
   '';
 
   environment.systemPackages = with pkgs; [
-    hello
+    (pkgs.writeScriptBin "debug" ''
+      echo "This system is using Config 2 - Debug"
+    '')
 
   ];
 
