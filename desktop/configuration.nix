@@ -98,13 +98,6 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-  ];
-
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -135,4 +128,32 @@
   nix.settings.experimental-features = [
     "flakes"
   ];
+
+  environment.systemPackages = with pkgs; [
+    fish
+    neovim
+    git
+    tldr
+    neofetch
+    ctop
+    bottom
+
+  ];
+
+  programs = {
+    fish.enable = true;
+
+    neovim.enable = true;
+    neovim.viAlias = true;
+    neovim.vimAlias = true;
+    neovim.defaultEditor = true;
+    neovim.configure = {
+      customRC = ''
+        set number
+        set relativenumber
+      '';
+    };
+  };
+
+  users.defaultUserShell = pkgs.fish;
 }
