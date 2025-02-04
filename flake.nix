@@ -127,6 +127,15 @@
             ./configs/docker-compose.nix
           ];
         };
+
+        # The first desktop machine
+        desktop = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./desktop/configuration.nix
+            ./desktop/hardware-configuration.nix
+          ];
+        };
       };
     };
 }
