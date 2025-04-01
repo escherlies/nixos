@@ -46,6 +46,11 @@
     root = "/var/www/blog";
   };
 
+  # Foo
+  services.nginx.virtualHosts."foo.ffilabs.com" = {
+    root = "/var/www/foo";
+  };
+
   # Docker services
 
   virtualisation.docker.enable = true;
