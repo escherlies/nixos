@@ -72,33 +72,6 @@
           ];
         };
 
-        debug1 = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./hardware/hcloud.nix
-            ./configuration.nix
-            ./configs/debug1.nix
-          ];
-        };
-
-        debug2 = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./hardware/hcloud.nix
-            ./configuration.nix
-            ./configs/debug2.nix
-          ];
-        };
-
-        debug3 = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./hardware/hcloud.nix
-            ./configuration.nix
-            ./configs/debug3.nix
-          ];
-        };
-
         tunneln = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
