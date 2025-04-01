@@ -48,6 +48,8 @@
 
   # Foo
   services.nginx.virtualHosts."foo.ffilabs.com" = {
+    forceSSL = true;
+    enableACME = true;
     root = "/var/www/foo";
   };
 
