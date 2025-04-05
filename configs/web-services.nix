@@ -144,6 +144,12 @@
 
   nixpkgs.config.allowUnfree = true;
   services.n8n.enable = true;
-  services.n8n.openFirewall = true;
+
+  services.caddy.enable = true;
+  services.caddy.virtualHosts."n8n.ffilabs.com".extraConfig = ''
+    handle_path /n8n/* {
+    	reverse_proxy localhost:5678
+    }
+  '';
 
 }
