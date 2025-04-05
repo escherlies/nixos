@@ -147,7 +147,7 @@
 
   services.caddy.enable = true;
   services.caddy.virtualHosts."n8n.ffilabs.com".extraConfig = ''
-    handle_path /n8n/* {
+    handle {
     	reverse_proxy localhost:5678
     }
   '';
