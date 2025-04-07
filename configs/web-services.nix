@@ -7,15 +7,6 @@
   ];
   networking.hostName = "nixe";
 
-  security.pam.loginLimits = [
-    {
-      domain = "*";
-      type = "-";
-      item = "nofile";
-      value = "65536";
-    }
-  ];
-
   # Stripe Datev Exporter
   services.stripe-datev-exporter.enable = true;
 
