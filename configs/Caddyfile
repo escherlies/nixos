@@ -1,0 +1,62 @@
+# Static sites
+static.68.125.88.23.clients.your-server.de {
+	root * /var/www/static.68.125.88.23.clients.your-server.de
+	file_server
+}
+
+www.binaryplease.com, binaryplease.com {
+	root * /var/www/binary-please
+	file_server
+}
+
+enryco.xyz {
+	root * /var/www/blog
+	file_server
+}
+
+foo.ffilabs.com {
+	root * /var/www/foo
+	file_server
+}
+
+# Nononote with API and auth proxies
+nononote.ai {
+	root * /var/www/nononote
+
+	# API proxy with websocket support
+	handle /api/* {
+		reverse_proxy localhost:8000
+	}
+
+	# Auth proxy
+	handle /auth/* {
+		reverse_proxy localhost:8000
+	}
+
+	# Serve static files, fallback to index.html for SPA
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# Bewirtungsbeleggenerator9000
+bewirtungsbeleggenerator9000.ffilabs.com {
+	root * /var/www/bebege9000
+
+	# API proxy with websocket support
+	handle /api/* {
+		reverse_proxy localhost:9000
+	}
+
+	# Serve static files, fallback to index.html for SPA
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# n8n service
+n8n.ffilabs.com {
+	reverse_proxy localhost:5678
+}
