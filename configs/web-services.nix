@@ -31,6 +31,7 @@
   # Misc
   nixpkgs.config.allowUnfree = true;
   services.n8n.enable = true;
+  systemd.services.n8n.serviceConfig.EnvironmentFile = "/root/.data/n8n.env";
 
   # Enable Caddy
   # All site configurations are now in the Caddyfile
