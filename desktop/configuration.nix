@@ -54,6 +54,7 @@
   services.xserver.xkb = {
     layout = "us";
     variant = "";
+    options = "ctrl:swap_lwin_lctl";
   };
 
   # Enable CUPS to print documents.
