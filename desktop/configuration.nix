@@ -5,8 +5,8 @@
 { config, pkgs, ... }:
 
 {
-  imports = [
-    # Include the results of the hardware scan.
+  imports =
+    [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
 
@@ -14,8 +14,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices."luks-6147e023-ad16-4fb1-b618-0d9242517a79".device =
-    "/dev/disk/by-uuid/6147e023-ad16-4fb1-b618-0d9242517a79";
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -45,9 +43,10 @@
   };
 
   # Enable the X11 windowing system.
+  # You can disable this if you're only using the Wayland session.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
+  # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
 
@@ -83,11 +82,9 @@
   users.users.enrico = {
     isNormalUser = true;
     description = "enrico";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
+    extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
+      kdePackages.kate
       #  thunderbird
     ];
   };
