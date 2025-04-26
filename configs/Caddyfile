@@ -19,6 +19,11 @@ foo.ffilabs.com {
 	file_server
 }
 
+fartindex.org {
+	root * /var/www/fartindex
+	file_server
+}
+
 # Nononote with API and auth proxies
 nononote.ai {
 	root * /var/www/nononote
