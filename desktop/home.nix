@@ -1,6 +1,6 @@
 {
   # config,
-  # pkgs,
+  pkgs,
   ...
 }:
 {
@@ -21,4 +21,13 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  programs.vscode.enable = true;
+
+  nixpkgs.config.allowUnfree = true;
+
+  home.packages = with pkgs; [
+    signal-desktop
+    nixfmt-rfc-style
+  ];
 }
