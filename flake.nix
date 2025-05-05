@@ -9,7 +9,7 @@
   };
 
   outputs =
-    { self, nixpkgs, ... }@inputs:
+    { self, nixpkgs, home-manager, ... }@inputs:
 
     let
 
@@ -109,6 +109,15 @@
           modules = [
             ./desktop/configuration.nix
             ./desktop/hardware-configuration.nix
+            
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.enrico = ./desktop/home.nix;
+              # Optionally, use home-manager.extraSpecialArgs to pass
+              # arguments to home.nix
+            }
           ];
         };
       };
