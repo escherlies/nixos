@@ -28,6 +28,8 @@
 
   home.packages = with pkgs; [
     signal-desktop
+
     nixfmt-rfc-style
+    nil
   ];
 }
