@@ -32,4 +32,40 @@
     nixfmt-rfc-style
     nil
   ];
+
+  programs.alacritty = {
+    enable = true;
+    settings = {
+
+      scrolling.history = 10000;
+      env.TERM = "xterm-256color";
+
+      window = {
+        # dimensions = {
+        #   lines = 40;
+        #   columns = 120;
+        # };
+        padding = {
+          x = 3;
+          y = 3;
+        };
+      };
+
+      font = {
+        size = 10;
+      };
+
+      cursor = {
+        style = "Beam";
+      };
+
+    };
+  };
+
+  programs.zellij.enable = true;
+  programs.zellij.settings = {
+    default_shell = "fish";
+  };
+
+  services.nextcloud-client.enable = true;
 }
