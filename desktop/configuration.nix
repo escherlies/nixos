@@ -186,6 +186,7 @@
     packages = with pkgs; [
       inter
       fira-code
+      nerd-fonts.space-mono
     ];
   };
 
