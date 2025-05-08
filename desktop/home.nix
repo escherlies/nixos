@@ -35,29 +35,23 @@
 
   programs.alacritty = {
     enable = true;
-    settings = {
 
+    # https://alacritty.org/config-alacritty.html
+    settings = {
       scrolling.history = 10000;
+
       env.TERM = "xterm-256color";
 
-      window = {
-        # dimensions = {
-        #   lines = 40;
-        #   columns = 120;
-        # };
-        padding = {
-          x = 3;
-          y = 3;
-        };
+      window.padding = {
+        x = 3;
+        y = 3;
       };
 
-      font = {
-        size = 10;
-      };
+      font.size = 10;
 
-      cursor = {
-        style = "Beam";
-      };
+      cursor.style = "Beam";
+
+      selection.save_to_clipboard = true;
 
     };
   };
