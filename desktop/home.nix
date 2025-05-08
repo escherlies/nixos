@@ -27,10 +27,12 @@
   nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
-    signal-desktop
-
     nixfmt-rfc-style
     nil
+
+    # Apps
+    signal-desktop
+    onlyoffice-desktopeditors
   ];
 
   programs.alacritty = {
