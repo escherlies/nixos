@@ -53,7 +53,7 @@
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
-    variant = "";
+    variant = "altgr-intl";
     options = "ctrl:swap_lwin_lctl";
   };
 
@@ -61,7 +61,7 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -86,12 +86,16 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "docker"
     ];
     packages = with pkgs; [
       # kdePackages.kate
       #  thunderbird
     ];
   };
+
+  # Docker services
+  virtualisation.docker.enable = true;
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -140,6 +144,8 @@
     neofetch
     ctop
     bottom
+    unzip
+    just
 
   ];
 
@@ -164,4 +170,24 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINGOkHM4m0DhxJCGH4lkSaaun5RYXZg91LAO15RPeXyS enrico1"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIINFV5Soberv3DZBGXE3RcIs+DAOMn+yWrzSXUAqjT4r enrico2"
   ];
+
+  # hardware.keyboard.qmk.enable = true;
+
+  services.udev.packages = [
+    # pkgs.via
+    pkgs.qmk-udev-rules # For QMK/Via
+  ];
+
+  services.libinput.mouse.accelProfile = "flat";
+
+  fonts = {
+    fontDir.enable = true; # Needed for some programs to find them
+    fontconfig.enable = true;
+    packages = with pkgs; [
+      inter
+      fira-code
+      nerd-fonts.space-mono
+    ];
+  };
+
 }
