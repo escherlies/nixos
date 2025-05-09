@@ -1,2 +1,2 @@
 desktop:
-  sudo nixos-rebuild switch ./#desktop
+  sudo nixos-rebuild switch --flake "./#desktop"
