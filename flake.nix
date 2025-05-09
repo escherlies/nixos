@@ -114,11 +114,14 @@
           modules = [
             ./desktop/configuration.nix
             ./desktop/hardware-configuration.nix
+            ./modules/default.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
               home-manager.users.enrico = ./desktop/home.nix;
+              home-manager.backupFileExtension = "_bk";
+
               # Optionally, use home-manager.extraSpecialArgs to pass
               # arguments to home.nix
             }
