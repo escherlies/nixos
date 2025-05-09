@@ -6,6 +6,7 @@
     jnoortheen.nix-ide
     nefrob.vscode-just-syntax
     elmtooling.elm-ls-vscode
+    redhat.vscode-yaml
 
     # Tooling
     usernamehw.errorlens

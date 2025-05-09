@@ -7,6 +7,7 @@
     ./shells/fish.nix
     ./apps/firefox.nix
     ./apps/vscode.nix
+    ./git.nix
     ./packages.nix
 
   ];
