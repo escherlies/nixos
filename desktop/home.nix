@@ -27,44 +27,4 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  nixpkgs.config.allowUnfree = true;
-
-  home.packages = with pkgs; [
-    nixfmt-rfc-style
-    nil
-
-    # Apps
-    signal-desktop
-    onlyoffice-desktopeditors
-  ];
-
-  programs.alacritty = {
-    enable = true;
-
-    # https://alacritty.org/config-alacritty.html
-    settings = {
-      scrolling.history = 10000;
-
-      env.TERM = "xterm-256color";
-
-      window.padding = {
-        x = 3;
-        y = 3;
-      };
-
-      font.size = 10;
-
-      cursor.style = "Beam";
-
-      selection.save_to_clipboard = true;
-
-    };
-  };
-
-  programs.zellij.enable = true;
-  programs.zellij.settings = {
-    default_shell = "fish";
-  };
-
-  services.nextcloud-client.enable = true;
 }

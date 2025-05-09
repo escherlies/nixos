@@ -94,15 +94,6 @@
     ];
   };
 
-  # Docker services
-  virtualisation.docker.enable = true;
-
-  # Install firefox.
-  programs.firefox.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -131,46 +122,6 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-
-  environment.systemPackages = with pkgs; [
-    fish
-    neovim
-    git
-    tldr
-    neofetch
-    ctop
-    bottom
-    unzip
-    just
-
-  ];
-
-  programs = {
-    fish.enable = true;
-
-    neovim.enable = true;
-    neovim.viAlias = true;
-    neovim.vimAlias = true;
-    neovim.defaultEditor = true;
-    neovim.configure = {
-      customRC = ''
-        set number
-        set relativenumber
-      '';
-    };
-  };
-
-  users.defaultUserShell = pkgs.fish;
-
-  users.users.enrico.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINGOkHM4m0DhxJCGH4lkSaaun5RYXZg91LAO15RPeXyS enrico1"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIINFV5Soberv3DZBGXE3RcIs+DAOMn+yWrzSXUAqjT4r enrico2"
-  ];
-
   # hardware.keyboard.qmk.enable = true;
 
   services.udev.packages = [
@@ -179,15 +130,4 @@
   ];
 
   services.libinput.mouse.accelProfile = "flat";
-
-  fonts = {
-    fontDir.enable = true; # Needed for some programs to find them
-    fontconfig.enable = true;
-    packages = with pkgs; [
-      inter
-      fira-code
-      nerd-fonts.space-mono
-    ];
-  };
-
 }
