@@ -13,7 +13,7 @@
         success_symbol = "[›](bold green)";
         error_symbol = "[›](bold red)";
       };
-      palette = "catppuccin_mocha";
+      # palette = "catppuccin_mocha";
     };
   };
 }
