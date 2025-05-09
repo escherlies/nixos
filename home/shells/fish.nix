@@ -3,20 +3,6 @@
   programs.fish = {
     enable = true;
 
-    plugins = [
-      {
-        # https://github.com/gazorby/fifc
-        name = "fifc";
-        src = pkgs.fetchFromGitHub {
-          owner = "gazorby";
-          repo = "fifc";
-          rev = "a01650cd432becdc6e36feeff5e8d657bd7ee84a";
-          sha256 = "sha256-Ynb0Yd5EMoz7tXwqF8NNKqCGbzTZn/CwLsZRQXIAVp4=";
-        };
-      }
-
-    ];
-
     functions = {
       fish_command_not_found = "echo Did not find command $argv[1]";
 
