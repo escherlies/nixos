@@ -6,6 +6,7 @@
     ./shells/starship.nix
     ./shells/fish.nix
     ./apps/firefox.nix
+    ./apps/thunderbird.nix
     ./apps/vscode.nix
     ./git.nix
     ./packages.nix
