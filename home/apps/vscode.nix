@@ -7,6 +7,7 @@
     nefrob.vscode-just-syntax
     elmtooling.elm-ls-vscode
     redhat.vscode-yaml
+    bradlc.vscode-tailwindcss
 
     # Tooling
     usernamehw.errorlens
