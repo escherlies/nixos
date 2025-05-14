@@ -5,7 +5,7 @@
     nil
 
     # Apps
-    signal-desktop
+    signal-desktop-bin # As of 2025-05-14 the nixpkg build is broken: no devices found
     onlyoffice-desktopeditors
   ];
 
