@@ -10,7 +10,8 @@
     # https://alacritty.org/config-alacritty.html
     settings = {
       general.import = [
-        ./alacritty/catppuccin-mocha.toml
+        # ./alacritty/catppuccin-mocha.toml
+        ./alacritty/enfocado_light.toml
       ];
 
       scrolling.history = 10000;
