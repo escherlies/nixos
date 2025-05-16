@@ -1,5 +1,14 @@
-{ pkgs, ... }:
 {
+  pkgs,
+  nix-index-database,
+  ...
+}:
+{
+  imports = [ nix-index-database.nixosModules.nix-index ];
+
+  # Use nix-index-database for comma
+  programs.nix-index-database.comma.enable = true;
+
   # Some config that should apply to every system
 
   nix.settings.experimental-features = [
