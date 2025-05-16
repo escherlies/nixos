@@ -9,7 +9,7 @@
 https://github.com/signalapp/Signal-Desktop/issues/4252
 
 ```
-vi .config/Signal/ephemeral.json
+vi ~/.config/Signal/ephemeral.json
 ```
 
 ```diff
