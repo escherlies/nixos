@@ -34,6 +34,14 @@
     in
     {
 
+      # Modules
+      nixosModules.core =
+        { config }:
+        {
+          options = { };
+          config = ./modules/core.nix;
+        };
+
       # Add dependencies that are only needed for development
       devShells = forAllSystems (
         system:
