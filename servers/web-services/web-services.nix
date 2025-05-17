@@ -5,17 +5,12 @@
     80
     443
   ];
-  networking.hostName = "nixe";
 
   # Stripe Datev Exporter
   services.stripe-datev-exporter.enable = true;
 
   # Docker services
   virtualisation.docker.enable = true;
-
-  environment.systemPackages = with pkgs; [
-    docker-compose
-  ];
 
   users.users.root.extraGroups = [ "docker" ];
 

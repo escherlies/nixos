@@ -1,9 +1,10 @@
 {
   imports = [
-    ./docker.nix
     ./editors/nvim.nix
-    ./fonts.nix
     ./core.nix
+    ./fonts.nix
+    ./docker.nix
+    ./ssh.nix
 
   ];
 }
