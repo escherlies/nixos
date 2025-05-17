@@ -39,7 +39,11 @@
         { config, ... }:
         {
           options = { };
-          config = ./modules/core.nix;
+          config = {
+            imports = [
+              ./modules/core.nix
+            ];
+          };
         };
 
       # Add dependencies that are only needed for development
