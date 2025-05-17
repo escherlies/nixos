@@ -38,12 +38,11 @@
       nixosModules.core =
         { config, ... }:
         {
+          imports = [
+            ./modules/core.nix
+          ];
           options = { };
-          config = {
-            imports = [
-              ./modules/core.nix
-            ];
-          };
+          config = { };
         };
 
       # Add dependencies that are only needed for development
