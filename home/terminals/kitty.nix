@@ -11,6 +11,7 @@
     # and it's installed by home-manager if `theme` is specified.
     # themeFile = "Catppuccin-Mocha";
     font.name = "Fira Code";
+    font.size = 10;
 
     settings = {
       #   macos_option_as_alt = true; # Option key acts as Alt on macOS
