@@ -1,0 +1,174 @@
+{
+  // Color and highlighting settings
+  "color-highlight.markRuler": false,
+  // DeepL translation settings
+  "deepl.formality": "default",
+  "deepl.splitSentences": "1",
+  "deepl.tagHandling": "off",
+  "deepl.translationMode": "Replace",
+  // Diff editor settings
+  "diffEditor.codeLens": true,
+  "diffEditor.experimental.showMoves": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.renderSideBySide": true,
+  // Editor appearance and behavior
+  "editor.accessibilitySupport": "off",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit"
+  },
+  "editor.codeLens": true,
+  "editor.find.seedSearchStringFromSelection": "selection",
+  "editor.fontFamily": "Fira Code",
+  "editor.fontSize": 13,
+  "editor.fontLigatures": "'cv02', 'cv11','ss01','ss02','ss03', 'ss05','ss11', 'ss08', 'cv24', 'cv06', 'cv30', 'calt' 1",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.inlayHints.enabled": "on",
+  "editor.inlineSuggest.suppressSuggestions": true,
+  "editor.lineNumbers": "relative",
+  "editor.minimap.enabled": false,
+  "editor.quickSuggestions": {
+    "comments": "off",
+    "other": "on",
+    "strings": "on"
+  },
+  "editor.tabSize": 2,
+  // Explorer settings
+  "explorer.compactFolders": false,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmPasteNative": false,
+  "explorer.sortOrderLexicographicOptions": "upper",
+  // File settings
+  "files.readonlyInclude": {
+    "**/.cargo/registry/src/**/*.rs": true,
+    "**/lib/rustlib/src/rust/library/**/*.rs": true
+  },
+  // Git settings
+  "git.autofetch": true,
+  "git.blame.editorDecoration.enabled": false,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.openRepositoryInParentFolders": "never",
+  // GitLens settings
+  "gitlens.codeLens.enabled": false,
+  "gitlens.currentLine.enabled": false,
+  "gitlens.plusFeatures.enabled": false,
+  // Language-specific settings
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+  },
+  "[mdx]": {
+    "editor.defaultFormatter": "unifiedjs.vscode-mdx"
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typst]": {
+    "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?"
+  },
+  "[typst-code]": {
+    "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  // Markdown settings
+  "markdown-checkbox.checkmark": "x",
+  "markdown-checkbox.typeOfBulletPoint": "-",
+  // Problems view settings
+  "problems.sortOrder": "severity",
+  // Quick Notes settings
+  "quickNotes.fileName": "./.vscode/.notes.md",
+  // Search settings
+  "search.exclude": {
+    "**/*.code-search": true,
+    "**/bower_components": true,
+    "**/node_modules": true,
+    "**/package-lock.json": true
+  },
+  // Tailwind CSS settings
+  "tailwindCSS.experimental.classRegex": [
+    "class \"([^\"]*)",
+    "class = \"([^\"]*)",
+    "classList\n.*\\( \"(.*)\"",
+    "\"(.*)\".*-- @tailwind"
+  ],
+  "tailwindCSS.includeLanguages": {
+    "elm": "elm"
+  },
+  // Telemetry settings
+  "telemetry.telemetryLevel": "off",
+  "terminal.integrated.copyOnSelection": true,
+  // TinyMist settings
+  "tinymist.formatterMode": "typstyle",
+  // TypeScript settings
+  "typescript.preferences.quoteStyle": "double",
+  "typescript.preferences.useAliasesForRenames": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  // Window settings
+  "window.autoDetectColorScheme": true,
+  "window.autoDetectHighContrast": false,
+  // Workbench settings
+  "workbench.colorCustomizations": {
+    "[Kai Light]": {
+      "window.activeBorder": "#00F",
+      "window.inactiveBorder": "#00F",
+    },
+    "[BBEdit Light]": {
+      "activityBar.background": "#f7f7f7",
+      "activityBar.foreground": "#141314",
+      "statusBar.background": "#f7f7f7",
+      "statusBar.foreground": "#141314"
+    }
+  },
+  "workbench.editor.empty.hint": "hidden",
+  "workbench.editorAssociations": {
+    "*.svg": "default"
+  },
+  "workbench.preferredDarkColorTheme": "Catppuccin Mocha",
+  "workbench.preferredLightColorTheme": "Catppuccin Latte",
+  // Zen Mode settings
+  "zenMode.fullScreen": false,
+  "zenMode.showTabs": "none",
+  // Language-specific path settings
+  "roc-lang.language-server.exe": "/Users/enrico/Developer/_playground/roc-lang/roc_nightly/roc_language_server",
+  "extensions.ignoreRecommendations": true,
+  "terminal.integrated.defaultProfile.linux": "fish",
+  "terminal.integrated.fontSize": 13,
+  "terminal.external.osxExec": "iTerm.app",
+  "terminal.external.linuxExec": "kitty",
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "window.commandCenter": false,
+  "chat.commandCenter.enabled": false,
+  "window.menuBarVisibility": "compact",
+  "window.titleBarStyle": "native",
+  "window.customTitleBarVisibility": "auto",
+  "update.mode": "none",
+  "gitlens.graph.avatars": false,
+  "gitlens.graph.layout": "editor"
+}
