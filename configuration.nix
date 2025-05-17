@@ -35,7 +35,7 @@
     fish
     neovim
     git
-    tldr
+    tealdeer # tldr replacement
     neofetch
     ctop
     bottom
