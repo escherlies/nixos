@@ -36,7 +36,7 @@
 
       # Modules
       nixosModules.core =
-        { config }:
+        { config, ... }:
         {
           options = { };
           config = ./modules/core.nix;
