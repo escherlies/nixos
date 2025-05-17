@@ -29,6 +29,10 @@
     # Misc
     adpyke.codesnap
 
+    # Dependencies
+    hbenl.vscode-test-explorer # Elm
+    ms-vscode.test-adapter-converter # Elm
+
     # TODO: Add to nixpkgs https://github.com/NixOS/nixpkgs/tree/master/pkgs/applications/editors/vscode/extensions
     # jameslan.yaclock
     # gxl.git-graph-3
