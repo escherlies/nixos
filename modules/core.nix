@@ -2,6 +2,12 @@
 {
   # Some config that should apply to every system
 
+  imports = [
+    ./editors/nvim.nix
+    ./ssh.nix
+
+  ];
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
