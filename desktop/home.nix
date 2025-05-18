@@ -1,13 +1,18 @@
 {
   # config,
   pkgs,
+  agenix,
   ...
 }:
 {
   imports = [
     ../home/default.nix
+    agenix.homeManagerModules.default
 
   ];
+
+  age.secrets.secret1.file = ../secrets/secret1.age;
+  # age.identityPaths = [ "/home/enrico/.ssh/id_ed25519" ];
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.

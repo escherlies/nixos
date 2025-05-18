@@ -3,8 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Lock with git commit at 0.15.0
+    agenix.url = "github:ryantm/agenix/564595d0ad4be7277e07fa63b5a991b3c645655d";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
 
   };
 
@@ -13,6 +18,7 @@
       self,
       nixpkgs,
       home-manager,
+      agenix,
       ...
     }@inputs:
 
@@ -72,12 +78,22 @@
             ./desktop/configuration.nix
             ./desktop/hardware-configuration.nix
             ./modules/default.nix
+            # (
+            #   { pkgs, ... }:
+            #   {
+            #     environment.systemPackages = [
+            #       agenix.packages."${pkgs.system}".default
+            #     ];
+            #   }
+            # )
+            # agenix.nixosModules.default
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
               home-manager.users.enrico = ./desktop/home.nix;
               home-manager.backupFileExtension = "_bk";
+              home-manager.extraSpecialArgs = { inherit agenix; };
 
               # Optionally, use home-manager.extraSpecialArgs to pass
               # arguments to home.nix
