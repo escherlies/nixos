@@ -138,4 +138,8 @@
     builtins.elem (lib.getName pkg) [
       "1password"
     ];
+
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    konsole
+  ];
 }

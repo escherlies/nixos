@@ -23,10 +23,10 @@
 
       # Eza ls replacement
       ls = "${pkgs.eza}/bin/eza -1 --group-directories-first --icons";
-      l = "${ls} -lbF --git --icons";
-      ll = "${l} -G";
-      la = "${ls} -lbhHigmuSa@ --time-style=long-iso --git --color-scale --icons";
-      lt = "${ls} --tree --level=2 --icons";
+      l = "${ls}";
+      ll = "${ls} -lbF --git --color-scale";
+      la = "${ls} -lbhgmua@ --color-scale --git";
+      lt = "${ls} --tree --level=2";
 
       # Git
       gs = "${pkgs.git}/bin/git status";
