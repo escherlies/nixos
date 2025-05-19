@@ -51,6 +51,33 @@
 
       thunderbird.enable = true;
     };
+
+    hyhyve = {
+      address = "enrico@hyhyve.com";
+      realName = "Enrico";
+      primary = false;
+
+      maildir = {
+        path = "hyhyve";
+      };
+
+      userName = "enrico@hyhyve.com";
+
+      imap = {
+        host = "outlook.office365.com";
+        tls.enable = true;
+        port = 993;
+      };
+
+      smtp = {
+        host = "smtp.outlook.com";
+        port = 587;
+        tls.enable = true;
+        tls.useStartTls = true;
+      };
+
+      thunderbird.enable = true;
+    };
   };
 
 }
