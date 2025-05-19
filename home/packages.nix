@@ -15,6 +15,9 @@
     # GitHub Cli
     gh
 
+    # Wayland utils
+    wl-clipboard
+
   ];
 
   services.nextcloud-client.enable = true;
