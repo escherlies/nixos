@@ -10,6 +10,7 @@
     ./apps/thunderbird.nix
     ./apps/vscode.nix
     ./git.nix
+    ./audio.nix
     ./packages.nix
 
   ];

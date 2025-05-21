@@ -78,6 +78,9 @@
     #media-session.enable = true;
   };
 
+  # For easyeffects (See file://./../home/audio.nix)
+  programs.dconf.enable = true;
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
