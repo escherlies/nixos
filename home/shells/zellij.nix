@@ -1,6 +1,7 @@
 let
-  shellAliases = {
-    "zj" = "zellij";
+  shellAliases = rec {
+    zj = "zellij";
+    zjl = "${zj} options --theme catppuccin-latte";
   };
 in
 {

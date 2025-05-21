@@ -69,6 +69,7 @@
         port = 993;
       };
 
+      # ! Needs OAuth2
       smtp = {
         host = "smtp.outlook.com";
         port = 587;
@@ -76,7 +77,59 @@
         tls.useStartTls = true;
       };
 
-      thunderbird.enable = true;
+      # signature = {
+      #   text = '''';
+      #   showSignature = "append";
+      # };
+
+      thunderbird = {
+        enable = true;
+        # OAuth2
+        settings = id: {
+          "mail.server.server_${id}.authMethod" = 10;
+          "mail.smtpserver.smtp_${id}.authMethod" = 10;
+        };
+      };
+    };
+
+    binary = {
+      address = "enrico@binaryplease.com";
+      realName = "Enrico";
+      primary = false;
+
+      maildir = {
+        path = "binaryplease";
+      };
+
+      userName = "enrico@binaryplease.com";
+
+      imap = {
+        host = "outlook.office365.com";
+        tls.enable = true;
+        port = 993;
+      };
+
+      # ! Needs OAuth2
+      smtp = {
+        host = "smtp.outlook.com";
+        port = 587;
+        tls.enable = true;
+        tls.useStartTls = true;
+      };
+
+      signature = {
+        text = '''';
+        showSignature = "append";
+      };
+
+      thunderbird = {
+        enable = true;
+        # OAuth2
+        settings = id: {
+          "mail.server.server_${id}.authMethod" = 10;
+          "mail.smtpserver.smtp_${id}.authMethod" = 10;
+        };
+      };
     };
   };
 

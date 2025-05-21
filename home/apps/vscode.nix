@@ -39,5 +39,7 @@
     # alekangelov.alek-kai-theme
     # mathematic.vscode-pdf
     # liangqin.quick-notes
+    # manuthebyte.dynamic-icon-theme
+    # chunsen.bracket-select
   ];
 }
