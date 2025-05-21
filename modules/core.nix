@@ -24,6 +24,7 @@
     unzip
     just
     hcloud
+    git-igitt
 
   ];
 
