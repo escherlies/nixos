@@ -33,6 +33,8 @@
     hbenl.vscode-test-explorer # Elm
     ms-vscode.test-adapter-converter # Elm
 
+    aaron-bond.better-comments
+
     # TODO: Add to nixpkgs https://github.com/NixOS/nixpkgs/tree/master/pkgs/applications/editors/vscode/extensions
     # jameslan.yaclock
     # gxl.git-graph-3
@@ -41,5 +43,7 @@
     # liangqin.quick-notes
     # manuthebyte.dynamic-icon-theme
     # chunsen.bracket-select
+    # sitoi.ai-commit
+    # pkief.markdown-checkbox
   ];
 }
