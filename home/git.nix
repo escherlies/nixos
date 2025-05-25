@@ -24,6 +24,6 @@
       signByDefault = true;
     };
 
-    difftastic.enable = true;
+    difftastic.enable = false;
   };
 }

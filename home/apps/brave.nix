@@ -11,6 +11,7 @@
     { id = "eimadpbcbfnmbkopoojfekhnkhdbieeh"; } # Dark Reader
     { id = "lnjaiaapbakfhlbjenjkhffcdpoompki"; } # Catppuccin for Web File Explorer Icons
     { id = "gejiddohjgogedgjnonbofjigllpkmbf"; } # 1Password Nightly – Password Manager
+    { id = "cdglnehniifkbagbbombnjghhcihifij"; } # Kagi Search
 
   ];
 

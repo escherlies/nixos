@@ -30,6 +30,7 @@
 
       # Git
       gs = "${pkgs.git}/bin/git status";
+      # git diff --no-ext-diff
 
       # Other
       lsblk = "lsblk -o name,mountpoint,label,size,type,uuid";

@@ -12,9 +12,6 @@
     pavucontrol
     comma
 
-    # GitHub Cli
-    gh
-
     # Wayland utils
     wl-clipboard
 
