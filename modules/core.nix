@@ -30,4 +30,12 @@
 
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
+
+  programs.bat.enable = true;
+
+  programs.htop = {
+    enable = true;
+    settings.tree_view = true;
+  };
+
 }
