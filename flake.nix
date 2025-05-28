@@ -77,7 +77,9 @@
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
               home-manager.users.enrico = ./desktop/home.nix;
-              home-manager.backupFileExtension = "_bk";
+
+              # Disabled for now. Let home-manager fail so i know i had some dotfiles flying around
+              # home-manager.backupFileExtension = "_bk";
 
               # Optionally, use home-manager.extraSpecialArgs to pass
               # arguments to home.nix
