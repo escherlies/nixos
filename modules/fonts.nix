@@ -5,7 +5,8 @@
     fontconfig.enable = true;
     packages = with pkgs; [
       inter
-      fira-code
+      # fira-code
+      nerd-fonts.fira-code
       nerd-fonts.space-mono
     ];
   };

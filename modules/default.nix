@@ -6,6 +6,7 @@
     ./docker.nix
     ./ssh.nix
     ./_1password.nix
+    ./starship.nix
 
   ];
 }
