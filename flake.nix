@@ -65,7 +65,6 @@
           ];
         };
 
-        # The first desktop machine
         desktop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
@@ -79,6 +78,25 @@
               home-manager.users.enrico = ./desktop/home.nix;
 
               # Disabled for now. Let home-manager fail so i know i had some dotfiles flying around
+              # home-manager.backupFileExtension = "_bk";
+
+              # Optionally, use home-manager.extraSpecialArgs to pass
+              # arguments to home.nix
+            }
+          ];
+        };
+
+        laptop = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./laptop/configuration.nix
+            ./laptop/hardware-configuration.nix
+            ./modules/default.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = false;
+              home-manager.useUserPackages = true;
+              home-manager.users.enrico = ./desktop/home.nix;
               # home-manager.backupFileExtension = "_bk";
 
               # Optionally, use home-manager.extraSpecialArgs to pass
