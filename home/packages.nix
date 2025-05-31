@@ -21,6 +21,8 @@
 
     micro
     shell-gpt
+
+    tor-browser
   ];
 
   services.nextcloud-client.enable = true;
