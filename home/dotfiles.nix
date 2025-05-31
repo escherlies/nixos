@@ -9,7 +9,7 @@ let
     # This repo lives always in ~/nixos
     config.lib.file.mkOutOfStoreSymlink ("${config.home.homeDirectory}/nixos/${fromProjectRoot}");
 
-  vscodePackage = "VSCodium"; # Code | VSCodium
+  vscodePackage = "Code"; # Code | VSCodium
 in
 {
 
