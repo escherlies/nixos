@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   programs.vscode.enable = true;
+  programs.vscode.package = pkgs.vscodium;
 
   # TODO Fix extensions
   # - https://github.com/nix-community/nix-vscode-extensions

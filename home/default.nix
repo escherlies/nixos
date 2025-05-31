@@ -13,5 +13,7 @@
     ./audio.nix
     ./packages.nix
 
+    ./dotfiles.nix
+
   ];
 }
