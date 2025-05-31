@@ -18,10 +18,10 @@
   },
   "editor.codeLens": true,
   "editor.find.seedSearchStringFromSelection": "selection",
-  "editor.fontFamily": "Fira Code",
+  "editor.fontFamily": "FiraCode Nerd Font",
   "editor.fontSize": 13,
   "editor.fontLigatures": "'cv02', 'cv11','ss01','ss02','ss03', 'ss05','ss11', 'ss08', 'cv24', 'cv06', 'cv30', 'calt' 1",
-  "editor.formatOnPaste": true,
+  "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
   "editor.inlayHints.enabled": "on",
   "editor.inlineSuggest.suppressSuggestions": true,
@@ -30,7 +30,7 @@
   "editor.quickSuggestions": {
     "comments": "off",
     "other": "on",
-    "strings": "on"
+      "strings": "on",
   },
   "editor.tabSize": 2,
   // Explorer settings
@@ -62,13 +62,13 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[javascript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+      "editor.defaultFormatter": "biomejs.biome"
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[json]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
+      "editor.defaultFormatter": "biomejs.biome"
   },
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
@@ -83,7 +83,7 @@
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+      "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
@@ -144,20 +144,14 @@
       "activityBar.foreground": "#141314",
       "statusBar.background": "#f7f7f7",
       "statusBar.foreground": "#141314"
-    }
+      },
   },
   "workbench.editor.empty.hint": "hidden",
   "workbench.editorAssociations": {
     "*.svg": "default"
   },
-  "workbench.preferredDarkColorTheme": "Catppuccin Mocha",
+  "workbench.preferredDarkColorTheme": "Catppuccin Macchiato",
   "workbench.preferredLightColorTheme": "Catppuccin Latte",
-  // Zen Mode settings
-  "zenMode.fullScreen": false,
-  "zenMode.showTabs": "none",
-  // Language-specific path settings
-  "roc-lang.language-server.exe": "/Users/enrico/Developer/_playground/roc-lang/roc_nightly/roc_language_server",
-  "extensions.ignoreRecommendations": true,
   "terminal.integrated.defaultProfile.linux": "fish",
   "terminal.integrated.fontSize": 13,
   "terminal.external.osxExec": "iTerm.app",
@@ -167,8 +161,20 @@
   "chat.commandCenter.enabled": false,
   "window.menuBarVisibility": "compact",
   "window.titleBarStyle": "native",
-  "window.customTitleBarVisibility": "auto",
+  "window.customTitleBarVisibility": "windowed",
   "update.mode": "none",
   "gitlens.graph.avatars": false,
-  "gitlens.graph.layout": "editor"
+  "gitlens.graph.layout": "editor",
+  "icontheme.lightIconTheme": "catppuccin-latte",
+  "icontheme.darkIconTheme": "catppuccin-mocha",
+  "workbench.iconTheme": "catppuccin-latte",
+  "gitlens.ai.enabled": false,
+  "roo-cline.allowedCommands": [
+      "npm test",
+      "npm install",
+      "tsc",
+      "git log",
+      "git diff",
+      "git show"
+  ]
 }
