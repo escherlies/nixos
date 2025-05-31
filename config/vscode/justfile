@@ -1,5 +1,5 @@
 install:
   cat ext.txt | xargs -I {} code --install-extension {}
 
-list:
-  code --list-extensions
+update-list:
+  code --list-extensions > ext.txt
