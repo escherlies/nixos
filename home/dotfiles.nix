@@ -24,4 +24,11 @@ in
     target = ".config/${vscodePackage}/User/keybindings.json";
     force = true;
   };
+
+  # Kitty (additional)
+  home.file.".config/kitty/dark-theme.auto.conf".source =
+    projectRoot "config/kitty/dark-theme.auto.conf";
+  home.file.".config/kitty/light-theme.auto.conf".source =
+    projectRoot "config/kitty/light-theme.auto.conf";
+
 }

@@ -30,7 +30,7 @@
   "editor.quickSuggestions": {
     "comments": "off",
     "other": "on",
-      "strings": "on",
+    "strings": "on",
   },
   "editor.tabSize": 2,
   // Explorer settings
@@ -62,13 +62,13 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[javascript]": {
-      "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[json]": {
-      "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
@@ -83,7 +83,7 @@
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
   "[typescript]": {
-      "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
@@ -144,7 +144,7 @@
       "activityBar.foreground": "#141314",
       "statusBar.background": "#f7f7f7",
       "statusBar.foreground": "#141314"
-      },
+    },
   },
   "workbench.editor.empty.hint": "hidden",
   "workbench.editorAssociations": {
@@ -170,11 +170,11 @@
   "workbench.iconTheme": "catppuccin-latte",
   "gitlens.ai.enabled": false,
   "roo-cline.allowedCommands": [
-      "npm test",
-      "npm install",
-      "tsc",
-      "git log",
-      "git diff",
-      "git show"
+    "npm test",
+    "npm install",
+    "tsc",
+    "git log",
+    "git diff",
+    "git show"
   ]
 }
