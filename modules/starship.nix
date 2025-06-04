@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   programs.starship = {
     enable = true;
@@ -15,17 +15,39 @@
         cmd_duration.show_notifications = false;
 
         nix_shell = {
-          format = "[  $name](fg:green bg:sapphire)";
+          format = "[ $symbol$state( \\($name\\))]($style)";
+          style = "fg:crust bg:sapphire";
         };
 
         format =
           let
             languages = "$elm$purescript$bun$deno$rust$golang$nodejs$haskell";
-            # sections = lib.strings.concatStrings [
-            # ]
+            sections = lib.strings.concatStrings [
+              # Red section
+              "[](red)"
+              "$os$username[](bg:peach fg:red)"
+
+              # Orange
+              "$directory[](bg:yellow fg:peach)"
+
+              # Yellow
+              "$git_branch$git_status[](fg:yellow bg:green)"
+
+              # Green
+              "${languages}[](fg:green bg:sapphire)"
+
+              # Blue
+              "$nix_shell[](fg:sapphire bg:lavender)"
+
+              # Purple
+              "$time[](fg:lavender)"
+
+              #
+              " $cmd_duration"
+            ];
           in
           ''
-            ┌[](red)$os$username[](bg:peach fg:red)$directory[](bg:yellow fg:peach)$git_branch$git_status[](fg:yellow bg:green)${languages}[](fg:green bg:sapphire)$nix_shell[](fg:sapphire bg:lavender)$time[](fg:lavender) $cmd_duration
+            ┌${sections}
             └─$character'';
         # Example: change prompt symbol
         character = {

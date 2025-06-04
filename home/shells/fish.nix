@@ -40,6 +40,8 @@
       weather = "${pkgs.curl}/bin/curl -4 http://wttr.in/Berlin";
 
       zzz = "systemctl suspend";
+
+      copy = "wl-copy";
     };
   };
 }
