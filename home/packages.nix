@@ -23,6 +23,7 @@
     shell-gpt
 
     tor-browser
+    gh
   ];
 
   services.nextcloud-client.enable = true;
