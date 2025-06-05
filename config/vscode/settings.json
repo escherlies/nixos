@@ -9,7 +9,7 @@
   // Diff editor settings
   "diffEditor.codeLens": true,
   "diffEditor.experimental.showMoves": true,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.renderSideBySide": true,
   // Editor appearance and behavior
   "editor.accessibilitySupport": "off",
