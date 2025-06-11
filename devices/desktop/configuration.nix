@@ -13,7 +13,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../desktops/kde.nix
+    ../../desktops/kde.nix
   ];
 
   # Bootloader.
@@ -51,7 +51,8 @@
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
-    variant = "";
+    variant = "altgr-intl";
+    options = "ctrl:swap_lwin_lctl";
   };
 
   # Enable CUPS to print documents.
@@ -73,6 +74,9 @@
     #media-session.enable = true;
   };
 
+  # For easyeffects (See file://./../home/audio.nix)
+  programs.dconf.enable = true;
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -83,24 +87,13 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "docker"
     ];
     packages = with pkgs; [
+      # kdePackages.kate
       #  thunderbird
     ];
   };
-
-  # Install firefox.
-  programs.firefox.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -113,7 +106,8 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
+  services.openssh.settings.PasswordAuthentication = false;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -127,11 +121,21 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
+
+  # hardware.keyboard.qmk.enable = true;
+
+  services.udev.packages = [
+    # pkgs.via
+    pkgs.qmk-udev-rules # For QMK/Via
+  ];
+
+  services.libinput.mouse.accelProfile = "flat";
 
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
       "1password"
     ];
+
 }
