@@ -1,11 +1,6 @@
 // Place your key bindings in this file to override the defaults
 [
   {
-    "key": "ctrl+shift+i",
-    "command": "editor.action.referenceSearch.trigger",
-    "when": "editorHasReferenceProvider && !inReferenceSearchEditor && !isInEmbeddedEditor"
-  },
-  {
     "key": "shift+alt+f",
     "command": "editor.action.formatDocument",
     "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
@@ -78,7 +73,7 @@
     "when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly && !suggestWidgetVisible"
   },
   {
-    "key": "shift+alt+i",
+    "key": "ctrl+i",
     "command": "editor.action.revealDefinition",
     "when": "editorHasDefinitionProvider"
   },
@@ -88,7 +83,7 @@
     "when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly && !suggestWidgetVisible"
   },
   {
-    "key": "ctrl+i",
+    "key": "ctrl+shift+i",
     "command": "editor.action.showHover",
     "when": "editorTextFocus"
   },
@@ -120,5 +115,9 @@
     "key": "ctrl+`",
     "command": "-workbench.action.terminal.toggleTerminal",
     "when": "terminal.active"
+  },
+  {
+    "key": "ctrl+shift+i",
+    "command": "editor.action.showDefinitionPreviewHover"
   }
 ]

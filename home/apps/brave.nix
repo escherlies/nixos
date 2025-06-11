@@ -12,6 +12,7 @@
     { id = "lnjaiaapbakfhlbjenjkhffcdpoompki"; } # Catppuccin for Web File Explorer Icons
     { id = "gejiddohjgogedgjnonbofjigllpkmbf"; } # 1Password Nightly – Password Manager
     { id = "cdglnehniifkbagbbombnjghhcihifij"; } # Kagi Search
+    { id = "edibdbjcniadpccecjdfdjjppcpchdlm"; } # I still don't care about cookies
 
   ];
 
