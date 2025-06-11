@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Fixes Signal time format not working
+# https://github.com/signalapp/Signal-Desktop/issues/4252
+# Replaces "localeOverride": null
+# with     "localeOverride": "en-DE"
+# in       ~/.config/Signal/ephemeral.json
+
+
 # Exit on error
 set -e
 
