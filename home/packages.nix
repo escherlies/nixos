@@ -24,6 +24,7 @@
 
     tor-browser
     gh
+    biome
   ];
 
   services.nextcloud-client.enable = true;

@@ -4,12 +4,21 @@
     enable = true;
 
     functions = {
-      fish_command_not_found = "echo Did not find command $argv[1]";
+      __fish_command_not_found_handler = {
+        body = "echo Did not find command $argv[1]";
+        onEvent = "fish_command_not_found";
+      };
 
       # # Create and change to a directory
       mkdircd = ''mkdir -p -- "$1" && cd -- "$1"'';
 
       fish_greeting = "";
+
+      ai_commit =
+        let
+          prompt = "Generate a commit message for these git diff changes. Use present tense. Do not use the word introduce. Use bullet points (-) for the body. Format: <summary>\n\n<body>";
+        in
+        ''git diff --staged | sgpt --no-md --no-cache --code "${prompt}" | copy'';
     };
 
     shellAbbrs = {
