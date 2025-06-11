@@ -18,7 +18,7 @@
     neovim
     git
     tealdeer # tldr replacement
-    neofetch
+    nitch
     ctop
     bottom
     unzip
