@@ -9,9 +9,10 @@ This repository contains my personal NixOS configurations, managed using Nix Fla
 ```
 .
 ├── flake.nix          # Main Nix Flake file
-├── machines/            # Machine-specific configurations
+├── machines/            # Machine-specific NixOS configurations
 │   ├── desktop/
-│   └── laptop/
+│   ├── laptop/
+│   └── web-services/
 ├── home/                # Home Manager configurations
 │   ├── default.nix
 │   └── ...
