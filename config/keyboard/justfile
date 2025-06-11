@@ -1,0 +1,2 @@
+convert:
+  nix-shell -p bun --run "bun convert.js"
