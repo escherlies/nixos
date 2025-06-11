@@ -13,7 +13,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../../desktops/kde.nix
+    ../../modules/desktops/kde.nix
   ];
 
   # Bootloader.
