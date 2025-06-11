@@ -61,15 +61,15 @@
         web-services = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            ./servers/web-services/configuration.nix
+            ./machines/web-services/configuration.nix
           ];
         };
 
         desktop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            ./devices/desktop/configuration.nix
-            ./devices/desktop/hardware-configuration.nix
+            ./machines/desktop/configuration.nix
+            ./machines/desktop/hardware-configuration.nix
             ./modules/default.nix
             home-manager.nixosModules.home-manager
             {
@@ -89,8 +89,8 @@
         laptop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            ./devices/laptop/configuration.nix
-            ./devices/laptop/hardware-configuration.nix
+            ./machines/laptop/configuration.nix
+            ./machines/laptop/hardware-configuration.nix
             ./modules/default.nix
             home-manager.nixosModules.home-manager
             {
