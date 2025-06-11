@@ -1,28 +1,34 @@
 ![nixos](https://socialify.git.ci/escherlies/nixos/image?custom_description=Enrico%27s+nix+config+files&description=1&font=KoHo&language=1&logo=https%3A%2F%2Fpablo.tools%2Fnixoscolorful.svg&name=1&owner=1&pattern=Plus&theme=Auto)
 
-# Desktop
 
-`Loading...`
+# My NixOS Configurations
 
-## Fixes
+This repository contains my personal NixOS configurations, managed using Nix Flakes.
 
-### Signal time format not working
-
-https://github.com/signalapp/Signal-Desktop/issues/4252
+## Structure
 
 ```
-vi ~/.config/Signal/ephemeral.json
+.
+├── flake.nix          # Main Nix Flake file
+├── machines/            # Machine-specific configurations
+│   ├── desktop/
+│   └── laptop/
+├── home/                # Home Manager configurations
+│   ├── default.nix
+│   └── ...
+├── modules/             # Custom NixOS modules
+│   ├── core.nix
+│   └── ...
+├── config/              # Other configurations (e.g., macOS)
+│   └── darwin/
+└── scripts/             # Utility scripts
+    └── ...
 ```
 
-```diff
-- "localeOverride": null
-+ "localeOverride": "en-DE"
-```
+## Usage
 
+These configurations are primarily for my personal use. However, feel free to browse the code and adapt any parts that you find useful for your own NixOS or Home Manager setup.
 
+## License
 
-# Servers
-
-## VPS
-
-Using [NixOS-Infect](https://github.com/elitak/nixos-infect) to deploy on Hetzner Cloud.
+This repository is licensed under the [MIT License](LICENSE).
