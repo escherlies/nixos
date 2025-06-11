@@ -1,5 +1,4 @@
-![nixos](https://socialify.git.ci/escherlies/nixos/image?custom_description=Enrico%27s+nix+config+files&description=1&font=KoHo&language=1&logo=https%3A%2F%2Fpablo.tools%2Fnixoscolorful.svg&name=1&owner=1&pattern=Plus&theme=Auto)
-
+![nixos](./screenshot.png)
 
 # My NixOS Configurations
 
