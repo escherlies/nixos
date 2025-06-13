@@ -4,10 +4,17 @@
     fontDir.enable = true; # Needed for some programs to find them
     fontconfig.enable = true;
     packages = with pkgs; [
+
       inter
-      # fira-code
+      aporetic
+      iosevka
+      ibm-plex
+
+      # 🤓 Nerd Fonts
       nerd-fonts.fira-code
       nerd-fonts.space-mono
+      nerd-fonts.monaspace
+      nerd-fonts.hack
     ];
   };
 }

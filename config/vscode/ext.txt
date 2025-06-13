@@ -19,12 +19,17 @@ liangqin.quick-notes
 manuthebyte.dynamic-icon-theme
 mathematic.vscode-pdf
 matthewpi.caddyfile-support
+mechatroner.rainbow-csv
 ms-vscode.test-adapter-converter
+myriad-dreamin.tinymist
+naumovs.color-highlight
 nefrob.vscode-just-syntax
+nwolverson.language-purescript
 pkief.markdown-checkbox
 redhat.vscode-yaml
 rooveterinaryinc.roo-cline
 saoudrizwan.claude-dev
+tomoki1207.pdf
 usernamehw.errorlens
 yzane.markdown-pdf
 yzhang.markdown-all-in-one

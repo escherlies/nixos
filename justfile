@@ -1,8 +1,6 @@
-_default:
-  @just --list
+rebuild:
+  sudo nixos-rebuild switch --flake .#$(hostname)
 
-desktop:
-  sudo nixos-rebuild switch --flake .#desktop
-
-laptop:
-  sudo nixos-rebuild switch --flake .#laptop
+# Initial rebuild, after that, hostname follows flake name
+rebuildt target:
+  sudo nixos-rebuild switch --flake .#{{target}}
