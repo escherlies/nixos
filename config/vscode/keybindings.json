@@ -119,5 +119,9 @@
   {
     "key": "ctrl+shift+i",
     "command": "editor.action.showDefinitionPreviewHover"
+  },
+  {
+    "key": "ctrl+shift+d",
+    "command": "editor.action.addSelectionToPreviousFindMatch"
   }
 ]
