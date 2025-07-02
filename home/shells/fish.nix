@@ -51,6 +51,8 @@
       zzz = "systemctl suspend";
 
       copy = "wl-copy";
+
+      nd = "nix develop -c $SHELL";
     };
   };
 }

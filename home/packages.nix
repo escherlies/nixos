@@ -25,6 +25,11 @@
     tor-browser
     gh
     biome
+
+    vlc
+
+    # Needs networking.firewall.checkReversePath = "loose";
+    protonvpn-gui
   ];
 
   services.nextcloud-client.enable = true;

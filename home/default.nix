@@ -9,6 +9,7 @@
     ./apps/firefox.nix
     ./apps/thunderbird.nix
     ./apps/vscode.nix
+    ./apps/zed.nix
     ./git.nix
     ./audio.nix
     ./packages.nix

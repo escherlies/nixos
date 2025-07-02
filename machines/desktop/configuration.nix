@@ -110,7 +110,18 @@
   services.openssh.settings.PasswordAuthentication = false;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [
+    1234
+    4321
+    3333
+    8000
+    8081
+
+  ];
+
+  # VPN Connections
+  networking.firewall.checkReversePath = "loose";
+
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;

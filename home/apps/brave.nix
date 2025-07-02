@@ -1,10 +1,8 @@
 { pkgs, ... }:
 {
-  programs.chromium.enable = true;
+  programs.brave.enable = true;
 
-  programs.chromium.package = pkgs.brave;
-
-  programs.chromium.extensions = [
+  programs.brave.extensions = [
     # Lazily copy an extension from the store:
     # https://github.com/escherlies/chromium-extension-to-nix-expr
 
@@ -16,9 +14,14 @@
 
   ];
 
-  programs.chromium.nativeMessagingHosts = [
+  programs.brave.nativeMessagingHosts = [
     pkgs.kdePackages.plasma-browser-integration
 
+  ];
+
+  programs.brave.commandLineArgs = [
+    "--disable-features=PasswordManagerOnboarding"
+    "--disable-features=AutofillEnableAccountWalletStorage"
   ];
 
 }
