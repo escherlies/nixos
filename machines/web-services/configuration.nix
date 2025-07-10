@@ -23,4 +23,14 @@
 
   networking.hostName = "web-services";
 
+  # TODO Split users. Reason: We need a user if we define users.users.enrico.openssh.authorizedKeys.keys.
+  users.users.enrico = {
+    isNormalUser = true;
+    description = "enrico";
+    extraGroups = [
+      "wheel"
+      "docker"
+    ];
+  };
+
 }
