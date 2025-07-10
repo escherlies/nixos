@@ -14,9 +14,9 @@ enryco.xyz {
 	file_server
 }
 
-foo.ffilabs.com {
-	root * /var/www/foo
-	file_server
+*.ffilabs.com {
+  root * /var/www/{labels.0}.{labels.1}.{labels.2}
+  file_server
 }
 
 fartindex.org {
