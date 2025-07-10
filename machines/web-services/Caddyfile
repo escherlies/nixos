@@ -14,7 +14,7 @@ enryco.xyz {
 	file_server
 }
 
-*.ffilabs.com {
+foo.ffilabs.com {
   root * /var/www/{labels.0}.{labels.1}.{labels.2}
   file_server
 }
