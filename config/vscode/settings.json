@@ -20,6 +20,7 @@
   "editor.find.seedSearchStringFromSelection": "selection",
   "editor.fontFamily": "FiraCode Nerd Font",
   "editor.fontSize": 13,
+  // -> |> 
   "editor.fontLigatures": "'cv02', 'cv11','ss01','ss02','ss03', 'ss05','ss11', 'ss08', 'cv24', 'cv06', 'cv30', 'calt' 1",
   "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
@@ -59,10 +60,10 @@
     "editor.defaultFormatter": "vscode.css-language-features"
   },
   "[javascript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[javascriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
@@ -80,7 +81,7 @@
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[typst]": {
     "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?"
@@ -162,9 +163,6 @@
   "workbench.iconTheme": "catppuccin-latte",
   "gitlens.ai.enabled": false,
   "roo-cline.allowedCommands": [
-    "npm test",
-    "npm install",
-    "tsc",
     "git log",
     "git diff",
     "git show"
@@ -181,7 +179,7 @@
   "github.copilot.nextEditSuggestions.enabled": false,
   "github.copilot.editor.enableCodeActions": false,
   "github.gitProtocol": "ssh",
-  "biome.enabled": false,
   "workbench.preferredLightColorTheme": "Kai Light",
+  "biome.enabled": false,
   "diffEditor.hideUnchangedRegions.enabled": true,
 }

@@ -53,6 +53,8 @@
       copy = "wl-copy";
 
       nd = "nix develop -c $SHELL";
+      day = "lookandfeeltool -a org.kde.breeze.desktop";
+      night = "lookandfeeltool -a org.kde.breezedark.desktop";
     };
   };
 }

@@ -20,7 +20,11 @@
     scdl # Download Music from Soundcloud
 
     micro
+
+    #
     shell-gpt
+    claude-code
+    gemini-cli
 
     tor-browser
     gh

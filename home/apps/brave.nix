@@ -24,4 +24,5 @@
     "--disable-features=AutofillEnableAccountWalletStorage"
   ];
 
+  programs.chromium.enable = true;
 }
