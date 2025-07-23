@@ -182,4 +182,9 @@
   "workbench.preferredLightColorTheme": "Kai Light",
   "biome.enabled": false,
   "diffEditor.hideUnchangedRegions.enabled": true,
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": "/home/enrico/nixos/config/commit.md"
+    }
+  ]
 }

@@ -16,9 +16,9 @@
 
       ai_commit =
         let
-          prompt = "Generate a commit message for these git diff changes. Use present tense. Do not use the word introduce. Use bullet points (-) for the body. Format: <summary>\n\n<body>";
+          prompt = builtins.readFile ../../config/commit.md;
         in
-        ''git diff --staged | sgpt --no-md --no-cache --code "${prompt}" | copy'';
+        ''git diff --staged | sgpt --no-md --no-cache --code ${builtins.toJSON prompt} | copy'';
     };
 
     shellAbbrs = {
