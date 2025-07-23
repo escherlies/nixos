@@ -42,6 +42,8 @@
     pkg:
     builtins.elem (lib.getName pkg) [
       "vscode"
+      "claude-code"
+
     ];
 
 }
