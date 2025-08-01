@@ -60,7 +60,7 @@
     "editor.defaultFormatter": "vscode.css-language-features"
   },
   "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
@@ -163,6 +163,9 @@
   "workbench.iconTheme": "catppuccin-latte",
   "gitlens.ai.enabled": false,
   "roo-cline.allowedCommands": [
+    "npm test",
+    "npm install",
+    "tsc",
     "git log",
     "git diff",
     "git show"
@@ -181,7 +184,6 @@
   "github.gitProtocol": "ssh",
   "workbench.preferredLightColorTheme": "Kai Light",
   "biome.enabled": false,
-  "diffEditor.hideUnchangedRegions.enabled": true,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
       "file": "/home/enrico/nixos/config/commit.md"
