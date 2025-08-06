@@ -2,6 +2,7 @@ aaron-bond.better-comments
 adpyke.codesnap
 alekangelov.alek-kai-theme
 assisrmatheus.sidebar-markdown-notes
+astro-build.astro-vscode
 bierner.markdown-mermaid
 bierner.markdown-preview-github-styles
 biomejs.biome
@@ -11,6 +12,8 @@ catppuccin.catppuccin-vsc-icons
 chunsen.bracket-select
 eamodio.gitlens
 elmtooling.elm-ls-vscode
+github.copilot
+github.copilot-chat
 gxl.git-graph-3
 hbenl.vscode-test-explorer
 jameslan.yaclock
@@ -20,6 +23,7 @@ manuthebyte.dynamic-icon-theme
 mathematic.vscode-pdf
 matthewpi.caddyfile-support
 mechatroner.rainbow-csv
+mjmlio.vscode-mjml
 ms-vscode.test-adapter-converter
 myriad-dreamin.tinymist
 naumovs.color-highlight
@@ -28,7 +32,6 @@ nwolverson.language-purescript
 pkief.markdown-checkbox
 redhat.vscode-yaml
 rooveterinaryinc.roo-cline
-saoudrizwan.claude-dev
 tomoki1207.pdf
 usernamehw.errorlens
 yzane.markdown-pdf

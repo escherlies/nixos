@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  programs.brave.enable = true;
+  programs.brave.enable = false;
 
   programs.brave.extensions = [
     # Lazily copy an extension from the store:
@@ -25,4 +25,9 @@
   ];
 
   programs.chromium.enable = true;
+
+  programs.chromium.extensions = [
+    { id = "gejiddohjgogedgjnonbofjigllpkmbf"; } # 1Password Nightly – Password Manager
+  ];
+
 }
