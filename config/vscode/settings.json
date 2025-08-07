@@ -160,7 +160,7 @@
   "gitlens.graph.layout": "editor",
   "icontheme.lightIconTheme": "catppuccin-latte",
   "icontheme.darkIconTheme": "catppuccin-mocha",
-  "workbench.iconTheme": "catppuccin-latte",
+  "workbench.iconTheme": "catppuccin-macchiato",
   "gitlens.ai.enabled": false,
   "roo-cline.allowedCommands": [
     "npm test",
