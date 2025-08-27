@@ -21,10 +21,11 @@
     nitch
     ctop
     bottom
-    unzip
+    zip
     just
     hcloud
     git-igitt
+    jq
 
   ];
 
