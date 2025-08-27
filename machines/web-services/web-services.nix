@@ -24,4 +24,8 @@
   services.caddy.enable = true;
   services.caddy.extraConfig = builtins.readFile ./Caddyfile;
 
+  services.caddy.virtualHosts."foo.ffilabs.com".extraConfig = ''
+    encode gzip
+  '';
+
 }
