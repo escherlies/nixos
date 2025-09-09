@@ -8,3 +8,6 @@ rebuildt target:
 
 rebuild-laptop-from-host:
   nixos-rebuild switch --flake .#laptop --target-host root@192.168.178.98
+
+rebuild-framework:
+  nixos-rebuild switch --flake .#framework --target-host root@192.168.178.119 --build-host root@192.168.178.119 --no-reexec
