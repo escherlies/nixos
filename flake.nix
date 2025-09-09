@@ -104,6 +104,24 @@
             }
           ];
         };
+
+        framework = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./machines/framework/configuration.nix
+            ./modules/default.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = false;
+              home-manager.useUserPackages = true;
+              home-manager.users.enrico = ./home/default.nix;
+              # home-manager.backupFileExtension = "_bk";
+
+              # Optionally, use home-manager.extraSpecialArgs to pass
+              # arguments to home.nix
+            }
+          ];
+        };
       };
     };
 }
