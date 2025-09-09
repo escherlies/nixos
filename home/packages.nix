@@ -29,21 +29,19 @@
     tor-browser
     gh
     biome
+    nodejs
 
     vlc
 
     # Needs networking.firewall.checkReversePath = "loose";
     protonvpn-gui
+
+    deja-dup
+    mongodb-compass
+
   ];
 
   services.nextcloud-client.enable = true;
 
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "vscode"
-      "claude-code"
-
-    ];
-
+  nixpkgs.config.allowUnfree = true;
 }

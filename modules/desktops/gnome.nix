@@ -14,5 +14,6 @@
 
     gnomeExtensions.emoji-copy
     gnomeExtensions.clipboard-history
+    gnomeExtensions.appindicator
   ];
 }

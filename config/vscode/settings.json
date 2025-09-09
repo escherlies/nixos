@@ -188,5 +188,7 @@
     {
       "file": "/home/enrico/nixos/config/commit.md"
     }
-  ]
+  ],
+  "files.autoSave": "onFocusChange",
+  "diffEditor.hideUnchangedRegions.enabled": true
 }

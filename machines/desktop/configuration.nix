@@ -143,10 +143,5 @@
 
   services.libinput.mouse.accelProfile = "flat";
 
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "1password"
-    ];
-
+  nixpkgs.config.allowUnfree = true;
 }
