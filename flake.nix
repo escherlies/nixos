@@ -6,6 +6,8 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
   };
 
   outputs =
@@ -106,6 +108,7 @@
         };
 
         framework = nixpkgs.lib.nixosSystem {
+          specialArgs = inputs;
           system = "x86_64-linux";
           modules = [
             ./machines/framework/configuration.nix
