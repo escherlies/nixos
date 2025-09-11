@@ -23,7 +23,8 @@
     micro
 
     #
-    shell-gpt
+    # shell-gpt
+    aichat
     claude-code
     gemini-cli
 

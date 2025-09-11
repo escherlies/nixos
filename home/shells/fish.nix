@@ -18,7 +18,7 @@
         let
           prompt = builtins.readFile ../../config/commit.md;
         in
-        ''git diff --staged | sgpt --no-md --no-cache --code ${builtins.toJSON prompt} | copy'';
+        ''git diff --staged | aichat -c ${builtins.toJSON prompt} | copy'';
     };
 
     shellAbbrs = {
