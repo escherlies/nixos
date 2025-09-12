@@ -17,6 +17,8 @@
     ../../modules/desktops/gnome.nix
   ];
 
+  hardware.amdgpu.opencl.enable = true;
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

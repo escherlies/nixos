@@ -119,6 +119,8 @@
 
   ];
 
+  services.xserver.displayManager.gdm.autoSuspend = false;
+
   # VPN Connections
   networking.firewall.checkReversePath = "loose";
 
