@@ -13,6 +13,7 @@
       {
         add_newline = true;
         cmd_duration.show_notifications = false;
+        cmd_duration.min_time = 50;
 
         nix_shell = {
           format = "[ $symbol$state( \\($name\\))]($style)";
