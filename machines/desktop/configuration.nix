@@ -146,4 +146,6 @@
   services.libinput.mouse.accelProfile = "flat";
 
   nixpkgs.config.allowUnfree = true;
+
+  networking.interfaces.enp14s0.wakeOnLan.enable = true;
 }
