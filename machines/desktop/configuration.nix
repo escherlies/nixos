@@ -119,8 +119,6 @@
 
   ];
 
-  services.xserver.displayManager.gdm.autoSuspend = false;
-
   # VPN Connections
   networking.firewall.checkReversePath = "loose";
 
@@ -147,5 +145,14 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # WOL (https://wiki.archlinux.org/title/Wake-on-LAN)
+  # ip link -> get device interface + mac adress
+  # sudo ethtool <interface> | grep Wake-on
+  # Enable wol in bios
+  # Enable in nix config on target machine:
   networking.interfaces.enp14s0.wakeOnLan.enable = true;
+  # Run wakeonlan <mac adress> to wakey wakey
+
+  # Re-Enable autoSuspend
+  services.xserver.displayManager.gdm.autoSuspend = true;
 }
