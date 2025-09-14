@@ -10,7 +10,7 @@
   "diffEditor.codeLens": true,
   "diffEditor.experimental.showMoves": true,
   "diffEditor.ignoreTrimWhitespace": true,
-  "diffEditor.renderSideBySide": true,
+  "diffEditor.renderSideBySide": false,
   // Editor appearance and behavior
   "editor.accessibilitySupport": "off",
   "editor.codeActionsOnSave": {
@@ -145,14 +145,13 @@
   "workbench.editorAssociations": {
     "*.svg": "default"
   },
-  "workbench.preferredDarkColorTheme": "Catppuccin Macchiato",
   "terminal.integrated.defaultProfile.linux": "fish",
   "terminal.integrated.fontSize": 13,
   "terminal.external.osxExec": "iTerm.app",
   "terminal.external.linuxExec": "kitty",
   "window.commandCenter": false,
   "chat.commandCenter.enabled": false,
-  "window.menuBarVisibility": "hidden",
+  "window.menuBarVisibility": "toggle",
   "window.titleBarStyle": "native",
   "window.customTitleBarVisibility": "never",
   "update.mode": "none",
@@ -160,7 +159,7 @@
   "gitlens.graph.layout": "editor",
   "icontheme.lightIconTheme": "catppuccin-latte",
   "icontheme.darkIconTheme": "catppuccin-mocha",
-  "workbench.iconTheme": "catppuccin-macchiato",
+  "workbench.iconTheme": "catppuccin-latte",
   "gitlens.ai.enabled": false,
   "roo-cline.allowedCommands": [
     "npm test",
@@ -190,5 +189,7 @@
     }
   ],
   "files.autoSave": "onFocusChange",
-  "diffEditor.hideUnchangedRegions.enabled": true
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "roo-cline.deniedCommands": [],
+  "workbench.preferredDarkColorTheme": "Dracula Theme"
 }
