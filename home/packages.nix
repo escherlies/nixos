@@ -41,6 +41,7 @@
     deja-dup
     mongodb-compass
 
+    wakeonlan
   ];
 
   services.nextcloud-client.enable = true;
