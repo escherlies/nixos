@@ -39,8 +39,12 @@
       la = "${ls} -lbhgmua@ --color-scale --git";
       lt = "${ls} --tree --level=2";
 
+      "!" = "just";
+
       # Git
       gs = "${pkgs.git}/bin/git status";
+
+      ga = "${pkgs.git}/bin/git add .";
       # git diff --no-ext-diff
 
       # Other
