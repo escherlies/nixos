@@ -139,4 +139,8 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
 
+  services.udev.packages = [
+    # pkgs.via
+    pkgs.qmk-udev-rules # For QMK/Via
+  ];
 }
