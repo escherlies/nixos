@@ -26,6 +26,8 @@
     hcloud
     git-igitt
     jq
+    mongodb-tools
+    mongosh
 
   ];
 
