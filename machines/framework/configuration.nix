@@ -57,7 +57,8 @@
   services.xserver.xkb = {
     layout = "us";
     variant = "altgr-intl";
-    options = "ctrl:swap_lwin_lctl";
+    # See readme
+    # options = "ctrl:swap_lwin_lctl";
     # options = "ctrl:swap_lalt_lctl_lwin";
   };
 

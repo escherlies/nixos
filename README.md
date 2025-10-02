@@ -33,6 +33,17 @@ These configurations are primarily for my personal use. However, feel free to br
 
 ### xkb options wont apply
 
+Currently setting it manually when i change keyboards.
+
+```sh
+# On desktop and laptop w/ external keyboard
+gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:swap_lwin_lctl']"
+
+# On laptop for internal keyboard
+gsettings set org.gnome.desktop.input-sources xkb-options "['caps:backspace','ctrl:swap_lalt_lctl_lwin']"
+```
+
+<strike>
 Fix: reset gnome and reboot
 ```
 gsettings reset org.gnome.desktop.input-sources xkb-options
@@ -43,6 +54,8 @@ reboot
 https://discourse.nixos.org/t/problem-with-xkboptions-it-doesnt-seem-to-take-effect/5269/2
 
 or put it int dconf."org/gnome/desktop/input-sources" https://github.com/jtojnar/nixfiles/blob/0d27214ee265766e25df0668514594835ea31814/hosts/evan/configuration.nix#L119
+
+</strike>
 
 
 ## License
