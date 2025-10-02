@@ -13,7 +13,7 @@
     gnome-tweaks
 
     gnomeExtensions.emoji-copy
-    gnomeExtensions.clipboard-history
     gnomeExtensions.appindicator
+    gnomeExtensions.clipboard-indicator
   ];
 }
