@@ -73,6 +73,7 @@
             ./machines/desktop/configuration.nix
             ./machines/desktop/hardware-configuration.nix
             ./modules/default.nix
+            ./configs/graphical.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
@@ -94,6 +95,7 @@
             ./machines/laptop/configuration.nix
             ./machines/laptop/hardware-configuration.nix
             ./modules/default.nix
+            ./configs/graphical.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
@@ -113,6 +115,8 @@
           modules = [
             ./machines/framework/configuration.nix
             ./modules/default.nix
+            ./configs/graphical.nix
+
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
