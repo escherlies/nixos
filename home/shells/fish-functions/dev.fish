@@ -36,8 +36,23 @@ if test -z "$nix_target" -a -f "flake.nix"
         if test (count $shells) -eq 1
             set nix_target $shells[1]
         else
-            # Use the shells directly from the command, don't add "default"
-            set chosen_shell (printf "%s\n" $shells | fzf \
+            # Sort shells to ensure "default" appears first
+            set sorted_shells
+            # Add "default" first if it exists
+            for shell in $shells
+                if test "$shell" = "default"
+                    set sorted_shells $sorted_shells $shell
+                    break
+                end
+            end
+            # Add all other shells
+            for shell in $shells
+                if test "$shell" != "default"
+                    set sorted_shells $sorted_shells $shell
+                end
+            end
+            
+            set chosen_shell (printf "%s\n" $sorted_shells | fzf \
                 --prompt="📦 Select shell: " \
                 --height=30% \
                 --border \
