@@ -12,8 +12,11 @@
   environment.systemPackages = with pkgs; [
     gnome-tweaks
 
-    gnomeExtensions.emoji-copy
     gnomeExtensions.appindicator
     gnomeExtensions.clipboard-indicator
+
+    # Emoji picker
+    smile
+    gnomeExtensions.smile-complementary-extension
   ];
 }
