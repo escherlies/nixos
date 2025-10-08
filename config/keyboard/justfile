@@ -1,2 +1,10 @@
-convert:
-  nix-shell -p bun --run "bun convert.js"
+_:
+  @./convert.js help
+
+# Convert from 5-row to 4-row layout
+convert-from5:
+  ./convert.js from5
+
+# Convert from 4-row to 5-row layout
+convert-from4:
+  ./convert.js from4

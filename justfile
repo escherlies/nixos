@@ -11,3 +11,7 @@ rebuild-laptop-from-host:
 
 rebuild-framework:
   nixos-rebuild switch --flake .#framework --target-host root@192.168.178.119 --build-host root@192.168.178.119 --no-reexec
+
+
+rebuild-desktop:
+  nixos-rebuild switch --flake .#desktop --target-host root@192.168.178.87 --build-host root@192.168.178.87 --no-reexec
