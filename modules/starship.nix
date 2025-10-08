@@ -27,28 +27,55 @@
           stashed = "";
         };
 
+        hostname = {
+          ssh_only = true;
+          format = "[@$hostname]($style)";
+          style = "fg:crust bg:red";
+        };
+
         format =
           let
             languages = "$elm$purescript$bun$deno$rust$golang$nodejs$haskell";
+
+            default-colors = {
+              red = "red";
+              peach = "peach";
+              yellow = "yellow";
+              green = "green";
+              sapphire = "sapphire";
+              lavender = "lavender";
+            };
+
+            grayscale-colors = {
+              red = "#e6e6e6"; # Very light gray
+              peach = "#d9d9d9"; # Light gray
+              yellow = "#cccccc"; # Medium-light gray
+              green = "#bfbfbf"; # Medium gray
+              sapphire = "#b3b3b3"; # Medium-dark gray
+              lavender = "#a6a6a6"; # Dark gray
+            };
+
+            colors = if config.networking.hostName == "desktop" then grayscale-colors else default-colors;
+
             sections = lib.strings.concatStrings [
               # Red section
-              "[](red)"
-              "$os$username[](bg:peach fg:red)"
+              "[](${colors.red})"
+              "$os$username$hostname[](bg:${colors.peach} fg:${colors.red})"
 
               # Orange
-              "$directory[](bg:yellow fg:peach)"
+              "$directory[](bg:${colors.yellow} fg:${colors.peach})"
 
               # Yellow
-              "$git_branch$git_status[](fg:yellow bg:green)"
+              "$git_branch$git_status[](fg:${colors.yellow} bg:${colors.green})"
 
               # Green
-              "${languages}[](fg:green bg:sapphire)"
+              "${languages}[](fg:${colors.green} bg:${colors.sapphire})"
 
               # Blue
-              "$nix_shell[](fg:sapphire bg:lavender)"
+              "$nix_shell[](fg:${colors.sapphire} bg:${colors.lavender})"
 
               # Purple
-              "$time[](fg:lavender)"
+              "$time[](fg:${colors.lavender})"
 
               #
               " $cmd_duration"

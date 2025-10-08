@@ -14,6 +14,9 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../modules/desktops/gnome.nix
+    ../../modules/ollama.nix
+    ../../modules/webui.nix
+
   ];
 
   # Bootloader.
@@ -117,6 +120,8 @@
     8000
     8081
 
+    # 8088 # WebUI via services.open-webui.openFirewall = true;
+    # 11434 # Ollama via services.ollama.openFirewall = true;
   ];
 
   # VPN Connections
@@ -153,6 +158,19 @@
   networking.interfaces.enp14s0.wakeOnLan.enable = true;
   # Run wakeonlan <mac adress> to wakey wakey
 
-  # Re-Enable autoSuspend
-  services.xserver.displayManager.gdm.autoSuspend = true;
+  # Disable autoSuspend
+  services.displayManager.gdm.autoSuspend = false;
+  # ^ This not working, additionally we need this...
+  # https://discourse.nixos.org/t/why-is-my-new-nixos-install-suspending/19500/2
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+        if (action.id == "org.freedesktop.login1.suspend" ||
+            action.id == "org.freedesktop.login1.suspend-multiple-sessions" ||
+            action.id == "org.freedesktop.login1.hibernate" ||
+            action.id == "org.freedesktop.login1.hibernate-multiple-sessions")
+        {
+            return polkit.Result.NO;
+        }
+    });
+  '';
 }
