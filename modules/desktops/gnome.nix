@@ -18,5 +18,7 @@
     # Emoji picker
     smile
     gnomeExtensions.smile-complementary-extension
+
+    gnomeExtensions.tiling-shell
   ];
 }
