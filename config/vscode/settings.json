@@ -151,7 +151,7 @@
   "terminal.external.linuxExec": "kitty",
   "window.commandCenter": false,
   "window.menuBarVisibility": "toggle",
-  "window.titleBarStyle": "native",
+  // "window.titleBarStyle": "native",
   "window.customTitleBarVisibility": "never",
   "update.mode": "none",
   "gitlens.graph.avatars": false,
@@ -179,9 +179,8 @@
     "scminput": false
   },
   "github.copilot.nextEditSuggestions.enabled": false,
-  "github.copilot.editor.enableCodeActions": false,
+  "github.copilot.editor.enableCodeActions": true,
   "github.gitProtocol": "ssh",
-  "workbench.preferredLightColorTheme": "Kai Light",
   "biome.enabled": false,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
@@ -190,7 +189,7 @@
   ],
   "files.autoSave": "onFocusChange",
   "roo-cline.deniedCommands": [],
-  "workbench.preferredDarkColorTheme": "Catppuccin Mocha",
+  "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
   "extensions.ignoreRecommendations": true,
   "[dockercompose]": {
     "editor.insertSpaces": true,
@@ -206,5 +205,10 @@
   "terminal.integrated.stickyScroll.enabled": false,
   "catppuccin-icons.monochrome": true,
   "nix.enableLanguageServer": true,
-  "diffEditor.hideUnchangedRegions.enabled": true
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "chat.agent.maxRequests": 50,
+  "chat.agentSessionsViewLocation": "view",
+  "chat.mcp.gallery.enabled": true
 }

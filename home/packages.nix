@@ -42,6 +42,8 @@
     mongodb-compass
 
     wakeonlan
+
+    firefox-devedition
   ];
 
   services.nextcloud-client.enable = true;

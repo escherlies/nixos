@@ -93,6 +93,8 @@
       "networkmanager"
       "wheel"
       "docker"
+      "dialout" # Needed for serial access to devices like Arduino
+
     ];
     packages = [
       #  thunderbird
