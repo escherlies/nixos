@@ -35,7 +35,6 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  time.timeZone = "Europe/Berlin";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -132,6 +131,10 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  networking.firewall.allowedTCPPorts = [
+    1234
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
