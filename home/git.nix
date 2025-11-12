@@ -1,8 +1,6 @@
 {
   programs.git = {
     enable = true;
-    userName = "Enrico Scherlies";
-    userEmail = "e.scherlies@pm.me";
     ignores = [
       ".note.*"
       ".vscode"
@@ -13,7 +11,9 @@
 
     ];
 
-    extraConfig = {
+    settings = {
+      user.name = "Enrico Scherlies";
+      user.email = "e.scherlies@pm.me";
       init.defaultBranch = "main";
     };
 
@@ -24,7 +24,7 @@
       key = "~/.ssh/id_ed25519.pub";
       signByDefault = true;
     };
-
-    difftastic.enable = false;
   };
+
+  programs.difftastic.enable = false;
 }
