@@ -14,6 +14,7 @@
     ./hardware-configuration.nix
     nixos-hardware.nixosModules.framework-amd-ai-300-series
     ../../modules/desktops/gnome.nix
+    ../../modules/gaming
   ];
 
   hardware.amdgpu.opencl.enable = true;
@@ -148,4 +149,6 @@
     # pkgs.via
     pkgs.qmk-udev-rules # For QMK/Via
   ];
+
+  modules.gaming.enable = true;
 }
