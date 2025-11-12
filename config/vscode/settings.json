@@ -189,7 +189,6 @@
   ],
   "files.autoSave": "onFocusChange",
   "roo-cline.deniedCommands": [],
-  "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
   "extensions.ignoreRecommendations": true,
   "[dockercompose]": {
     "editor.insertSpaces": true,
@@ -207,8 +206,10 @@
   "nix.enableLanguageServer": true,
   "gitlens.ai.model": "vscode",
   "gitlens.ai.vscode.model": "copilot:gpt-4.1",
-  "diffEditor.hideUnchangedRegions.enabled": true,
   "chat.agent.maxRequests": 50,
   "chat.agentSessionsViewLocation": "view",
-  "chat.mcp.gallery.enabled": true
+  "chat.mcp.gallery.enabled": true,
+  "workbench.preferredDarkColorTheme": "Dracula Theme",
+  "workbench.preferredLightColorTheme": "Kai Light",
+  "diffEditor.hideUnchangedRegions.enabled": true,
 }
