@@ -15,6 +15,7 @@
     nixos-hardware.nixosModules.framework-amd-ai-300-series
     ../../modules/desktops/gnome.nix
     ../../modules/gaming
+    ./keyboard.nix
   ];
 
   hardware.amdgpu.opencl.enable = true;
