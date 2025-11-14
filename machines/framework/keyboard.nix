@@ -4,8 +4,8 @@
   services.keyd = {
     enable = true;
     keyboards = {
-      default = {
-        ids = [ "*" ];
+      framework = {
+        ids = [ "0001:0001" ];
         settings = {
           main = {
             capslock = "backspace";
@@ -21,6 +21,16 @@
           #   k = "up";
           #   l = "right";
           # };
+        };
+      };
+
+      nyquist = {
+        ids = [ "cb10:3156" ];
+        settings = {
+          main = {
+            leftcontrol = "leftmeta";
+            leftmeta = "leftcontrol";
+          };
         };
       };
     };
