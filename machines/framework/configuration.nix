@@ -5,6 +5,7 @@
 {
   pkgs,
   nixos-hardware,
+  nixpkgs-stable,
   ...
 }:
 
@@ -152,4 +153,15 @@
   ];
 
   modules.gaming.enable = true;
+
+  services.ollama = {
+    enable = true;
+    acceleration = "rocm";
+  };
+
+  services.open-webui = {
+    enable = true;
+    openFirewall = false;
+    package = nixpkgs-stable.legacyPackages.${pkgs.system}.open-webui;
+  };
 }
