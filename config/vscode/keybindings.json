@@ -123,5 +123,10 @@
   {
     "key": "ctrl+shift+d",
     "command": "editor.action.addSelectionToPreviousFindMatch"
+  },
+  {
+    "key": "ctrl+shift+y",
+    "command": "-workbench.debug.action.toggleRepl",
+    "when": "workbench.panel.repl.view.active"
   }
 ]

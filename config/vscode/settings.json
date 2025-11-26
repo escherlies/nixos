@@ -9,7 +9,7 @@
   // Diff editor settings
   "diffEditor.codeLens": true,
   "diffEditor.experimental.showMoves": true,
-  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.renderSideBySide": true,
   // Editor appearance and behavior
   "editor.accessibilitySupport": "off",
@@ -207,7 +207,6 @@
   "gitlens.ai.model": "vscode",
   "gitlens.ai.vscode.model": "copilot:gpt-4.1",
   "chat.agent.maxRequests": 50,
-  "chat.agentSessionsViewLocation": "view",
   "chat.mcp.gallery.enabled": true,
   "workbench.preferredDarkColorTheme": "Dracula Theme",
   "workbench.preferredLightColorTheme": "Kai Light",
