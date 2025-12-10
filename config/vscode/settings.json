@@ -9,7 +9,7 @@
   // Diff editor settings
   "diffEditor.codeLens": true,
   "diffEditor.experimental.showMoves": true,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.renderSideBySide": true,
   // Editor appearance and behavior
   "editor.accessibilitySupport": "off",
@@ -209,6 +209,15 @@
   "chat.agent.maxRequests": 50,
   "chat.mcp.gallery.enabled": true,
   "workbench.preferredDarkColorTheme": "Dracula Theme",
-  "workbench.preferredLightColorTheme": "Kai Light",
   "diffEditor.hideUnchangedRegions.enabled": true,
+  "chat.checkpoints.showFileChanges": true,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "claudeCode.preferredLocation": "panel",
+  "chat.tools.terminal.autoApprove": {
+    "just": true,
+    "elm": true,
+    "timeout": true
+  },
 }
