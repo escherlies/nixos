@@ -1,6 +1,9 @@
+{ nixpkgs-stable, pkgs, ... }:
 {
-  services.open-webui.enable = true;
-  services.open-webui.openFirewall = true;
-
-  services.open-webui.host = "0.0.0.0";
+  services.open-webui = {
+    enable = true;
+    openFirewall = true;
+    host = "0.0.0.0";
+    package = nixpkgs-stable.legacyPackages.${pkgs.system}.open-webui;
+  };
 }
