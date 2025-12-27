@@ -140,6 +140,17 @@
       "statusBar.background": "#f7f7f7",
       "statusBar.foreground": "#141314"
     },
+    "[NetBeans Light Theme]": {
+      "activityBar.background": "#f7f7f7",
+      "activityBar.foreground": "#141314",
+      "statusBar.background": "#e9eff8",
+      "statusBar.foreground": "#141314",
+      "activityBar.border": "#b0c5e3",
+      "sideBar.border": "#b0c5e3",
+      "editorGroup.border": "#b0c5e3",
+      "panel.border": "#b0c5e3",
+      "statusBar.border": "#b0c5e3"
+    }
   },
   "workbench.editor.empty.hint": "hidden",
   "workbench.editorAssociations": {
@@ -208,7 +219,6 @@
   "gitlens.ai.vscode.model": "copilot:gpt-4.1",
   "chat.agent.maxRequests": 50,
   "chat.mcp.gallery.enabled": true,
-  "workbench.preferredDarkColorTheme": "Dracula Theme",
   "diffEditor.hideUnchangedRegions.enabled": true,
   "chat.checkpoints.showFileChanges": true,
   "[html]": {
@@ -220,4 +230,7 @@
     "elm": true,
     "timeout": true
   },
+  "workbench.preferredLightColorTheme": "NetBeans Light Theme",
+  "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
+  "chat.editing.confirmEditRequestRemoval": false,
 }

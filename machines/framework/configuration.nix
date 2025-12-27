@@ -5,7 +5,6 @@
 {
   pkgs,
   nixos-hardware,
-  nixpkgs-stable,
   ...
 }:
 
@@ -156,12 +155,16 @@
 
   services.ollama = {
     enable = true;
-    acceleration = "rocm";
+    package = pkgs.ollama-vulkan;
   };
 
   services.open-webui = {
     enable = true;
     openFirewall = false;
-    package = nixpkgs-stable.legacyPackages.${pkgs.system}.open-webui;
   };
+
+  # For fingerprint support
+  # To enroll prints: `sudo fprintd-enroll <username>`
+  services.fprintd.enable = true;
+
 }

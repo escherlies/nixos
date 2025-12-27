@@ -1,8 +1,8 @@
-{ ... }:
+{ pkgs, ... }:
 {
   services.ollama = {
     enable = true;
-    acceleration = "rocm";
+    package = pkgs.ollama-vulkan;
   };
 
   services.ollama.openFirewall = true;
