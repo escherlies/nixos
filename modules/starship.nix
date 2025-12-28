@@ -9,8 +9,26 @@
     ];
 
     settings =
+      let
+        mkLanguageModule = {
+          format = "[ via $version]($style)";
+          style = "fg:crust bg:green";
+        };
 
-      {
+        languages = [
+          "elm"
+          "purescript"
+          "bun"
+          "deno"
+          "rust"
+          "golang"
+          "nodejs"
+          "haskell"
+        ];
+        languageModules = lib.genAttrs languages (_: mkLanguageModule);
+      in
+      languageModules
+      // {
         add_newline = true;
         cmd_duration.show_notifications = false;
         cmd_duration.min_time = 50;
