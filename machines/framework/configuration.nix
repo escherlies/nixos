@@ -5,6 +5,7 @@
 {
   pkgs,
   nixos-hardware,
+  nix-index-database,
   ...
 }:
 
@@ -13,6 +14,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     nixos-hardware.nixosModules.framework-amd-ai-300-series
+    nix-index-database.nixosModules.default
     ../../modules/desktops/gnome.nix
     ../../modules/gaming
     ./keyboard.nix
