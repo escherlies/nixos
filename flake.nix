@@ -59,6 +59,8 @@
         }
       );
 
+      formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt-rfc-style);
+
       nixosConfigurations = {
 
         web-services = nixpkgs.lib.nixosSystem {
