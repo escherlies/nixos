@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
 
@@ -16,7 +16,6 @@
           settings = {
             main = {
               capslock = "overload(nav, backspace)";
-              space = "overload(nav, space)";
               leftalt = "leftcontrol";
               leftcontrol = "leftmeta";
               leftmeta = "leftalt";
