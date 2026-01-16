@@ -9,7 +9,7 @@
   // Diff editor settings
   "diffEditor.codeLens": true,
   "diffEditor.experimental.showMoves": true,
-  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.renderSideBySide": true,
   // Editor appearance and behavior
   "editor.accessibilitySupport": "off",
@@ -219,7 +219,6 @@
   "gitlens.ai.vscode.model": "copilot:gpt-4.1",
   "chat.agent.maxRequests": 50,
   "chat.mcp.gallery.enabled": true,
-  "diffEditor.hideUnchangedRegions.enabled": true,
   "chat.checkpoints.showFileChanges": true,
   "[html]": {
     "editor.defaultFormatter": "vscode.html-language-features"
@@ -233,4 +232,27 @@
   "workbench.preferredLightColorTheme": "NetBeans Light Theme",
   "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
   "chat.editing.confirmEditRequestRemoval": false,
+  "chat.viewSessions.orientation": "stacked",
+  "hediet.vscode-drawio.resizeImages": null,
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "githubIssues.ignoreCompletionTrigger": [
+    "coffeescript",
+    "crystal",
+    "diff",
+    "dockerfile",
+    "dockercompose",
+    "ignore",
+    "ini",
+    "julia",
+    "makefile",
+    "perl",
+    "powershell",
+    "python",
+    "r",
+    "ruby",
+    "shellscript",
+    "yaml",
+    "nix"
+  ]
 }
