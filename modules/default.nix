@@ -2,8 +2,8 @@
 {
   imports = [
     ./editors/nvim.nix
-    ./docker.nix
     ./ssh.nix
+    ./server-metadata.nix
 
   ];
 

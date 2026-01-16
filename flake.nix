@@ -11,6 +11,15 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs = {
+        nixpkgs = {
+          follows = "nixpkgs";
+        };
+      };
+    };
+
   };
 
   outputs =
@@ -72,6 +81,16 @@
           ];
         };
 
+        home-server = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./machines/home-server/configuration.nix
+            ./modules/default.nix
+            inputs.disko.nixosModules.disko
+
+          ];
+        };
+
         desktop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
@@ -79,6 +98,8 @@
             ./machines/desktop/hardware-configuration.nix
             ./modules/default.nix
             ./configs/graphical.nix
+            ./modules/docker.nix
+
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
@@ -121,6 +142,7 @@
             ./machines/framework/configuration.nix
             ./modules/default.nix
             ./configs/graphical.nix
+            ./modules/docker.nix
 
             home-manager.nixosModules.home-manager
             {
