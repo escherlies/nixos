@@ -84,9 +84,10 @@
         home-server = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
+            inputs.disko.nixosModules.disko
             ./machines/home-server/configuration.nix
             ./modules/default.nix
-            inputs.disko.nixosModules.disko
+            ./modules/hass.nix
 
           ];
         };

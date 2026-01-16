@@ -39,7 +39,4 @@
   system.stateVersion = "25.11";
 
   server.metadata.ipv4 = "192.168.178.134";
-
-  # services.home-assistant.enable = true;
-
 }
