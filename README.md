@@ -25,6 +25,13 @@ This repository contains my personal NixOS configurations, managed using Nix Fla
     └── ...
 ```
 
+## BOOTABLE STICK
+
+
+lsblk
+
+sudo dd bs=4M conv=fsync oflag=direct status=progress if=<path-to-image> of=/dev/sdX
+
 ## Usage
 
 These configurations are primarily for my personal use. However, feel free to browse the code and adapt any parts that you find useful for your own NixOS or Home Manager setup.
