@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 {
   home.packages = with pkgs; [
-    nixfmt-rfc-style
+    nixfmt
     nil
 
     # Apps
