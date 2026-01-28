@@ -15,6 +15,7 @@
       nerd-fonts.space-mono
       nerd-fonts.monaspace
       nerd-fonts.hack
+      nerd-fonts._0xproto
     ];
   };
 }
