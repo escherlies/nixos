@@ -9,7 +9,7 @@
   // Diff editor settings
   "diffEditor.codeLens": true,
   "diffEditor.experimental.showMoves": true,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.renderSideBySide": true,
   // Editor appearance and behavior
   "editor.accessibilitySupport": "off",
@@ -18,9 +18,9 @@
   },
   "editor.codeLens": true,
   "editor.find.seedSearchStringFromSelection": "selection",
-  "editor.fontFamily": "FiraCode Nerd Font",
   "editor.fontSize": 13,
   // -> |>
+  "editor.fontFamily": "FiraCode Nerd Font Mono",
   "editor.fontLigatures": "'cv02', 'cv11','ss01','ss02','ss03', 'ss05','ss11', 'ss08', 'cv24', 'cv06', 'cv30', 'calt' 1",
   "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
@@ -235,7 +235,6 @@
   "chat.viewSessions.orientation": "stacked",
   "hediet.vscode-drawio.resizeImages": null,
   "terminal.integrated.enableMultiLinePasteWarning": "never",
-  "diffEditor.hideUnchangedRegions.enabled": true,
   "githubIssues.ignoreCompletionTrigger": [
     "coffeescript",
     "crystal",
@@ -254,5 +253,8 @@
     "shellscript",
     "yaml",
     "nix"
-  ]
+  ],
+  "githubPullRequests.createOnPublishBranch": "never",
+  "eslint.quiet": true,
+  "diffEditor.hideUnchangedRegions.enabled": true,
 }
