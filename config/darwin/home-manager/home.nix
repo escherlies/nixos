@@ -56,7 +56,7 @@
     asciiquarium-transparent
 
     # Nix
-    nixfmt-rfc-style
+    nixfmt
     nil
 
     # Misc
