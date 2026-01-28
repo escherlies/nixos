@@ -169,4 +169,10 @@
   # To enroll prints: `sudo fprintd-enroll <username>`
   services.fprintd.enable = true;
 
+  services.wakapi.enable = true;
+  services.wakapi.passwordSalt = "XWA37P924SFkMROG1dfE3VtvefbSdCl6";
+  services.wakapi.settings = {
+    server.port = 3030;
+  };
+
 }

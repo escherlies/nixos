@@ -18,6 +18,7 @@
               capslock = "overload(nav, backspace)";
               leftalt = "leftcontrol";
               leftcontrol = "leftmeta";
+              # leftmeta = "oneshot(leftalt)";
               leftmeta = "leftalt";
               rightcontrol = "rightalt";
               # rightalt = "layer(nav)";
