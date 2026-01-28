@@ -1,0 +1,112 @@
+/* Linkhint boxes - HUD Scan Style */
+div>.vimiumHintMarker {
+  /* HUD Base Background - Semi-transparent black */
+  background-color: rgba(0, 0, 0, 0.85);
+
+  /* REMOVE standard border */
+  border: none;
+  border-radius: 0;
+  box-shadow: 0 0 4px rgba(51, 255, 0, 0.2);
+  /* Slight glow */
+
+  /* 
+     HUD CORNER BORDERS & SCANLINES 
+     Order: TL, TR, BR, BL, then Scanlines.
+  */
+  background-image:
+    /* Top Left (Vert, Horiz) */
+    linear-gradient(#33ff00, #33ff00), linear-gradient(#33ff00, #33ff00),
+    /* Top Right (Vert, Horiz) */
+    linear-gradient(#33ff00, #33ff00), linear-gradient(#33ff00, #33ff00),
+    /* Bottom Right (Vert, Horiz) */
+    linear-gradient(#33ff00, #33ff00), linear-gradient(#33ff00, #33ff00),
+    /* Bottom Left (Vert, Horiz) */
+    linear-gradient(#33ff00, #33ff00), linear-gradient(#33ff00, #33ff00),
+    /* Original Scanline Effect */
+    linear-gradient(to bottom, transparent 50%, rgba(0, 50, 0, 0.5) 50%);
+
+  /* Positioning the gradients in the corners */
+  background-position:
+    0 0, 0 0,
+    /* TL */
+    100% 0, 100% 0,
+    /* TR */
+    100% 100%, 100% 100%,
+    /* BR */
+    0 100%, 0 100%,
+    /* BL */
+    0 0;
+  /* Scanlines */
+
+  /* Sizing the gradients (Thickness x Length) */
+  background-size:
+    2px 7px, 7px 2px,
+    /* TL */
+    2px 7px, 7px 2px,
+    /* TR */
+    2px 7px, 7px 2px,
+    /* BR */
+    2px 7px, 7px 2px,
+    /* BL */
+    100% 2px;
+  /* Scanlines */
+
+  background-repeat: no-repeat;
+
+  /* Layout & Spacing */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  min-width: 14px;
+}
+
+/* Hover State - "Target Lock" Effect */
+div>.vimiumHintMarker:hover {
+  background-color: rgba(51, 255, 0, 0.9);
+  background-image: none;
+  box-shadow: 0 0 8px #33ff00;
+}
+
+/* Linkhint text */
+div>.vimiumHintMarker span {
+  font-family: "0xProto Nerd Font Mono", "IBM Plex Mono", monospace;
+  font-weight: medium;
+  font-size: 14px;
+  color: #33ff00;
+
+  /* Centering Logic */
+  line-height: 1;
+  margin-top: -2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 2px rgba(51, 255, 0, 0.5);
+}
+
+/* Hover text - Invert for contrast */
+div>.vimiumHintMarker:hover span {
+  color: #000000;
+  text-shadow: none;
+}
+
+/* 
+   Matching character - INVERTED (Block Cursor) 
+   Swaps the colors: Green Background, Black Text
+*/
+div>.vimiumHintMarker>.matchingCharacter {
+  background-color: #33ff00;
+  color: #000000;
+  border-bottom: none;
+
+  /* Optional: Make the block cursor slightly distinct */
+  box-shadow: 0 0 2px #33ff00;
+}
+
+/* 
+   Hover matching character 
+   When the whole box turns green, we just blend this in 
+   by making the background transparent.
+*/
+div>.vimiumHintMarker:hover>.matchingCharacter {
+  background-color: transparent;
+  color: #000000;
+}
