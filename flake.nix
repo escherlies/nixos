@@ -87,7 +87,7 @@
             inputs.disko.nixosModules.disko
             ./machines/home-server/configuration.nix
             ./modules/default.nix
-            ./modules/hass.nix
+            ./modules/home-assistant.nix
 
           ];
         };
