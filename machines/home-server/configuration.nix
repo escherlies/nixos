@@ -3,6 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ./disko-config.nix
+    ../../modules/adguard.nix
   ];
 
   boot.loader.grub = {
@@ -41,4 +42,13 @@
   server.metadata.ipv4 = "192.168.178.134";
 
   networking.useDHCP = true;
+
+  # Enable Caddy for reverse proxy
+  services.caddy.enable = true;
+  services.caddy.extraConfig = builtins.readFile ./Caddyfile;
+
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
 }

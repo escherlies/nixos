@@ -1,0 +1,3 @@
+http://hoa.gg {
+	reverse_proxy localhost:8123
+}
