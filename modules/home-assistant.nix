@@ -7,10 +7,18 @@
     extraComponents = [
       "zha"
       "met"
+      "isal"
     ];
+
+    extraPackages =
+      python3Packages: with python3Packages; [
+        gtts
+      ];
 
     config = {
       default_config = { };
+
+      automation = "!include automations.yaml";
 
       homeassistant = {
         unit_system = "metric";
@@ -29,6 +37,8 @@
   };
 
   # Open firewall for Home Assistant
-  networking.firewall.allowedTCPPorts = [ 8123 ];
+  networking.firewall.allowedTCPPorts = [ 8123 ]; # Fallback
 
+  # Use reverse proxy
+  services.caddy.virtualHosts."http://hoa.gg".extraConfig = "reverse_proxy 127.0.0.1:8123";
 }

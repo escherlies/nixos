@@ -45,7 +45,6 @@
 
   # Enable Caddy for reverse proxy
   services.caddy.enable = true;
-  services.caddy.extraConfig = builtins.readFile ./Caddyfile;
 
   networking.firewall.allowedTCPPorts = [
     80
