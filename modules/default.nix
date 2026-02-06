@@ -13,21 +13,45 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    # Core utilities
     fish
     neovim
     git
-    tealdeer # tldr replacement
-    nitch
-    ctop
-    bottom
-    zip
-    just
-    hcloud
-    git-igitt
-    jq
-    mongodb-tools
-    mongosh
 
+    # Documentation & system info
+    tealdeer # tldr replacement - simplified man pages
+    nitch # minimal system info
+
+    # System monitoring
+    ctop # container monitoring
+    bottom # system resource monitor (btm)
+    htop # already enabled via programs.htop below
+
+    # File & text search
+    ripgrep # fast recursive grep (rg)
+    fd # modern find alternative
+    tree # directory tree visualization
+
+    # File operations
+    zip
+    unzip # archive extraction
+
+    # Terminal productivity
+    fzf # fuzzy finder for cli
+    just # command runner
+
+    # Disk usage
+    ncdu # interactive disk usage analyzer
+    duf # better df for disk usage
+
+    # Network tools
+    wget # download files
+    nmap # network scanning
+    dig # dns queries
+
+    # Cloud & APIs
+    hcloud # hetzner cloud cli
+    jq # json processor
   ];
 
   programs.fish.enable = true;
