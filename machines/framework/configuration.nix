@@ -18,6 +18,8 @@
     ../../modules/desktops/gnome.nix
     ../../modules/gaming
     ./keyboard.nix
+    ../../configs/graphical.nix
+    ../../configs/ai-agents.nix
   ];
 
   hardware.amdgpu.opencl.enable = true;
@@ -170,7 +172,6 @@
   services.fprintd.enable = true;
 
   services.wakapi.enable = true;
-  services.wakapi.passwordSalt = "XWA37P924SFkMROG1dfE3VtvefbSdCl6";
   services.wakapi.settings = {
     server.port = 3030;
   };

@@ -23,12 +23,6 @@
 
     micro
 
-    #
-    # shell-gpt
-    aichat
-    claude-code
-    gemini-cli
-
     tor-browser
     gh
     biome

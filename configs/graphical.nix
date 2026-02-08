@@ -13,4 +13,5 @@
   ];
 
   hardware.i2c.enable = true; # https://wiki.nixos.org/wiki/Backlight#Via_ddcutil
+  users.users.enrico.extraGroups = [ "i2c" ];
 }

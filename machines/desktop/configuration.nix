@@ -16,6 +16,7 @@
     ../../modules/desktops/gnome.nix
     ../../modules/ollama.nix
     ../../modules/webui.nix
+    ../../configs/ai-agents.nix
 
   ];
 
