@@ -3,7 +3,8 @@
   imports = [
     ./hardware-configuration.nix
     ./disko-config.nix
-    ../../modules/adguard.nix
+    ../../modules/blocky.nix
+    ../../modules/monitoring.nix
   ];
 
   boot.loader.grub = {
