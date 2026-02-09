@@ -225,6 +225,7 @@
   },
   "claudeCode.preferredLocation": "panel",
   "chat.tools.terminal.autoApprove": {
+    "jq": true,
     "just": true,
     "elm": true,
     "timeout": true
@@ -257,4 +258,5 @@
   "githubPullRequests.createOnPublishBranch": "never",
   "eslint.quiet": true,
   "diffEditor.hideUnchangedRegions.enabled": true,
+  "chat.useAgentSkills": true,
 }
