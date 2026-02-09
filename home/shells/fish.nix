@@ -35,7 +35,9 @@
       # Eza ls replacement
       ls = "${pkgs.eza}/bin/eza -1 --group-directories-first --icons";
       l = "${ls}";
-      ll = "${ls} -lbF --git --color-scale";
+      ll = "${ls} --tree --level=2";
+      lll = "${ls} --tree --level=3";
+      llll = "${ls} --tree --level=4";
       la = "${ls} -lbhgmua@ --color-scale --git";
       lt = "${ls} --tree --level=2";
 
