@@ -9,8 +9,8 @@
         onEvent = "fish_command_not_found";
       };
 
-      # # Create and change to a directory
-      mkdircd = ''mkdir -p -- "$1" && cd -- "$1"'';
+      # Create and change to a directory
+      mkdircd = ''mkdir -p -- "$argv[1]" && cd -- "$argv[1]"'';
 
       fish_greeting = "";
 
