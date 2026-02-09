@@ -12,6 +12,16 @@
     "flakes"
   ];
 
+  # Automatic garbage collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 90d";
+  };
+
+  # Optimize Nix store automatically
+  nix.settings.auto-optimise-store = true;
+
   environment.systemPackages = with pkgs; [
     # Core utilities
     fish
