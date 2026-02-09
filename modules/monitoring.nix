@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   prometheusPort = 9090;
@@ -77,4 +77,8 @@ in
     prometheusPort
     blockyPort
   ];
+
+  # Use reverse proxy
+  services.caddy.virtualHosts."http://${config.network.services.grafana.dns}".extraConfig =
+    "reverse_proxy 127.0.0.1:${toString grafanaPort}";
 }

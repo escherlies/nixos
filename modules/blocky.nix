@@ -1,4 +1,4 @@
-{ ... }:
+{ config, lib, ... }:
 
 {
   services.blocky = {
@@ -39,13 +39,10 @@
 
       # Custom DNS mappings
       customDNS = {
-        mapping =
-          let
-            home-server-ip = "192.168.178.134";
-          in
-          {
-            "hoa.internal" = home-server-ip;
-          };
+        mapping = lib.mapAttrs' (_name: value: {
+          name = value.dns;
+          value = value.ip;
+        }) config.network.services;
       };
 
       # Conditional DNS for local network

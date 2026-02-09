@@ -17,6 +17,7 @@
     ../../modules/ollama.nix
     ../../modules/webui.nix
     ../../configs/ai-agents.nix
+    ../../modules/machines.nix
 
   ];
 
@@ -113,8 +114,12 @@
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = false;
 
+  # Enable Caddy for reverse proxy
+  services.caddy.enable = true;
+
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
+    80
     1234
     4321
     3333
@@ -131,6 +136,9 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  # Machine specific metadata
+  server.metadata.ipv4 = config.machines.desktop.ipv4;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

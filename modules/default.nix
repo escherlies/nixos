@@ -4,7 +4,7 @@
     ./editors/nvim.nix
     ./ssh.nix
     ./server-metadata.nix
-
+    ./service-data.nix
   ];
 
   nix.settings.experimental-features = [

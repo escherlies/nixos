@@ -40,5 +40,6 @@
   networking.firewall.allowedTCPPorts = [ 8123 ]; # Fallback
 
   # Use reverse proxy
-  services.caddy.virtualHosts."http://hoa.internal".extraConfig = "reverse_proxy 127.0.0.1:8123";
+  services.caddy.virtualHosts."http://${config.network.services.home-assistant.dns}".extraConfig =
+    "reverse_proxy 127.0.0.1:8123";
 }

@@ -1,10 +1,11 @@
-{ ... }:
+{ config, ... }:
 {
   imports = [
     ./hardware-configuration.nix
     ./disko-config.nix
     ../../modules/blocky.nix
     ../../modules/monitoring.nix
+    ../../modules/machines.nix
   ];
 
   boot.loader.grub = {
@@ -40,7 +41,7 @@
 
   system.stateVersion = "25.11";
 
-  server.metadata.ipv4 = "192.168.178.134";
+  server.metadata.ipv4 = config.machines.home-server.ipv4;
 
   networking.useDHCP = true;
 
