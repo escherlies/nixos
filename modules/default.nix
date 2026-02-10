@@ -73,4 +73,7 @@
     enable = true;
     settings.tree_view = true;
   };
+
+  # Trust the local CA root certificate on all machines
+  security.pki.certificateFiles = [ ../secrets/local_ca.crt ];
 }

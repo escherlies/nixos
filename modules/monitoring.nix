@@ -78,7 +78,9 @@ in
     blockyPort
   ];
 
-  # Use reverse proxy
-  services.caddy.virtualHosts."http://${config.network.services.grafana.dns}".extraConfig =
-    "reverse_proxy 127.0.0.1:${toString grafanaPort}";
+  # Use reverse proxy with internal TLS issuer
+  services.caddy.virtualHosts."${config.network.services.grafana.dns}".extraConfig = ''
+    tls internal
+    reverse_proxy 127.0.0.1:${toString grafanaPort}
+  '';
 }

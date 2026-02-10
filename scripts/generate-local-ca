@@ -1,0 +1,79 @@
+#! /usr/bin/env nix
+#! nix shell nixpkgs#openssl --command bash
+
+# Generate a local CA certificate for Caddy's PKI app
+#
+# This script generates:
+# 1. A root CA certificate (public, committed to repo)
+# 2. A root CA private key (encrypted with agenix)
+#
+# Usage:
+#   ./scripts/generate-local-ca
+#
+# After running, commit the certificate and encrypted key to git:
+#   git add secrets/local_ca.crt secrets/local_ca.key.age
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SECRETS_DIR="$REPO_ROOT/secrets"
+
+CERT_PATH="$SECRETS_DIR/local_ca.crt"
+KEY_PATH="$SECRETS_DIR/local_ca.key"
+
+# Check if certificates already exist
+if [ -f "$CERT_PATH" ]; then
+    echo "⚠️  Certificate already exists: $CERT_PATH"
+    echo ""
+    read -p "Do you want to regenerate? This will replace the existing certificate. [y/N] " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+    rm -f "$CERT_PATH"
+fi
+
+if [ -f "$KEY_PATH" ]; then
+    rm -f "$KEY_PATH"
+fi
+
+echo "🔐 Generating FFI Labs CA certificate..."
+echo "   Algorithm: ECC (prime256v1)"
+echo "   Validity: 10 years"
+echo ""
+
+# Generate ECC (prime256v1) root CA valid for 10 years
+# Using ECC to align with Caddy's default naming convention (ECC Root/Intermediate)
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 \
+    -days 3650 \
+    -nodes \
+    -keyout "$KEY_PATH" \
+    -out "$CERT_PATH" \
+    -subj "/CN=FFI Labs - 2026 ECC Root/O=NixOS/C=DE" \
+    -addext "basicConstraints=critical,CA:TRUE" \
+    -addext "keyUsage=critical,keyCertSign,cRLSign"
+
+chmod 600 "$KEY_PATH"
+chmod 644 "$CERT_PATH"
+
+echo "✅ CA certificate generated successfully!"
+echo ""
+
+echo "🔒 Encrypting private key with agenix..."
+cd "$REPO_ROOT" && EDITOR="cp $KEY_PATH" nix run github:ryantm/agenix -- -e secrets/local_ca.key.age
+
+# Remove the unencrypted key
+echo ""
+echo "🗑️  Removing unencrypted private key..."
+rm -f "$KEY_PATH"
+
+echo ""
+echo "✅ Setup complete!"
+echo ""
+echo "📋 Next steps:"
+echo "   1. Commit the certificate and encrypted key to git:"
+echo "      git add $CERT_PATH secrets/local_ca.key.age"
+echo ""
+read -p "Press Enter to continue..."

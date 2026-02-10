@@ -39,7 +39,9 @@
   # Open firewall for Home Assistant
   networking.firewall.allowedTCPPorts = [ 8123 ]; # Fallback
 
-  # Use reverse proxy
-  services.caddy.virtualHosts."http://${config.network.services.home-assistant.dns}".extraConfig =
-    "reverse_proxy 127.0.0.1:8123";
+  # Use reverse proxy with internal TLS issuer
+  services.caddy.virtualHosts."${config.network.services.home-assistant.dns}".extraConfig = ''
+    tls internal
+    reverse_proxy 127.0.0.1:8123
+  '';
 }

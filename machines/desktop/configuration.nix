@@ -120,6 +120,7 @@
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
     80
+    443
     1234
     4321
     3333

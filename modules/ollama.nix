@@ -8,7 +8,9 @@
 
   services.ollama.openFirewall = true;
 
-  # Use reverse proxy
-  services.caddy.virtualHosts."http://${config.network.services.ollama.dns}".extraConfig =
-    "reverse_proxy 127.0.0.1:11434";
+  # Use reverse proxy with internal TLS issuer
+  services.caddy.virtualHosts."${config.network.services.ollama.dns}".extraConfig = ''
+    tls internal
+    reverse_proxy 127.0.0.1:11434
+  '';
 }

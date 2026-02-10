@@ -20,6 +20,11 @@
       };
     };
 
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -85,21 +90,24 @@
           system = "x86_64-linux";
           modules = [
             inputs.disko.nixosModules.disko
+            inputs.agenix.nixosModules.default
             ./machines/home-server/configuration.nix
             ./modules/default.nix
             ./modules/home-assistant.nix
-
+            ./modules/caddy-pki.nix
           ];
         };
 
         desktop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
+            inputs.agenix.nixosModules.default
             ./machines/desktop/configuration.nix
             ./machines/desktop/hardware-configuration.nix
             ./modules/default.nix
             ./configs/graphical.nix
             ./modules/docker.nix
+            ./modules/caddy-pki.nix
 
             home-manager.nixosModules.home-manager
             {

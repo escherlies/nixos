@@ -9,19 +9,23 @@
   network.services = {
     home-assistant = {
       ip = config.machines.home-server.ipv4;
-      dns = "hoa.internal";
+      dns = "hoa.lan";
     };
     grafana = {
       ip = config.machines.home-server.ipv4;
-      dns = "grafana.internal";
+      dns = "grafana.lan";
     };
     ollama = {
       ip = config.machines.desktop.ipv4;
-      dns = "ollama.internal";
+      dns = "ollama.lan";
     };
     open-webui = {
       ip = config.machines.desktop.ipv4;
-      dns = "ai.internal";
+      dns = "ai.lan";
+    };
+    example = {
+      ip = config.machines.home-server.ipv4;
+      dns = "example.lan";
     };
   };
 }
