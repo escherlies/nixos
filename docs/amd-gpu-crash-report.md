@@ -427,10 +427,10 @@ pkill -f electron
 - [ ] **Rebuild and reboot**: `sudo nixos-rebuild switch --flake .`
 
 ### Short-term (this week)
-- [ ] **Set `NIXOS_OZONE_WL = "1"`** in environment.sessionVariables — forces Electron apps to native Wayland, avoiding XWayland GPU overhead. pinpox sets this system-wide.
+- [x] **Set `NIXOS_OZONE_WL = "1"`** in `configs/graphical.nix` — forces Electron apps to native Wayland, avoiding XWayland GPU overhead. Applied system-wide for all graphical machines.
 - [ ] **Enable `hardware.fw-fanctrl`** — pinpox uses this for custom fan curves. Better cooling reduces thermal-related GPU instability.
 - [ ] **Enable `services.power-profiles-daemon`** — pinpox notes "AMD has better battery life with PPD over TLP". PPD provides cleaner power state transitions that are less likely to trigger GPU faults.
-- [ ] **Install `framework-tool`** — useful for hardware diagnostics and EC interaction.
+- [x] **Install `framework-tool`** — added to `machines/framework/configuration.nix` system packages.
 
 ### Medium-term (monitor)
 - [ ] **Watch [ROCm/ROCm#5724](https://github.com/ROCm/ROCm/issues/5724)** — AMD has been issuing MES firmware fixes. When a new firmware lands in nixpkgs/linux-firmware, the root cause may be resolved.
