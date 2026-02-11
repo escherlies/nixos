@@ -259,4 +259,10 @@
   "eslint.quiet": true,
   "diffEditor.hideUnchangedRegions.enabled": true,
   "chat.useAgentSkills": true,
+  "chat.tools.urls.autoApprove": {
+    "https://github.com/search": {
+      "approveRequest": false,
+      "approveResponse": true
+    }
+  },
 }
