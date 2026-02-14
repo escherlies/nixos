@@ -25,7 +25,7 @@
   environment.systemPackages = with pkgs; [
     # Core utilities
     fish
-    neovim
+    # neovim is configured via programs.neovim in editors/nvim.nix
     git
 
     # Documentation & system info
