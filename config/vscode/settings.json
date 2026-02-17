@@ -228,10 +228,14 @@
     "jq": true,
     "just": true,
     "elm": true,
-    "timeout": true
+    "timeout": true,
+    "/^nix build$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
   },
   "workbench.preferredLightColorTheme": "NetBeans Light Theme",
-  "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
+  "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
   "chat.editing.confirmEditRequestRemoval": false,
   "chat.viewSessions.orientation": "stacked",
   "hediet.vscode-drawio.resizeImages": null,
