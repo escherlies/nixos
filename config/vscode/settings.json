@@ -161,9 +161,6 @@
   "terminal.external.osxExec": "iTerm.app",
   "terminal.external.linuxExec": "kitty",
   "window.commandCenter": false,
-  "window.menuBarVisibility": "toggle",
-  // "window.titleBarStyle": "native",
-  "window.customTitleBarVisibility": "never",
   "update.mode": "none",
   "gitlens.graph.avatars": false,
   "gitlens.graph.layout": "editor",
@@ -232,7 +229,9 @@
     "/^nix build$/": {
       "approve": true,
       "matchCommandLine": true
-    }
+    },
+    "git checkout": true,
+    "notion-db": true
   },
   "workbench.preferredLightColorTheme": "NetBeans Light Theme",
   "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
@@ -261,7 +260,6 @@
   ],
   "githubPullRequests.createOnPublishBranch": "never",
   "eslint.quiet": true,
-  "diffEditor.hideUnchangedRegions.enabled": true,
   "chat.useAgentSkills": true,
   "chat.tools.urls.autoApprove": {
     "https://github.com/search": {
@@ -269,4 +267,5 @@
       "approveResponse": true
     }
   },
+  "diffEditor.hideUnchangedRegions.enabled": true,
 }
