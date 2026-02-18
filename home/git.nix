@@ -17,6 +17,10 @@
       init.defaultBranch = "main";
     };
 
+    aliases = {
+      graph = "log --graph --oneline --all --decorate";
+    };
+
     lfs.enable = true;
 
     signing = {
