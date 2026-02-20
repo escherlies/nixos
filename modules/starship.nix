@@ -1,18 +1,32 @@
-{ config, lib, ... }:
+{ lib, ... }:
 {
   programs.starship = {
     enable = true;
 
     presets = [
-      "catppuccin-powerline"
       "nerd-font-symbols"
     ];
 
     settings =
       let
+        palette = {
+          bg = "#201d2a";
+          surface = "#2c2839";
+          muted = "#4b455f";
+          fg = "#9992b0";
+          bright = "#efebff";
+          s1 = "#625a7c";
+          s2 = "#8363ee";
+          s3 = "#9375f5";
+          s4 = "#a286fd";
+          s5 = "#b5a0fe";
+          s6 = "#ca80ff";
+          accent = "#b042ff";
+        };
+
         mkLanguageModule = {
-          format = "[ via $version]($style)";
-          style = "fg:crust bg:green";
+          format = "[  $symbol$version]($style)";
+          style = "fg:${palette.bg} bg:${palette.s4}";
         };
 
         languages = [
@@ -30,82 +44,96 @@
       languageModules
       // {
         add_newline = true;
-        cmd_duration.show_notifications = false;
-        cmd_duration.min_time = 50;
+        cmd_duration = {
+          show_notifications = false;
+          min_time = 50;
+          style = "fg:${palette.s6}";
+        };
 
         nix_shell = {
           format = "[ $symbol$state( \\($name\\))]($style)";
-          style = "fg:crust bg:sapphire";
+          style = "fg:${palette.bg} bg:${palette.s4}";
+        };
+
+        os = {
+          disabled = false;
+          format = "[ $symbol]($style)";
+          style = "fg:${palette.bright} bg:${palette.s1}";
+        };
+
+        username = {
+          format = "[$user]($style)";
+          style_user = "fg:${palette.bright} bg:${palette.s1}";
+          style_root = "fg:${palette.accent} bg:${palette.s1}";
+        };
+
+        git_branch = {
+          format = "[ $symbol$branch(:$remote_branch)]($style)";
+          style = "fg:${palette.bg} bg:${palette.s4}";
         };
 
         git_status = {
+          format = "[$all_status$ahead_behind]($style)";
           ahead = "⇡\${count}";
           diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
           behind = "⇣\${count}";
           stashed = "";
+          style = "fg:${palette.bg} bg:${palette.s4}";
         };
 
         hostname = {
           ssh_only = true;
           format = "[@$hostname]($style)";
-          style = "fg:crust bg:red";
+          style = "fg:${palette.bright} bg:${palette.s1}";
+        };
+
+        directory = {
+          format = "[ $path]($style)";
+          style = "fg:${palette.bg} bg:${palette.s2}";
+        };
+
+        time = {
+          disabled = false;
+          format = "[ $time]($style)";
+          style = "fg:${palette.bg} bg:${palette.s6}";
         };
 
         format =
           let
-            languages = "$elm$purescript$bun$deno$rust$golang$nodejs$haskell";
-
-            default-colors = {
-              red = "red";
-              peach = "peach";
-              yellow = "yellow";
-              green = "green";
-              sapphire = "sapphire";
-              lavender = "lavender";
-            };
-
-            grayscale-colors = {
-              red = "#e6e6e6"; # Very light gray
-              peach = "#d9d9d9"; # Light gray
-              yellow = "#cccccc"; # Medium-light gray
-              green = "#bfbfbf"; # Medium gray
-              sapphire = "#b3b3b3"; # Medium-dark gray
-              lavender = "#a6a6a6"; # Dark gray
-            };
-
-            colors = if config.networking.hostName == "desktop" then grayscale-colors else default-colors;
+            rightArrowSymbol = "";
+            leftArrowSymbol = "";
+            langs = "$elm$purescript$bun$deno$rust$golang$nodejs$haskell";
 
             sections = lib.strings.concatStrings [
-              # Red section
-              "[](${colors.red})"
-              "$os$username$hostname[](bg:${colors.peach} fg:${colors.red})"
+              # s1: os / user / host (always visible)
+              "[${leftArrowSymbol}](fg:${palette.s1})"
+              "$os$username$hostname"
+              "[${rightArrowSymbol}](bg:${palette.s2} fg:${palette.s1})"
 
-              # Orange
-              "$directory[](bg:${colors.yellow} fg:${colors.peach})"
+              # s2: directory (always visible)
+              "$directory"
+              "[${rightArrowSymbol}](bg:${palette.s4} fg:${palette.s2})"
 
-              # Yellow
-              "$git_branch$git_status[](fg:${colors.yellow} bg:${colors.green})"
+              # s4: git + languages + nix (all optional, shared bg)
+              "$git_branch$git_status"
+              "${langs}"
+              "$nix_shell"
+              "[${rightArrowSymbol}](fg:${palette.s4} bg:${palette.s6})"
 
-              # Green
-              "${languages}[](fg:${colors.green} bg:${colors.sapphire})"
+              # s6: time (always visible)
+              "$time"
+              "[${rightArrowSymbol}](fg:${palette.s6})"
 
-              # Blue
-              "$nix_shell[](fg:${colors.sapphire} bg:${colors.lavender})"
-
-              # Purple
-              "$time[](fg:${colors.lavender})"
-
-              #
               " $cmd_duration"
             ];
           in
           ''
             ┌${sections}
             └─$character'';
-        # Example: change prompt symbol
+
         character = {
-          success_symbol = "λ";
-          error_symbol = "λ";
+          success_symbol = "[λ](${palette.s5})";
+          error_symbol = "[λ](${palette.accent})";
         };
       };
   };

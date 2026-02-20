@@ -1,4 +1,4 @@
-![nixos](./screenshot.png)
+![nixos](docs/image.png)
 
 # My NixOS Configurations
 
