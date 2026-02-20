@@ -1,19 +1,25 @@
 # AMD GPU Crash Report - Framework Laptop
 
-**Last Incident**: 2026-02-11 11:24:36 CET
-**Status**: Confirmed upstream AMD MES scheduler bug triggered by Electron GPU acceleration
+**Last Incident**: 2026-02-20 01:17:58 CET
+**Status**: Confirmed upstream AMD MES firmware bug (MES 0x80) — tracked in [ROCm/ROCm#5844](https://github.com/ROCm/ROCm/issues/5844)
 
 ---
 
 ## What Happened
 
-A graphics crash caused your session to logout unexpectedly. The sequence:
+A graphics crash caused your session to logout unexpectedly. Two distinct crash patterns observed:
 
-1. An Electron app that had been **running for a while** triggered an AMD GPU page fault (this time VSCode, previously Signal)
-2. AMD GPU driver failed to recover (`MES failed to respond to msg=RESET`)
-3. GNOME Shell crashed (couldn't handle dead GPU)
-4. Session terminated → forced logout
-5. **Any Electron app** can trigger this — it never happens on launch, always after extended use
+### Pattern A: Page Fault → MES Reset Failure (incidents 1 & 2)
+1. An Electron app running for a while triggers an AMD GPU page fault
+2. AMD GPU driver fails to recover (`MES failed to respond to msg=RESET`)
+3. GNOME Shell crashes → forced logout
+
+### Pattern B: MES Hang → Ring Buffer Full (incident 3 — latest)
+1. MES firmware stops responding — no page fault trigger visible
+2. `MES failed to respond to msg=MISC (WAIT_REG_MEM)` — 15× over 42 seconds
+3. MES ring buffer fills with undrainable commands → `MES ring buffer is full` — 119× over 5+ minutes
+4. GDM cannot start new Wayland session while MES is hung
+5. System requires hard reboot — GPU never recovers
 
 ## Quick Diagnosis
 
@@ -31,10 +37,12 @@ coredumpctl list --since "10 minutes ago"
 ```
 
 ### Key Indicators
-- `amdgpu: [gfxhub] page fault` - GPU memory access violation
-- `amdgpu: ring gfx_0.0.0 timeout` - GPU stopped responding
-- `MES failed to respond to msg=RESET` - GPU reset failed (critical!)
-- GNOME Shell crash followed by session termination
+- `amdgpu: [gfxhub] page fault` - GPU memory access violation (Pattern A)
+- `amdgpu: ring gfx_0.0.0 timeout` - GPU stopped responding (Pattern A)
+- `MES failed to respond to msg=RESET` - GPU reset failed (Pattern A)
+- `MES failed to respond to msg=MISC (WAIT_REG_MEM)` - MES firmware hang, TLB flush stalled (Pattern B)
+- `MES ring buffer is full` - MES completely deadlocked, ring cannot drain (Pattern B — **new**)
+- GNOME Shell crash / GDM session failure
 
 ---
 
@@ -49,6 +57,8 @@ coredumpctl list --since "10 minutes ago"
 - **Hardware Config**: `nixos-hardware.nixosModules.framework-amd-ai-300-series`
 - **nixpkgs**: nixos-unstable, locked 2026-02-04
 - **nixos-hardware**: locked 2026-01-25 (rev `a351494b0e35`)
+- **MES firmware**: 0x80 (mes_v11_0) — affected by [ROCm/ROCm#5844](https://github.com/ROCm/ROCm/issues/5844)
+- **MES_KIQ firmware**: 0x6f
 - **Boot params**: `amd_pstate=active amdgpu.dcdebugmask=0x10 loglevel=4`
 - **GPU recovery**: `-1` (auto/default)
 - **Firmware**: Up to date (no pending fwupd updates)
@@ -57,23 +67,28 @@ coredumpctl list --since "10 minutes ago"
 
 ## Root Causes
 
-### Confirmed Root Cause
-The **AMD MES (Micro Engine Scheduler)** hangs when compute and graphics workloads run simultaneously ([ROCm/TheRock#2655](https://github.com/ROCm/TheRock/issues/2655)). Electron apps (VSCode, Signal, Chromium-based browsers) trigger this because they use GPU-accelerated rendering (a graphics workload) which can conflict with other GPU compute tasks. This is a **firmware/driver bug**, not an application bug.
+### Two Distinct MES Failure Modes
 
-**Important pattern**: The crash never happens when launching an app. It always occurs after an Electron app has been running for a while — likely a cumulative GPU resource issue or a race condition that takes time to manifest.
+#### Failure Mode 1: Concurrent Compute+Graphics Hang
+The **AMD MES (Micro Engine Scheduler)** hangs when compute and graphics workloads run simultaneously ([ROCm/TheRock#2655](https://github.com/ROCm/TheRock/issues/2655)). Electron apps trigger this because they use GPU-accelerated rendering which can conflict with other GPU compute tasks. Manifests as page fault → `MES failed to respond to msg=RESET`.
+
+#### Failure Mode 2: MES Firmware Deadlock (NEW — 2026-02-20)
+MES firmware (0x80) spontaneously stops processing commands. No page fault or external trigger visible in logs. The command ring buffer fills up because MES cannot drain it. Manifests as `MES failed to respond to msg=MISC (WAIT_REG_MEM)` → `MES ring buffer is full`. This is tracked in **[ROCm/ROCm#5844](https://github.com/ROCm/ROCm/issues/5844)** — an open bug affecting MES 0x80/0x82 on gfx1150/gfx1152 (Strix Point / Krackan Point).
+
+**Technical details**: The `WAIT_REG_MEM` messages are TLB flush operations that MES must process for the display pipeline. When MES hangs, `mes_v11_0_submit_pkt_and_poll_completion()` in the kernel waits 2.1s per command for the oldest ring fence to complete, times out, and logs "ring buffer is full". The GPU becomes completely unrecoverable — even GDM cannot start a new Wayland session.
+
+**AMD has confirmed** this is a **different bug** from the MES 0x83 regression ([ROCm/ROCm#5724](https://github.com/ROCm/ROCm/issues/5724)). Engineer `@amd-nicknick` stated: *"FW 0x82 is not affected by [the 0x83] issue. If anyone is seeing failures with FW != 0x83, please raise a new issue."* Our firmware is 0x80.
 
 ### Contributing Factors
-1. **Electron apps** with hardware acceleration enabled running over extended periods — triggers the concurrent graphics+compute condition after sustained GPU use
-2. **MES firmware maturity** — AMD AI-300 series uses newer MES firmware (0x82/0x83 range) that has known hang issues. AMD has been issuing fixes ([ROCm/ROCm#5724](https://github.com/ROCm/ROCm/issues/5724))
-3. **Bleeding-edge kernel** (6.18.x) — latest drivers, but the MES firmware bug exists at the firmware level, not just the kernel driver
+1. **MES firmware 0x80** — affected by the [#5844](https://github.com/ROCm/ROCm/issues/5844) deadlock bug. No firmware fix available yet.
+2. **Electron apps** with hardware acceleration running for extended periods — can trigger Failure Mode 1
+3. **GNOME/Mutter** — heavyweight compositor puts more GPU pressure than lightweight WMs like Sway
 4. **No explicit `gpu_recovery=1`** — the driver defaults may not aggressively attempt recovery
+5. **Bleeding-edge kernel** (6.18.x) — latest drivers, but the MES firmware bug exists at the firmware level
 
-### Every Electron App Is Affected
-Signal triggered a previous crash; this time the logs show **VSCode triggered it**:
-```
-Feb 11 11:24:36 framework kernel: amdgpu: Process code pid 106381
-```
-Process name "code" = VSCode. **Any Electron app with hardware acceleration can trigger the MES bug** — this is not specific to one app. The crash consistently happens after the app has been running for a while, never immediately on launch.
+### Crash Triggers
+- **Incidents 1 & 2**: Electron apps (Signal, VSCode) after extended use → page fault → MES reset failure
+- **Incident 3**: No visible trigger — MES hung spontaneously during normal desktop use at 01:17 CET
 
 ---
 
@@ -227,8 +242,9 @@ journalctl --since "7 days ago" | grep -c "amdgpu.*page fault"
 - **[microsoft/vscode#238088](https://github.com/microsoft/vscode/issues/238088)** — "Terminal GPU acceleration causing GPU page faults on AMD" — This is our exact bug. VSCode's GPU-accelerated terminal triggers `amdgpu: [gfxhub] page fault`, causing hangs, soft-timeouts, and resets. Labeled `bug`, `upstream`, `help wanted`. **Still OPEN** (14 reactions). Workaround: `--disable-gpu`.
 
 ### MES Scheduler Failures on AMD AI-series (our GPU family)
-- **[ROCm/ROCm#5724](https://github.com/ROCm/ROCm/issues/5724)** — MES 0x83 firmware causing GPU hangs on **Strix Halo** (same RDNA3 family). 52 comments. **Closed with firmware/driver fix.**
-- **[ROCm/ROCm#5844](https://github.com/ROCm/ROCm/issues/5844)** — GPU hang on **Krackan Point / Ryzen AI 350** with `MES:0x82`. Very close to our hardware. **Still OPEN.**
+- **[ROCm/ROCm#5844](https://github.com/ROCm/ROCm/issues/5844)** ⭐ **EXACT MATCH** — GPU hang on gfx1150/gfx1152 with `MES:0x80/0x82`. Same crash pattern: `MISC (WAIT_REG_MEM)` timeouts → `ring buffer is full` flood → desktop crash. AMD actively investigating. **Still OPEN.**
+- **[drm/amd#4749](https://gitlab.freedesktop.org/drm/amd/-/issues/4749)** — Upstream kernel bug tracker entry linked from #5844.
+- **[ROCm/ROCm#5724](https://github.com/ROCm/ROCm/issues/5724)** — MES 0x83 firmware causing GPU hangs on **Strix Halo**. **DIFFERENT BUG** — only affects FW 0x83. **Closed with firmware/driver fix.**
 - **[ROCm/ROCm#5151](https://github.com/ROCm/ROCm/issues/5151)** — GPU hang on **AMD AI+ 395pro** on kernel 6.14. 44 comments, under investigation.
 - **[ROCm/ROCm#2196](https://github.com/ROCm/ROCm/issues/2196)** — Long-standing `MES failed to response` error. 42 comments, 26 reactions.
 
@@ -326,13 +342,15 @@ This may explain why pinpox hasn't needed GPU workarounds — Sway puts less GPU
 
 ### What's Missing ⚠️
 
-| Issue                              | Details                                                                                                                    |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **No `amdgpu.gpu_recovery=1`**     | GPU recovery is at default (`-1`). Explicitly enabling could help the driver recover from hangs without taking GNOME down. |
-| **No `amdgpu.sg_display=0`**       | The FW16 AI-300 module sets this for graphics stability, but the FW13 module does not.                                     |
-| **VSCode has no `--disable-gpu`**  | `home/apps/vscode.nix` has no hardware acceleration disabled — this is the confirmed crash trigger.                        |
-| **home-manager is old**            | Locked to 2025-04-24 (~10 months old).                                                                                     |
-| **nixos-hardware slightly behind** | Locked 2026-01-25, latest is 2026-02-09 (minor: 1 codeowner commit missed).                                                |
+| Issue                              | Details                                                                                                                                          |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **No `amdgpu.gpu_recovery=1`**     | GPU recovery is at default (`-1`). Explicitly enabling could help the driver recover from hangs without taking GNOME down.                       |
+| **No `amdgpu.sg_display=0`**       | The FW16 AI-300 module sets this for graphics stability, but the FW13 module does not.                                                           |
+| **No `amdgpu.cwsr_enable=0`**      | Disabling Compute Wave Save/Restore may reduce MES deadlock frequency ([#5844](https://github.com/ROCm/ROCm/issues/5844)). Not a guaranteed fix. |
+| **MES firmware 0x80**              | Affected by [#5844](https://github.com/ROCm/ROCm/issues/5844). No firmware fix available yet. Must wait for AMD.                                 |
+| **VSCode has no `--disable-gpu`**  | `home/apps/vscode.nix` has no hardware acceleration disabled — confirmed crash trigger for Pattern A.                                            |
+| **home-manager is old**            | Locked to 2025-04-24 (~10 months old).                                                                                                           |
+| **nixos-hardware slightly behind** | Locked 2026-01-25, latest is 2026-02-09 (minor: 1 codeowner commit missed).                                                                      |
 
 ### Relevant NixOS Settings
 
@@ -352,24 +370,27 @@ From `nixos-hardware` module (`framework-amd-ai-300-series`):
 
 ## Decision Matrix
 
-| Symptom                                          | Likely Culprit         | Recommended Action                            |
-| ------------------------------------------------ | ---------------------- | --------------------------------------------- |
-| VSCode running for a while when crash happens    | VSCode HW accel        | Disable VSCode GPU                            |
-| Signal running for a while when crash happens    | Signal HW accel        | Disable Signal GPU                            |
-| Multiple Electron apps running for extended time | General Electron issue | Disable all Electron GPU                      |
-| Happens on heavy graphics work                   | Driver/kernel issue    | Try stable kernel                             |
-| Happens randomly                                 | Could be hardware      | Test with different kernel + all HW accel off |
-| GPU temperature >85°C before crash               | Thermal throttling     | Check cooling, repaste                        |
+| Symptom                                          | Likely Culprit                                               | Recommended Action                                                                                 |
+| ------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `MES ring buffer is full` in logs                | MES FW 0x80 deadlock                                         | Wait for AMD firmware fix ([#5844](https://github.com/ROCm/ROCm/issues/5844)), try `cwsr_enable=0` |
+| `MES failed to respond to msg=MISC`              | MES FW 0x80 hang                                             | Same as above — this precedes ring buffer full                                                     |
+| VSCode running for a while when crash happens    | VSCode HW accel                                              | Disable VSCode GPU                                                                                 |
+| Signal running for a while when crash happens    | Signal HW accel                                              | Disable Signal GPU                                                                                 |
+| Multiple Electron apps running for extended time | General Electron issue                                       | Disable all Electron GPU                                                                           |
+| No visible trigger, MES just hangs               | MES FW bug [#5844](https://github.com/ROCm/ROCm/issues/5844) | Add all kernel params, wait for FW fix                                                             |
+| Happens on heavy graphics work                   | Driver/kernel issue                                          | Try stable kernel                                                                                  |
+| GPU temperature >85°C before crash               | Thermal throttling                                           | Check cooling, repaste                                                                             |
 
 ---
 
 ## Notes
 
 ### Incident History
-1. **Previous incident** — Signal triggered crash after running for a while (correctly identified)
-2. **2026-02-11 11:24:36** — VSCode triggered crash after running for a while. Confirms every Electron app is affected, not just Signal.
+1. **Previous incident** — Signal triggered crash after running for a while (Pattern A: page fault)
+2. **2026-02-11 11:24:36** — VSCode triggered crash after running for a while (Pattern A: page fault → MES reset failure)
+3. **2026-02-20 01:17:58** — MES firmware deadlock, no visible trigger (Pattern B: `MISC WAIT_REG_MEM` ×15 → `ring buffer is full` ×119). System had been up ~15 hours (booted Feb 19 10:32). Required hard reboot. Electron coredump (SIGILL) on reboot at 01:25:56.
 
-**Consistent pattern**: Crashes always occur after an Electron app has been open for an extended period, never immediately on launch. This suggests a cumulative GPU state issue rather than a single triggering event.
+**Updated pattern**: Incidents 1 & 2 were Electron-triggered after extended use. Incident 3 had **no visible trigger** — MES hung spontaneously. This confirms the firmware-level bug ([ROCm/ROCm#5844](https://github.com/ROCm/ROCm/issues/5844)) is not solely caused by Electron apps.
 
 ### Patterns to Watch For
 - **Uptime of Electron app before crash** (always after extended use, never on launch)
@@ -423,6 +444,7 @@ pkill -f electron
 ### Immediate (do now)
 - [ ] **Add `amdgpu.gpu_recovery=1`** to `boot.kernelParams` in `machines/framework/configuration.nix`. Won't prevent crashes but may allow the driver to recover without killing the GNOME session.
 - [ ] **Add `amdgpu.sg_display=0`** to `boot.kernelParams`. The FW16 AI-300 nixos-hardware module includes this for graphics stability; the FW13 module does not.
+- [ ] **Add `amdgpu.cwsr_enable=0`** to `boot.kernelParams`. Disables Compute Wave Save/Restore — may reduce MES deadlock frequency per [#5844](https://github.com/ROCm/ROCm/issues/5844) discussion. Not a guaranteed fix.
 - [ ] **Run `nix flake update`** to pick up latest nixpkgs and nixos-hardware.
 - [ ] **Rebuild and reboot**: `sudo nixos-rebuild switch --flake .`
 
@@ -433,7 +455,8 @@ pkill -f electron
 - [x] **Install `framework-tool`** — added to `machines/framework/configuration.nix` system packages.
 
 ### Medium-term (monitor)
-- [ ] **Watch [ROCm/ROCm#5724](https://github.com/ROCm/ROCm/issues/5724)** — AMD has been issuing MES firmware fixes. When a new firmware lands in nixpkgs/linux-firmware, the root cause may be resolved.
+- [ ] **Watch [ROCm/ROCm#5844](https://github.com/ROCm/ROCm/issues/5844)** ⭐ — **PRIMARY ISSUE**. MES 0x80/0x82 deadlock on gfx1150/gfx1152. AMD actively investigating. Fix will come through firmware update in linux-firmware.
+- [ ] **Watch [drm/amd#4749](https://gitlab.freedesktop.org/drm/amd/-/issues/4749)** — Upstream kernel bug tracker entry.
 - [ ] **Watch [ROCm/TheRock#2655](https://github.com/ROCm/TheRock/issues/2655)** — AMD-confirmed MES hang with concurrent compute+graphics. Fix will come through kernel/firmware updates.
 - [ ] **Watch [vscode#238088](https://github.com/microsoft/vscode/issues/238088)** — Upstream VSCode fix for AMD GPU page faults.
 - [ ] **Update home-manager** — Currently locked to 2025-04-24, nearly 10 months old.
@@ -449,8 +472,15 @@ pkill -f electron
 # Confirm kernel params took effect
 cat /proc/cmdline | tr ' ' '\n' | grep amdgpu
 
+# Check MES firmware version (watch for updates beyond 0x80)
+sudo sh -c 'cat /sys/kernel/debug/dri/*/amdgpu_firmware_info' | grep -i mes
+
 # Monitor for GPU faults over the next week
 journalctl --since "7 days ago" | grep -c "amdgpu.*page fault"
+
+# Monitor for MES ring buffer issues
+journalctl --since "7 days ago" | grep -c "MES ring buffer is full"
+journalctl --since "7 days ago" | grep -c "MES failed to respond"
 
 # Confirm VSCode is not using GPU
 # In VSCode: Help > Toggle Developer Tools > Console
@@ -459,5 +489,5 @@ journalctl --since "7 days ago" | grep -c "amdgpu.*page fault"
 
 ---
 
-**Last Updated**: 2026-02-11
-**Last Audited**: 2026-02-11 (kernel, mesa, firmware, flake inputs all verified)
+**Last Updated**: 2026-02-20
+**Last Audited**: 2026-02-20 (kernel 6.18.8, mesa 25.3.4, MES FW 0x80, flake inputs verified)
