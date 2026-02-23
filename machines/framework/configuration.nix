@@ -178,4 +178,5 @@
     (builtins.toFile "wakapi-env" "WAKAPI_PASSWORD_SALT=XWA37P924SFkMROG1dfE3VtvefbSdCl6")
   ];
 
+  programs.direnv.enable = true;
 }
