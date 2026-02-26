@@ -112,13 +112,6 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-  ];
-
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -179,4 +172,10 @@
   ];
 
   programs.direnv.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    uv
+    mpi
+  ];
+  programs.nix-ld.enable = true;
 }

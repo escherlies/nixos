@@ -15,13 +15,13 @@
           muted = "#4b455f";
           fg = "#9992b0";
           bright = "#efebff";
-          s1 = "#625a7c";
-          s2 = "#8363ee";
-          s3 = "#9375f5";
-          s4 = "#a286fd";
-          s5 = "#b5a0fe";
-          s6 = "#ca80ff";
-          accent = "#b042ff";
+          s1 = "#8e8dbc";
+          s2 = "#a69dff";
+          s3 = "#b5acff";
+          s4 = "#c4c0ff";
+          s5 = "#d5d2ff";
+          s6 = "#e5cbff";
+          accent = "#b079ff";
         };
 
         mkLanguageModule = {

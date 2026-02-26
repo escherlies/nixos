@@ -49,6 +49,8 @@ in
     wakeonlan
 
     firefox-devedition
+
+    bun
   ];
 
   services.nextcloud-client.enable = true;

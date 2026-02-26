@@ -23,6 +23,11 @@
   home.username = "enrico";
   home.homeDirectory = "/home/enrico";
 
+  # Add bun global packages to PATH
+  home.sessionPath = [
+    "$HOME/.bun/bin"
+  ];
+
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards
