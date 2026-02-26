@@ -478,7 +478,6 @@
   "insertDateString.formatDate": "YYYY-MM-DD, DDD",
   "insertDateString.format": "YYYY-MM-DD, DDD",
   "terminal.integrated.stickyScroll.enabled": false,
-  "catppuccin-icons.monochrome": true,
   "nix.enableLanguageServer": true,
   "gitlens.ai.model": "vscode",
   "gitlens.ai.vscode.model": "copilot:gpt-4.1",
@@ -644,5 +643,4 @@
       ]
     }
   },
-  "workbench.iconTheme": "chalice-icon-theme",
 }
