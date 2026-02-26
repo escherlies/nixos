@@ -172,6 +172,8 @@
   ];
 
   programs.direnv.enable = true;
+  programs.direnv.loadInNixShell = false;
+  programs.direnv.silent = true;
 
   environment.systemPackages = with pkgs; [
     uv

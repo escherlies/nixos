@@ -71,7 +71,7 @@
           pkgs = nixpkgsFor.${system};
         in
         {
-          default = pkgs.mkShell { buildInputs = with pkgs; [ nixos-rebuild ]; };
+          default = pkgs.mkShell { buildInputs = with pkgs; [ hello ]; };
         }
       );
 

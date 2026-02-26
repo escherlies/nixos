@@ -3,6 +3,10 @@
   programs.fish = {
     enable = true;
 
+    shellInit = ''
+      fish_add_path $HOME/.bun/bin
+    '';
+
     functions = {
       __fish_command_not_found_handler = {
         body = "echo Did not find command $argv[1]";
