@@ -20,6 +20,7 @@
     ./keyboard.nix
     ../../configs/graphical.nix
     ../../configs/ai-agents.nix
+    ../../modules/playwright.nix
   ];
 
   hardware.amdgpu.opencl.enable = true;

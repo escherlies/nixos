@@ -498,7 +498,9 @@
       "matchCommandLine": true
     },
     "git checkout": true,
-    "notion-db": true
+    "notion-db": true,
+    "playwright-cli": true,
+    "sqlite3": true
   },
   "workbench.preferredLightColorTheme": "Moonspell - Lavender",
   "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
@@ -530,7 +532,11 @@
   "chat.useAgentSkills": true,
   "chat.tools.urls.autoApprove": {
     "https://github.com/search": {
-      "approveRequest": false,
+      "approveRequest": true,
+      "approveResponse": true
+    },
+    "https://docs.github.com": {
+      "approveRequest": true,
       "approveResponse": true
     }
   },
