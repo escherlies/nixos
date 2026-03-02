@@ -1,10 +1,16 @@
-{ pkgs, ... }:
+{ pkgs, osConfig, ... }:
 {
   programs.fish = {
     enable = true;
 
     shellInit = ''
       fish_add_path $HOME/.bun/bin
+      fish_add_path $HOME/Developer/_scripts
+
+      # Load user environment variables from agenix secrets
+      for line in (grep -v '^\s*#\|^\s*$' ${osConfig.age.secrets.user-env.path})
+        set -gx (string split -m 1 '=' $line)
+      end
     '';
 
     functions = {

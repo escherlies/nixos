@@ -128,10 +128,12 @@
         laptop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
+            inputs.agenix.nixosModules.default
             ./machines/laptop/configuration.nix
             ./machines/laptop/hardware-configuration.nix
             ./modules/default.nix
             ./configs/graphical.nix
+            ./modules/user-env.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
