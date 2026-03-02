@@ -108,6 +108,7 @@
             ./configs/graphical.nix
             ./modules/docker.nix
             ./modules/caddy-pki.nix
+            ./modules/user-env.nix
 
             home-manager.nixosModules.home-manager
             {
@@ -148,10 +149,12 @@
           specialArgs = inputs;
           system = "x86_64-linux";
           modules = [
+            inputs.agenix.nixosModules.default
             ./machines/framework/configuration.nix
             ./modules/default.nix
             ./configs/graphical.nix
             ./modules/docker.nix
+            ./modules/user-env.nix
 
             home-manager.nixosModules.home-manager
             {
