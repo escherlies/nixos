@@ -21,6 +21,7 @@
     ../../configs/graphical.nix
     ../../configs/ai-agents.nix
     ../../modules/playwright.nix
+    ../../modules/agent-skills.nix
   ];
 
   hardware.amdgpu.opencl.enable = true;
