@@ -7,6 +7,7 @@
     claude-code
     opencode
     gemini-cli
+    file
   ];
 
 }

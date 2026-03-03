@@ -3,11 +3,21 @@ let
   mdstream = pkgs.writeShellScriptBin "mdstream" (
     lib.replaceStrings [ "glow" ] [ "${pkgs.glow}/bin/glow" ] (builtins.readFile ../scripts/mdstream)
   );
+  cpfile = pkgs.writeShellScriptBin "cpfile" (
+    lib.replaceStrings
+      [ "file -b" "xclip" ]
+      [
+        "${pkgs.file}/bin/file -b"
+        "${pkgs.xclip}/bin/xclip"
+      ]
+      (builtins.readFile ../scripts/cpfile)
+  );
 in
 {
   home.packages = with pkgs; [
     # Custom scripts
     mdstream
+    cpfile
 
     # Nix
     nixfmt

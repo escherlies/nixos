@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# Copy a file to the clipboard with correct MIME type
+# Usage: cpfile <file>
+#    or: realpath file.png | cpfile
+
+if [ $# -eq 1 ]; then
+  file="$1"
+elif [ ! -t 0 ]; then
+  file="$(cat)"
+  file="${file%$'\n'}"
+else
+  echo "Usage: cpfile <file>" >&2
+  exit 1
+fi
+
+if [ ! -f "$file" ]; then
+  echo "File not found: $file" >&2
+  exit 1
+fi
+
+mime="$(file -b --mime-type "$file")"
+xclip -selection clipboard -t "$mime" -i "$file"
+echo "Copied $file ($mime) to clipboard"
