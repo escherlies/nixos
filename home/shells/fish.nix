@@ -5,7 +5,9 @@
 
     shellInit = ''
       fish_add_path $HOME/.bun/bin
-      fish_add_path $HOME/Developer/exocortex/contrib/enrico
+      fish_add_path $HOME/Developer/exocortex/collections/enrico
+      fish_add_path $HOME/Developer/exocortex/collections/exocortex
+
 
       # Load user environment variables from agenix secrets
       for line in (grep -v '^\s*#\|^\s*$' ${osConfig.age.secrets.user-env.path})

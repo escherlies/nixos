@@ -500,7 +500,8 @@
     "git checkout": true,
     "notion-db": true,
     "playwright-cli": true,
-    "sqlite3": true
+    "sqlite3": true,
+    "nano-banana": true
   },
   "workbench.preferredLightColorTheme": "Moonspell - Lavender",
   "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
@@ -649,4 +650,7 @@
       ]
     }
   },
+  "chat.tools.terminal.terminalProfile.linux": {
+    "path": "bash"
+  }
 }
