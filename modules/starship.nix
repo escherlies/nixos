@@ -10,18 +10,21 @@
     settings =
       let
         palette = {
-          bg = "#201d2a";
-          surface = "#2c2839";
-          muted = "#4b455f";
-          fg = "#9992b0";
-          bright = "#efebff";
-          s1 = "#8e8dbc";
-          s2 = "#a69dff";
-          s3 = "#b5acff";
-          s4 = "#c4c0ff";
-          s5 = "#d5d2ff";
-          s6 = "#e5cbff";
-          accent = "#b079ff";
+          bg = "white";
+          bright = "white";
+
+          fg = "black";
+
+          surface = "bright-black";
+          muted = "bright-black";
+          s1 = "bright-black";
+          s2 = "bright-black";
+          s3 = "bright-black";
+          s4 = "bright-black";
+          s5 = "bright-black";
+          s6 = "bright-black";
+
+          accent = "red";
         };
 
         mkLanguageModule = {
