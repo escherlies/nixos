@@ -10,6 +10,7 @@
 
   environment.systemPackages = with pkgs; [
     ddcutil # https://wiki.nixos.org/wiki/Backlight#Via_ddcutil
+    brightnessctl # https://wiki.nixos.org/wiki/Backlight#brightnessctl
   ];
 
   hardware.i2c.enable = true; # https://wiki.nixos.org/wiki/Backlight#Via_ddcutil
