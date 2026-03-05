@@ -3,6 +3,9 @@
   programs.starship = {
     enable = true;
 
+    # Disabled here; handled manually in home/shells/fish.nix to skip in VSCode
+    transientPrompt.enable = false;
+
     presets = [
       "nerd-font-symbols"
     ];

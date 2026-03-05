@@ -15,6 +15,19 @@
       end
     '';
 
+    interactiveShellInit = ''
+      # Enable starship transient prompt, but not in VSCode (shell integration conflict)
+      if test "$TERM_PROGRAM" != "vscode"
+        function starship_transient_prompt_func
+          printf '\n\033[90m──λ\033[0m \n'
+        end
+        function starship_transient_rprompt_func
+          printf '\033[90m%s\033[0m' (date +%H:%M:%S)
+        end
+        enable_transience
+      end
+    '';
+
     functions = {
       __fish_command_not_found_handler = {
         body = "echo Did not find command $argv[1]";
