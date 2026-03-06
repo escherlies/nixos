@@ -503,7 +503,6 @@
     "sqlite3": true,
     "nano-banana": true
   },
-  "workbench.preferredLightColorTheme": "Moonspell - Lavender",
   "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
   "chat.editing.confirmEditRequestRemoval": false,
   "chat.viewSessions.orientation": "stacked",
@@ -652,5 +651,6 @@
   },
   "chat.tools.terminal.terminalProfile.linux": {
     "path": "bash"
-  }
+  },
+  "workbench.preferredLightColorTheme": "NetBeans Light Theme"
 }
