@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+names=(
+  black red green yellow blue magenta cyan white
+  bright-black bright-red bright-green bright-yellow
+  bright-blue bright-magenta bright-cyan bright-white
+)
+
+echo "16 ANSI base colors (theme-defined):"
+echo -n "standard: "
+for i in {0..7}; do
+  printf "\e[48;5;${i}m  %-14s\e[0m" "${names[$i]}"
+done
+echo
+echo -n "extended: "
+for i in {8..15}; do
+  printf "\e[48;5;${i}m  %-14s\e[0m" "${names[$i]}"
+done
+echo
