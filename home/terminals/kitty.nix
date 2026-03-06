@@ -16,6 +16,13 @@
       copy_on_select = true;
 
       confirm_os_window_close = 0;
+
+      # Use xterm-256color so less (and other TUI apps) handle keys correctly
+      term = "xterm-256color";
+
+      # Jump to end of scrollback with +G instead of +INPUT_LINE_NUMBER
+      # to avoid blank white screen when opening the pager
+      scrollback_pager = "less --chop-long-lines --RAW-CONTROL-CHARS +G";
     };
 
     keybindings = {
