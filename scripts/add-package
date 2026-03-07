@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Add a package to the NixOS config (home/packages.nix) and run a rebuild test.
+# Uses hostname to resolve the correct machine flake.
+#
+# Usage: add-package <package-name> [package-name ...]
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NIXOS_DIR="$(dirname "$SCRIPT_DIR")"
+PACKAGES_FILE="$NIXOS_DIR/home/packages.nix"
+HOST="$(hostname)"
+
+# --- Validation ---
+
+if [ $# -eq 0 ]; then
+  echo "Usage: add-package <package-name> [package-name ...]"
+  echo ""
+  echo "Adds package(s) to home/packages.nix and runs 'nixos-rebuild test'."
+  echo "Detected host: $HOST"
+  exit 1
+fi
+
+if [ ! -f "$PACKAGES_FILE" ]; then
+  echo "Error: packages file not found at $PACKAGES_FILE"
+  exit 1
+fi
+
+# --- Add packages ---
+
+for pkg in "$@"; do
+  if grep -qE "^\s+${pkg}\b" "$PACKAGES_FILE"; then
+    echo "Package '$pkg' already in $PACKAGES_FILE, skipping."
+  else
+    # Insert the package before the closing ]; of home.packages
+    sed -i "/^  \];$/i\\    $pkg" "$PACKAGES_FILE"
+    echo "Added '$pkg' to $PACKAGES_FILE"
+  fi
+done
+
+# --- Rebuild test ---
+
+echo ""
+echo "Running: sudo nixos-rebuild test --flake $NIXOS_DIR#$HOST"
+echo ""
+
+sudo nixos-rebuild test --flake "$NIXOS_DIR#$HOST"
