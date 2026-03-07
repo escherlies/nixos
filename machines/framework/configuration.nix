@@ -24,6 +24,9 @@
     ../../modules/agent-skills.nix
   ];
 
+  # Enable WireGuard VPN
+  vpn.enable = true;
+
   hardware.amdgpu.opencl.enable = true;
 
   # Bootloader.

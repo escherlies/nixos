@@ -71,13 +71,28 @@
           pkgs = nixpkgsFor.${system};
         in
         {
-          default = pkgs.mkShell { buildInputs = with pkgs; [ hello ]; };
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              hello
+              ragenix
+
+            ];
+          };
         }
       );
 
       formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt);
 
       nixosConfigurations = {
+
+        vpn-gateway = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            inputs.disko.nixosModules.disko
+            inputs.agenix.nixosModules.default
+            ./machines/vpn-gateway/configuration.nix
+          ];
+        };
 
         web-services = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
@@ -95,6 +110,7 @@
             ./modules/default.nix
             ./modules/home-assistant.nix
             ./modules/caddy-pki.nix
+            ./modules/wireguard.nix
           ];
         };
 
@@ -109,6 +125,7 @@
             ./modules/docker.nix
             ./modules/caddy-pki.nix
             ./modules/user-env.nix
+            ./modules/wireguard.nix
 
             home-manager.nixosModules.home-manager
             {
@@ -134,6 +151,7 @@
             ./modules/default.nix
             ./configs/graphical.nix
             ./modules/user-env.nix
+            ./modules/wireguard.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = false;
@@ -157,6 +175,7 @@
             ./configs/graphical.nix
             ./modules/docker.nix
             ./modules/user-env.nix
+            ./modules/wireguard.nix
 
             home-manager.nixosModules.home-manager
             {

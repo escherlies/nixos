@@ -8,6 +8,9 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDCJOEu1nPXQaHgcaZQLjjAycUxVjqrvJocYdI/NM3kK"
   ];
   desktop = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJsJjCECpF/sagPMgZx5R7hXrQDXBvN0RGJ9dVDGh3gg";
+  laptop = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB8QWrHthWO/Ldkn+xyqyhPLBtpCsiQQIhb+afexN/zi";
+
+  vpn-gateway = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFOLUfDXFXdsO9zudZ3FqX3Fj4kF1gRfFH6j6bWfNIA2";
 in
 {
   "local_ca.key.age".publicKeys = framework ++ [
@@ -18,6 +21,14 @@ in
   "user.env.age".publicKeys = framework ++ [
     home-server
     desktop
+    laptop
   ];
+
+  # WireGuard private keys — each machine can only decrypt its own key
+  "wg-vpn-gateway.key.age".publicKeys = [ vpn-gateway ];
+  "wg-home-server.key.age".publicKeys = [ home-server ];
+  "wg-desktop.key.age".publicKeys = [ desktop ];
+  "wg-framework.key.age".publicKeys = framework;
+  "wg-laptop.key.age".publicKeys = [ laptop ];
 
 }

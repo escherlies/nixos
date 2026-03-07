@@ -41,12 +41,16 @@
 
   system.stateVersion = "25.11";
 
-  server.metadata.ipv4 = config.machines.home-server.ipv4;
-
+  networking.hostName = "home-server";
   networking.useDHCP = true;
+
+  server.metadata.ipv4 = config.machines.home-server.ipv4;
 
   # Enable Caddy for reverse proxy
   services.caddy.enable = true;
+
+  # Enable WireGuard VPN
+  vpn.enable = true;
 
   networking.firewall.allowedTCPPorts = [
     80
