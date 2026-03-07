@@ -19,6 +19,14 @@
   # Enable WireGuard VPN
   vpn.enable = true;
 
+  # Ensure WireGuard recovers from transient failures
+  systemd.services.wireguard-wg0 = {
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -32,6 +40,9 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+
+  # Hide WireGuard from NetworkManager / GNOME so the default user can't toggle it off
+  networking.networkmanager.unmanaged = [ "wg0" ];
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -92,6 +103,30 @@
     ];
   };
 
+  # Unprivileged default user — managed by root/enrico
+  users.users.default = {
+    isNormalUser = true;
+    description = "Default User";
+    hashedPassword = ""; # empty password
+    extraGroups = [
+      "networkmanager" # allow connecting to Wi-Fi
+    ];
+    # No "wheel" — no sudo / admin privileges
+  };
+
+  # Allow login with an empty password for the default user
+  security.pam.services.gdm-password.rules.auth.unix.settings.nullok = true;
+
+  # Auto-login the default user via GDM
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "default";
+  };
+
+  # Workaround for GNOME GDM auto-login race condition
+  systemd.services."getty@tty1".enable = false;
+  systemd.services."autovt@tty1".enable = false;
+
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -114,9 +149,6 @@
   # };
 
   # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
