@@ -7,6 +7,14 @@
     ../../modules/ssh.nix
   ];
 
+  boot.loader.grub = {
+    enable = true;
+    # no need to set devices, disko will add all devices that have a EF02 partition to the list already
+    # devices = [ ];
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
+
   system.stateVersion = "24.11";
 
   boot.tmp.cleanOnBoot = true;
