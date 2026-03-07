@@ -61,6 +61,7 @@ in
     firefox-devedition
 
     bun
+    drawio
   ];
 
   services.nextcloud-client.enable = true;
