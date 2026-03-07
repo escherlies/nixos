@@ -1,4 +1,8 @@
-![nixos](docs/image.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/image-dark.webp">
+  <source media="(prefers-color-scheme: light)" srcset="docs/image-light.webp">
+  <img src="docs/image-light.webp" alt="nixos">
+</picture>
 
 # My NixOS Configurations
 
