@@ -112,6 +112,10 @@
       "networkmanager" # allow connecting to Wi-Fi
     ];
     # No "wheel" — no sudo / admin privileges
+    packages = with pkgs; [
+      aisleriot
+      onlyoffice-desktopeditors
+    ];
   };
 
   # Allow login with an empty password for the default user
