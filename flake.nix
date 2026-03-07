@@ -75,7 +75,6 @@
             buildInputs = with pkgs; [
               hello
               ragenix
-
             ];
           };
         }
