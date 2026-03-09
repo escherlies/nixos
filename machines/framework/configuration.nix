@@ -138,6 +138,8 @@
   # networking.firewall.enable = false;
 
   networking.firewall.allowedTCPPorts = [
+    80
+    443
     1234
   ];
 
@@ -166,8 +168,13 @@
     openFirewall = false;
   };
 
+  # Enable Caddy for reverse proxy
+  services.caddy.enable = true;
+
   # Enable OpenCode server + web UI
   services.opencode.enable = true;
+  services.opencode.caddy.enable = true;
+  services.opencode.caddy.dns = config.network.services.opencode-framework.dns;
   services.opencode.environmentFile = config.age.secrets.opencode-env.path;
 
   age.secrets.opencode-env = {

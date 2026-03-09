@@ -84,6 +84,11 @@ in
 
     caddy = {
       enable = lib.mkEnableOption "Caddy reverse proxy for the OpenCode web UI";
+
+      dns = lib.mkOption {
+        type = lib.types.str;
+        description = "DNS hostname for the Caddy virtual host (e.g. from network.services).";
+      };
     };
   };
 
@@ -150,7 +155,7 @@ in
 
     # Caddy reverse proxy for the web UI (optional)
     services.caddy.virtualHosts = lib.mkIf cfg.caddy.enable {
-      "${config.network.services.opencode.dns}".extraConfig = ''
+      "${cfg.caddy.dns}".extraConfig = ''
         tls internal
         reverse_proxy 127.0.0.1:${toString cfg.web.port}
       '';

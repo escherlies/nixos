@@ -176,6 +176,7 @@
             ./modules/user-env.nix
             ./modules/wireguard.nix
             ./modules/opencode.nix
+            ./modules/caddy-pki.nix
 
             home-manager.nixosModules.home-manager
             {

@@ -121,6 +121,7 @@
   # Enable OpenCode server + web UI
   services.opencode.enable = true;
   services.opencode.caddy.enable = true;
+  services.opencode.caddy.dns = config.network.services.opencode-desktop.dns;
   services.opencode.environmentFile = config.age.secrets.opencode-env.path;
 
   age.secrets.opencode-env = {
