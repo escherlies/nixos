@@ -27,6 +27,9 @@ let
     laptop = {
       publicKey = "KgQvkZitebxibx+iyPAhYAfX3rV9ZBtLcpupCOXq21A=";
     };
+    iphone = {
+      publicKey = "+miJXGV74c6U7uPAUt4+WBmL8xBiv/R1GVIbjJbsUUU=";
+    };
   };
 
   hostname = config.networking.hostName;
