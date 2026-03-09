@@ -23,6 +23,10 @@
       ip = config.machines.desktop.ipv4;
       dns = "ai.lan";
     };
+    opencode = {
+      ip = config.machines.desktop.ipv4;
+      dns = "opencode.lan";
+    };
     example = {
       ip = config.machines.home-server.ipv4;
       dns = "example.lan";

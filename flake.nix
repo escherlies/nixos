@@ -175,6 +175,7 @@
             ./modules/docker.nix
             ./modules/user-env.nix
             ./modules/wireguard.nix
+            ./modules/opencode.nix
 
             home-manager.nixosModules.home-manager
             {

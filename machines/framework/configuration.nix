@@ -3,6 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
+  config,
   pkgs,
   nixos-hardware,
   nix-index-database,
@@ -163,6 +164,17 @@
   services.open-webui = {
     enable = true;
     openFirewall = false;
+  };
+
+  # Enable OpenCode server + web UI
+  services.opencode.enable = true;
+  services.opencode.environmentFile = config.age.secrets.opencode-env.path;
+
+  age.secrets.opencode-env = {
+    file = ../../secrets/opencode.env.age;
+    owner = config.services.opencode.user;
+    group = config.services.opencode.group;
+    mode = "0400";
   };
 
   # For fingerprint support

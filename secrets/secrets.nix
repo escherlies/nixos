@@ -24,6 +24,11 @@ in
     laptop
   ];
 
+  # OpenCode environment (API keys)
+  "opencode.env.age".publicKeys = framework ++ [
+    desktop
+  ];
+
   # WireGuard private keys — each machine can only decrypt its own key
   "wg-vpn-gateway.key.age".publicKeys = [ vpn-gateway ];
   "wg-home-server.key.age".publicKeys = [ home-server ];
