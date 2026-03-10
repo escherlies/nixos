@@ -13,6 +13,12 @@
           bullets-vim
         ];
       };
+      # programs.neovim.configure sets VIMINIT which prevents neovim from
+      # loading the user's init.lua. Source it explicitly so all settings
+      # live in a native, bidirectional lua file in the repo.
+      customRC = ''
+        lua local f = vim.fn.stdpath("config") .. "/init.lua"; if vim.uv.fs_stat(f) then dofile(f) end
+      '';
     };
   };
 
