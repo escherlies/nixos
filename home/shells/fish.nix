@@ -1,13 +1,13 @@
 { pkgs, osConfig, ... }:
+let
+  extraPaths = import ./paths.nix;
+in
 {
   programs.fish = {
     enable = true;
 
     shellInit = ''
-      fish_add_path $HOME/.bun/bin
-      fish_add_path $HOME/Developer/exocortex/collections/enrico
-      fish_add_path $HOME/Developer/exocortex/collections/exocortex
-
+      ${builtins.concatStringsSep "\n" (map (p: "fish_add_path ${p}") extraPaths)}
 
       # Load user environment variables from agenix secrets
       for line in (grep -v '^\s*#\|^\s*$' ${osConfig.age.secrets.user-env.path})

@@ -99,15 +99,16 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
+      # Run through a login shell so the full NixOS/user PATH is available
+      # for tool execution (git, ssh, etc.)
       serviceConfig = {
         Type = "simple";
         User = cfg.user;
         Group = cfg.group;
         ExecStart = lib.concatStringsSep " " [
-          "${cfg.package}/bin/opencode"
-          "serve"
-          "--port ${toString cfg.server.port}"
-          "--hostname ${cfg.server.hostname}"
+          "/run/current-system/sw/bin/bash"
+          "-lc"
+          "'${cfg.package}/bin/opencode serve --port ${toString cfg.server.port} --hostname ${cfg.server.hostname}'"
         ];
         WorkingDirectory = cfg.workDir;
         StateDirectory = "opencode";
