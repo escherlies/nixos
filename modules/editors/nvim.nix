@@ -18,6 +18,8 @@
         set relativenumber
         set clipboard=unnamedplus
         set foldlevel=99
+        set ignorecase
+        set smartcase
       '';
     };
   };
