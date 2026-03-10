@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ./disko-config.nix
     ../../modules/wireguard.nix
+    ../../modules/vpn-dns.nix
     ../../modules/ssh.nix
   ];
 

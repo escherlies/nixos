@@ -13,4 +13,8 @@
     tls internal
     reverse_proxy 127.0.0.1:11434
   '';
+  services.caddy.virtualHosts."${config.network.services.ollama.wgDns}".extraConfig = ''
+    tls internal
+    reverse_proxy 127.0.0.1:11434
+  '';
 }

@@ -37,7 +37,7 @@
         "tcp+udp:2620:fe::fe:10"
       ];
 
-      # Custom DNS mappings
+      # Custom DNS mappings (LAN IPs for LAN clients)
       customDNS = {
         mapping = lib.mapAttrs' (_name: value: {
           name = value.dns;
@@ -58,10 +58,12 @@
         path = "/metrics";
       };
 
-      # Ports config
+      # Ports config — bind DNS to LAN IP + localhost
       ports = {
-        # optional: Port(s) and optional bind ip address(es) to serve HTTP used for prometheus metrics, pprof, REST API, DoH...
-        # example: [4000, :4000, 127.0.0.1:4000, [::1]:4000]
+        dns = [
+          "${config.machines.home-server.ipv4}:53"
+          "127.0.0.1:53"
+        ];
         http = 4000;
       };
     };

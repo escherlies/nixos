@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.vpn;
@@ -34,6 +39,8 @@ let
 
   hostname = config.networking.hostName;
   isHub = hostname == "vpn-gateway";
+  # VPN DNS server: Blocky running on vpn-gateway's WireGuard IP
+  vpnDns = machines.vpn-gateway.vpnIp;
 
   # Hub peer config: list all clients as peers with their /32 VPN IPs
   hubPeers = lib.mapAttrsToList (name: keys: {
@@ -69,6 +76,14 @@ in
       listenPort = lib.mkIf isHub 51820;
       privateKeyFile = config.age.secrets."wg-${hostname}".path;
       peers = if isHub then hubPeers else clientPeers;
+
+      # Configure VPN DNS for *.wg resolution on client machines
+      # Uses resolvectl to set the VPN DNS server with ~wg routing domain
+      # so only *.wg queries go through the VPN DNS, everything else uses default DNS
+      postSetup = lib.mkIf (!isHub) ''
+        ${pkgs.systemd}/bin/resolvectl dns wg0 ${vpnDns}
+        ${pkgs.systemd}/bin/resolvectl domain wg0 "~wg"
+      '';
     };
 
     networking.firewall = {

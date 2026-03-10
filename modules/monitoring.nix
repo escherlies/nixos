@@ -90,4 +90,8 @@ in
     tls internal
     reverse_proxy 127.0.0.1:${toString grafanaPort}
   '';
+  services.caddy.virtualHosts."${config.network.services.grafana.wgDns}".extraConfig = ''
+    tls internal
+    reverse_proxy 127.0.0.1:${toString grafanaPort}
+  '';
 }

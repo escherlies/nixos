@@ -87,7 +87,12 @@ in
 
       dns = lib.mkOption {
         type = lib.types.str;
-        description = "DNS hostname for the Caddy virtual host (e.g. from network.services).";
+        description = "LAN DNS hostname for the Caddy virtual host (*.lan).";
+      };
+
+      wgDns = lib.mkOption {
+        type = lib.types.str;
+        description = "WireGuard DNS hostname for the Caddy virtual host (*.wg).";
       };
     };
   };
@@ -156,6 +161,10 @@ in
     # Caddy reverse proxy for the web UI (optional)
     services.caddy.virtualHosts = lib.mkIf cfg.caddy.enable {
       "${cfg.caddy.dns}".extraConfig = ''
+        tls internal
+        reverse_proxy 127.0.0.1:${toString cfg.web.port}
+      '';
+      "${cfg.caddy.wgDns}".extraConfig = ''
         tls internal
         reverse_proxy 127.0.0.1:${toString cfg.web.port}
       '';
