@@ -31,6 +31,7 @@ in
 
   # WireGuard private keys — each machine can only decrypt its own key
   "wg-vpn-gateway.key.age".publicKeys = [ vpn-gateway ];
+  "wg-vpn-gateway-untrusted.key.age".publicKeys = [ vpn-gateway ];
   "wg-home-server.key.age".publicKeys = [ home-server ];
   "wg-desktop.key.age".publicKeys = [ desktop ];
   "wg-framework.key.age".publicKeys = framework;

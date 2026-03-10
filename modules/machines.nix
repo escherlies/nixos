@@ -14,6 +14,19 @@
             description = "WireGuard VPN IP address of the machine";
             default = null;
           };
+          vpnNetwork = lib.mkOption {
+            type = lib.types.enum [
+              "trusted"
+              "untrusted"
+            ];
+            description = ''
+              Which VPN network the machine belongs to.
+              Trusted machines share wg0 (10.100.0.0/24) and can reach each other.
+              Untrusted machines are isolated on wg1 (10.100.1.0/24) and can only
+              be reached via the hub (e.g. ssh -J vpn-gateway).
+            '';
+            default = "trusted";
+          };
         };
       }
     );
@@ -40,7 +53,8 @@
     };
     laptop = {
       ipv4 = "192.168.178.98";
-      vpnIp = "10.100.0.5";
+      vpnIp = "10.100.1.2";
+      vpnNetwork = "untrusted";
     };
     iphone = {
       ipv4 = "0.0.0.0";

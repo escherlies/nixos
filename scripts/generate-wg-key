@@ -1,0 +1,77 @@
+#! /usr/bin/env nix
+#! nix shell nixpkgs#wireguard-tools nixpkgs#age --command bash
+
+# Generate a WireGuard keypair and encrypt the private key with age (ASCII armor)
+#
+# This script:
+# 1. Generates a WireGuard private/public keypair
+# 2. Reads recipients from secrets/secrets.nix via nix eval
+# 3. Encrypts the private key with age --armor (ASCII-armored, git-friendly)
+# 4. Prints the public key for use in wireguard.nix
+#
+# Usage:
+#   ./scripts/generate-wg-key <secret-name>
+#
+# Example:
+#   ./scripts/generate-wg-key wg-vpn-gateway-untrusted
+#
+# The secret name must match an entry in secrets/secrets.nix.
+# After running, commit the encrypted key:
+#   git add secrets/<secret-name>.key.age
+
+set -euo pipefail
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <secret-name>"
+    echo "Example: $0 wg-vpn-gateway-untrusted"
+    exit 1
+fi
+
+SECRET_NAME="$1"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SECRETS_DIR="$REPO_ROOT/secrets"
+AGE_FILE="$SECRETS_DIR/${SECRET_NAME}.key.age"
+
+# Check if the .age file already exists
+if [ -f "$AGE_FILE" ]; then
+    echo "Warning: $AGE_FILE already exists."
+    echo ""
+    read -p "Regenerate? This will replace the existing key. [y/N] " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+fi
+
+# Generate keypair in a temp directory
+TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR"' EXIT
+
+PRIVATE_KEY_FILE="$TMPDIR/private.key"
+RECIPIENTS_FILE="$TMPDIR/recipients"
+
+umask 077
+wg genkey > "$PRIVATE_KEY_FILE"
+PUBLIC_KEY="$(wg pubkey < "$PRIVATE_KEY_FILE")"
+
+# Extract recipient public keys from secrets.nix
+echo "Reading recipients from secrets.nix..."
+nix eval --raw -f "$SECRETS_DIR/secrets.nix" \
+  --apply 'x: builtins.concatStringsSep "\n" x."'"${SECRET_NAME}.key.age"'".publicKeys + "\n"' \
+  > "$RECIPIENTS_FILE"
+
+echo "Encrypting private key with age (ASCII armor)..."
+age --armor -R "$RECIPIENTS_FILE" -o "$AGE_FILE" "$PRIVATE_KEY_FILE"
+
+echo ""
+echo "Done! Encrypted key written to: $AGE_FILE"
+echo ""
+echo "Public key:"
+echo "  $PUBLIC_KEY"
+echo ""
+echo "Next steps:"
+echo "  1. Replace the public key placeholder in modules/wireguard.nix"
+echo "  2. Commit: git add $AGE_FILE"

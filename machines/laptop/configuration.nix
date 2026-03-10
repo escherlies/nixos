@@ -16,7 +16,7 @@
     ../../modules/desktops/gnome.nix
   ];
 
-  # Enable WireGuard VPN
+  # Enable WireGuard VPN (laptop is on the untrusted network, see machines.nix)
   vpn.enable = true;
 
   # Ensure WireGuard recovers from transient failures
