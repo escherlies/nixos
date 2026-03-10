@@ -75,6 +75,7 @@
             buildInputs = with pkgs; [
               hello
               ragenix
+              bash # VS Code shell integration injects \[...\] readline non-printing markers into PS1; without bash in PATH from the nix store, these are not interpreted and render as literal garbage
             ];
           };
         }
