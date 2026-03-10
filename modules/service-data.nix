@@ -15,16 +15,18 @@
       ip = config.machines.home-server.ipv4;
       dns = "grafana.lan";
     };
+    # Desktop services: DNS points to home-server, which runs the WoL gateway proxy.
+    # When accessed, the home-server wakes the desktop (if suspended) and proxies through.
     ollama = {
-      ip = config.machines.desktop.ipv4;
+      ip = config.machines.home-server.ipv4;
       dns = "ollama.lan";
     };
     open-webui = {
-      ip = config.machines.desktop.ipv4;
+      ip = config.machines.home-server.ipv4;
       dns = "ai.lan";
     };
     opencode-desktop = {
-      ip = config.machines.desktop.ipv4;
+      ip = config.machines.home-server.ipv4;
       dns = "opencode.desktop.lan";
     };
     opencode-framework = {

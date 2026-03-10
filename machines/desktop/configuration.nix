@@ -19,6 +19,7 @@
     ../../modules/opencode.nix
     ../../configs/ai-agents.nix
     ../../modules/machines.nix
+    ../../modules/auto-suspend.nix
 
   ];
 
@@ -185,21 +186,14 @@
   networking.interfaces.enp14s0.wakeOnLan.enable = true;
   # Run wakeonlan <mac adress> to wakey wakey
 
-  # Disable autoSuspend
+  # Auto-suspend: suspends after idle period, but only when no services are active.
+  # Replaces the old blanket polkit suspend-block. The auto-suspend module
+  # allows root (systemd timer) to suspend while blocking GNOME/GDM auto-suspend.
+  services.auto-suspend.enable = true;
+  services.auto-suspend.idleMinutes = 15;
+
+  # GDM auto-suspend is unreliable — our auto-suspend module handles it properly
   services.displayManager.gdm.autoSuspend = false;
-  # ^ This not working, additionally we need this...
-  # https://discourse.nixos.org/t/why-is-my-new-nixos-install-suspending/19500/2
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-        if (action.id == "org.freedesktop.login1.suspend" ||
-            action.id == "org.freedesktop.login1.suspend-multiple-sessions" ||
-            action.id == "org.freedesktop.login1.hibernate" ||
-            action.id == "org.freedesktop.login1.hibernate-multiple-sessions")
-        {
-            return polkit.Result.NO;
-        }
-    });
-  '';
 
   services.hardware.openrgb.enable = true;
 }

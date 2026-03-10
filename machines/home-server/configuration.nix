@@ -6,6 +6,7 @@
     ../../modules/blocky.nix
     ../../modules/monitoring.nix
     ../../modules/machines.nix
+    ../../modules/wol-gateway.nix
   ];
 
   boot.loader.grub = {
@@ -59,4 +60,31 @@
     80
     443
   ];
+
+  # WoL gateway: wake the desktop on-demand when accessing its services.
+  # Desktop services DNS (ollama.lan, ai.lan, opencode.desktop.lan) resolves
+  # to the home-server. Caddy here proxies to the desktop, waking it first
+  # via Wake-on-LAN if it's suspended.
+  services.wol-gateway = {
+    enable = true;
+    target = {
+      ip = config.machines.desktop.vpnIp; # 10.100.0.3
+      mac = "d8:43:ae:8e:88:0b";
+      checkPort = 22; # SSH comes up fast after resume
+    };
+    proxiedServices = {
+      ollama = {
+        dns = "ollama.lan";
+        targetPort = 11434;
+      };
+      open-webui = {
+        dns = "ai.lan";
+        targetPort = 8080;
+      };
+      opencode-desktop = {
+        dns = "opencode.desktop.lan";
+        targetPort = 4097;
+      };
+    };
+  };
 }
