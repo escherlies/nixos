@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.vpn;
@@ -35,6 +40,10 @@ let
   hostname = config.networking.hostName;
   isHub = hostname == "vpn-gateway";
 
+  # Machines that don't run their own DNS resolver need systemd-resolved
+  # to route .lan queries to blocky via the VPN tunnel
+  needsDnsRouting = !isHub && !config.services.blocky.enable;
+
   # Hub peer config: list all clients as peers with their /32 VPN IPs
   hubPeers = lib.mapAttrsToList (name: keys: {
     inherit (keys) publicKey;
@@ -64,11 +73,25 @@ in
       mode = "0400";
     };
 
+    # Enable systemd-resolved on VPN clients for split DNS routing.
+    # This lets .lan queries go to blocky (on the home-server) via WireGuard,
+    # while all other DNS queries use the default resolver.
+    services.resolved.enable = lib.mkIf needsDnsRouting true;
+
     networking.wireguard.interfaces.wg0 = {
       ips = [ "${machines.${hostname}.vpnIp}/24" ];
       listenPort = lib.mkIf isHub 51820;
       privateKeyFile = config.age.secrets."wg-${hostname}".path;
       peers = if isHub then hubPeers else clientPeers;
+
+      # Configure split DNS: route .lan queries to blocky via VPN
+      postSetup = lib.mkIf needsDnsRouting ''
+        ${pkgs.systemd}/bin/resolvectl dns wg0 ${machines.home-server.vpnIp}
+        ${pkgs.systemd}/bin/resolvectl domain wg0 "~lan"
+      '';
+      postShutdown = lib.mkIf needsDnsRouting ''
+        ${pkgs.systemd}/bin/resolvectl revert wg0 || true
+      '';
     };
 
     networking.firewall = {

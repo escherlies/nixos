@@ -1,6 +1,19 @@
 { config, lib, ... }:
 
+let
+  # Build LAN IP → VPN IP lookup table from machine definitions
+  # This allows blocky to return both LAN and VPN IPs for each service,
+  # enabling Happy Eyeballs: LAN clients connect directly, VPN clients
+  # connect via their WireGuard tunnel.
+  ipToVpnIp = builtins.listToAttrs (
+    builtins.filter (pair: pair.value != null) (
+      lib.mapAttrsToList (_name: m: lib.nameValuePair m.ipv4 m.vpnIp) config.machines
+    )
+  );
+in
 {
+  imports = [ ./machines.nix ];
+
   services.blocky = {
     enable = true;
     settings = {
@@ -37,12 +50,19 @@
         "tcp+udp:2620:fe::fe:10"
       ];
 
-      # Custom DNS mappings
+      # Custom DNS mappings — includes both LAN and VPN IPs so services
+      # are reachable from both the home network and via WireGuard
       customDNS = {
-        mapping = lib.mapAttrs' (_name: value: {
-          name = value.dns;
-          value = value.ip;
-        }) config.network.services;
+        mapping = lib.mapAttrs' (
+          _name: value:
+          let
+            vpnIp = ipToVpnIp.${value.ip} or null;
+          in
+          {
+            name = value.dns;
+            value = if vpnIp != null then "${value.ip},${vpnIp}" else value.ip;
+          }
+        ) config.network.services;
       };
 
       # Conditional DNS for local network
