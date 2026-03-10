@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -38,6 +38,9 @@
     enable = true;
     defaultEditor = true;
   };
+
+  # Wake-on-LAN: allows waking desktop from remote machines via VPN
+  environment.systemPackages = [ pkgs.wakeonlan ];
 
   system.stateVersion = "25.11";
 
