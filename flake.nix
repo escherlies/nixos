@@ -25,6 +25,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    opencode = {
+      url = "github:anomalyco/opencode";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -117,6 +122,7 @@
         desktop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
+            { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
             inputs.agenix.nixosModules.default
             ./machines/desktop/configuration.nix
             ./machines/desktop/hardware-configuration.nix
@@ -169,6 +175,7 @@
           specialArgs = inputs;
           system = "x86_64-linux";
           modules = [
+            { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
             inputs.agenix.nixosModules.default
             ./machines/framework/configuration.nix
             ./modules/default.nix
