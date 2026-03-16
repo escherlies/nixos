@@ -505,7 +505,8 @@
     "npx tsc": true,
     "git add": true,
     "git push": true,
-    "gh": true
+    "gh": true,
+    "npx elm": true
   },
   "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
   "chat.editing.confirmEditRequestRemoval": false,

@@ -1,4 +1,5 @@
 {
+  config,
   ...
 }:
 {
@@ -26,11 +27,19 @@
       # Jump to end of scrollback with +G instead of +INPUT_LINE_NUMBER
       # to avoid blank white screen when opening the pager
       scrollback_pager = "less --chop-long-lines --RAW-CONTROL-CHARS +G";
+
+      # Start in ~/Developer
+      startup_session = "${config.xdg.configHome}/kitty/startup.conf";
     };
 
     keybindings = {
       "ctrl+shift+enter" = "launch --cwd=current";
-      "ctrl+shift+t" = "new_tab";
+      "ctrl+shift+t" = "launch --type=tab --cwd=~/Developer";
     };
   };
+
+  # Startup session that sets the initial working directory
+  home.file.".config/kitty/startup.conf".text = ''
+    cd ${config.home.homeDirectory}/Developer
+  '';
 }
