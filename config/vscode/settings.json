@@ -501,7 +501,11 @@
     "notion-db": true,
     "playwright-cli": true,
     "sqlite3": true,
-    "nano-banana": true
+    "nano-banana": true,
+    "npx tsc": true,
+    "git add": true,
+    "git push": true,
+    "gh": true
   },
   "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
   "chat.editing.confirmEditRequestRemoval": false,
