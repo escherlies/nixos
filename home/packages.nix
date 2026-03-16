@@ -62,6 +62,7 @@ in
 
     bun
     drawio
+    mise
   ];
 
   services.nextcloud-client.enable = true;
