@@ -175,7 +175,7 @@
           specialArgs = inputs;
           system = "x86_64-linux";
           modules = [
-            { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
+            # { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
             inputs.agenix.nixosModules.default
             ./machines/framework/configuration.nix
             ./modules/default.nix
