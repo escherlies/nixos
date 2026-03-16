@@ -17,6 +17,9 @@
 
       confirm_os_window_close = 0;
 
+      allow_remote_control = "yes";
+      listen_on = "unix:/tmp/kitty";
+
       # Use xterm-256color so less (and other TUI apps) handle keys correctly
       term = "xterm-256color";
 
