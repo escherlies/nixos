@@ -28,7 +28,7 @@ in
 
     workDir = lib.mkOption {
       type = lib.types.str;
-      default = "/home/${cfg.user}";
+      default = "/home/${cfg.user}/Developer";
       description = "Working directory for the opencode server (project root).";
     };
 
