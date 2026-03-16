@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, repoSubdir, ... }:
 
 {
   programs = {
@@ -30,7 +30,7 @@
       user=$(basename "$dir")
       id "$user" &>/dev/null || continue
       config_dir="$dir.config/nvim"
-      target="$dir/nixos/config/nvim/init.lua"
+      target="$dir/${repoSubdir}/config/nvim/init.lua"
       [ -f "$target" ] || continue
       mkdir -p "$config_dir"
       ln -sf "$target" "$config_dir/init.lua"

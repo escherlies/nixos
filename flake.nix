@@ -41,6 +41,11 @@
     }@inputs:
 
     let
+      # Relative path from $HOME to this repo checkout.
+      # Used by home-manager (mkOutOfStoreSymlink) and NixOS activation scripts
+      # to create symlinks into the working tree rather than the Nix store.
+      repoSubdir = "Developer/nixos";
+
       # System types to support.
       supportedSystems = [
         "x86_64-linux"
@@ -107,6 +112,7 @@
         };
 
         home-server = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit repoSubdir; };
           system = "x86_64-linux";
           modules = [
             inputs.disko.nixosModules.disko
@@ -120,6 +126,7 @@
         };
 
         desktop = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit repoSubdir; };
           system = "x86_64-linux";
           modules = [
             { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
@@ -137,18 +144,17 @@
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit repoSubdir; };
               home-manager.users.enrico = ./home/default.nix;
 
               # Disabled for now. Let home-manager fail so i know i had some dotfiles flying around
               # home-manager.backupFileExtension = "_bk";
-
-              # Optionally, use home-manager.extraSpecialArgs to pass
-              # arguments to home.nix
             }
           ];
         };
 
         laptop = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit repoSubdir; };
           system = "x86_64-linux";
           modules = [
             inputs.agenix.nixosModules.default
@@ -162,17 +168,17 @@
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit repoSubdir; };
               home-manager.users.enrico = ./home/default.nix;
               # home-manager.backupFileExtension = "_bk";
-
-              # Optionally, use home-manager.extraSpecialArgs to pass
-              # arguments to home.nix
             }
           ];
         };
 
         framework = nixpkgs.lib.nixosSystem {
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit repoSubdir;
+          };
           system = "x86_64-linux";
           modules = [
             # { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
@@ -190,11 +196,9 @@
             {
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit repoSubdir; };
               home-manager.users.enrico = ./home/default.nix;
               # home-manager.backupFileExtension = "_bk";
-
-              # Optionally, use home-manager.extraSpecialArgs to pass
-              # arguments to home.nix
             }
           ];
         };

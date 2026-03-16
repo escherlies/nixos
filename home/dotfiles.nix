@@ -1,13 +1,14 @@
 # Motivation
 # For stuff that frequently change, i.e. my vscode settings,
 # I just want to have normal but synced Dotfiles :)
-{ config, ... }:
+{ config, repoSubdir, ... }:
 let
   # projectRoot helper
   projectRoot =
     fromProjectRoot:
-    # This repo lives always in ~/nixos
-    config.lib.file.mkOutOfStoreSymlink ("${config.home.homeDirectory}/nixos/${fromProjectRoot}");
+    config.lib.file.mkOutOfStoreSymlink (
+      "${config.home.homeDirectory}/${repoSubdir}/${fromProjectRoot}"
+    );
 
   vscodePackage = "Code"; # Code | VSCodium
 in

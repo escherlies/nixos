@@ -460,7 +460,7 @@
   "biome.enabled": false,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "file": "/home/enrico/nixos/config/commit.md"
+      "file": "/home/enrico/Developer/nixos/config/commit.md"
     }
   ],
   "files.autoSave": "onFocusChange",
