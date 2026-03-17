@@ -63,6 +63,9 @@ in
     bun
     drawio
     mise
+    (himalaya.override {
+      withFeatures = [ "oauth2" ];
+    })
   ];
 
   services.nextcloud-client.enable = true;

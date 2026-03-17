@@ -26,6 +26,9 @@ in
     force = true;
   };
 
+  # Himalaya
+  home.file.".config/himalaya/config.toml".source = projectRoot "config/himalaya/config.toml";
+
   # Kitty (additional)
   home.file.".config/kitty/dark-theme.auto.conf".source =
     projectRoot "config/kitty/dark-theme.auto.conf";
