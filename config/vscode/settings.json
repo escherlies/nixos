@@ -481,7 +481,7 @@
   "nix.enableLanguageServer": true,
   "gitlens.ai.model": "vscode",
   "gitlens.ai.vscode.model": "copilot:gpt-4.1",
-  "chat.agent.maxRequests": 50,
+  "chat.agent.maxRequests": 100,
   "chat.mcp.gallery.enabled": true,
   "chat.checkpoints.showFileChanges": true,
   "[html]": {
@@ -506,7 +506,9 @@
     "git add": true,
     "git push": true,
     "gh": true,
-    "npx elm": true
+    "npx elm": true,
+    "openpencil": true,
+    "git commit": true
   },
   "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
   "chat.editing.confirmEditRequestRemoval": false,
@@ -545,7 +547,6 @@
       "approveResponse": true
     }
   },
-  "diffEditor.hideUnchangedRegions.enabled": true,
   "editor.tokenColorCustomizations": {
     "[Moonspell - Lavender]": {
       "textMateRules": [
@@ -657,5 +658,5 @@
   "chat.tools.terminal.terminalProfile.linux": {
     "path": "bash"
   },
-  "workbench.preferredLightColorTheme": "NetBeans Light Theme"
+  "diffEditor.hideUnchangedRegions.enabled": true
 }
