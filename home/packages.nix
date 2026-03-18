@@ -66,6 +66,7 @@ in
     (himalaya.override {
       withFeatures = [ "oauth2" ];
     })
+    ffmpeg
   ];
 
   services.nextcloud-client.enable = true;
