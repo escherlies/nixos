@@ -67,6 +67,8 @@ in
       withFeatures = [ "oauth2" ];
     })
     ffmpeg
+    broot
+    viu
   ];
 
   services.nextcloud-client.enable = true;
