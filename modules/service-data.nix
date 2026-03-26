@@ -15,6 +15,11 @@
       ip = config.machines.home-server.ipv4;
       dns = "grafana.lan";
     };
+    blocky = {
+      ip = config.machines.home-server.ipv4;
+      dns = "blocky.lan";
+    };
+
     ollama = {
       ip = config.machines.desktop.ipv4;
       dns = "ollama.lan";

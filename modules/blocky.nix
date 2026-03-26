@@ -90,4 +90,10 @@ in
   # Open dns ports in firewall
   networking.firewall.allowedUDPPorts = [ 53 ];
   networking.firewall.allowedTCPPorts = [ 53 ];
+
+  # Use reverse proxy with internal TLS issuer for Blocky API
+  services.caddy.virtualHosts."${config.network.services.blocky.dns}".extraConfig = ''
+    tls internal
+    reverse_proxy 127.0.0.1:${toString config.services.blocky.settings.ports.http}
+  '';
 }
