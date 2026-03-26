@@ -44,3 +44,49 @@ message.send.backend.auth.redirect-host = "localhost"
 message.send.backend.auth.redirect-port = 9091
 message.send.backend.auth.access-token.keyring = "himalaya-work-smtp-access-token"
 message.send.backend.auth.refresh-token.keyring = "himalaya-work-smtp-refresh-token"
+
+[accounts.binaryplease]
+email = "enrico@binaryplease.com"
+display-name = "Enrico Scherlies"
+
+# Folder aliases (Exchange uses different names)
+folder.aliases.sent = "Sent Items"
+folder.aliases.drafts = "Drafts"
+folder.aliases.trash = "Deleted Items"
+folder.aliases.junk = "Junk Email"
+
+# Reading (IMAP with OAuth2)
+backend.type = "imap"
+backend.host = "outlook.office365.com"
+backend.port = 993
+backend.encryption.type = "tls"
+backend.login = "enrico@binaryplease.com"
+backend.auth.type = "oauth2"
+backend.auth.method = "xoauth2"
+backend.auth.client-id = "9e5f94bc-e8a4-4e73-b8be-63364c29d753"
+backend.auth.auth-url = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+backend.auth.token-url = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+backend.auth.pkce = true
+backend.auth.scopes = ["https://outlook.office.com/IMAP.AccessAsUser.All", "https://outlook.office.com/SMTP.Send", "offline_access"]
+backend.auth.redirect-host = "localhost"
+backend.auth.redirect-port = 9092
+backend.auth.access-token.keyring = "himalaya-binaryplease-imap-access-token"
+backend.auth.refresh-token.keyring = "himalaya-binaryplease-imap-refresh-token"
+
+# Sending (SMTP with OAuth2)
+message.send.backend.type = "smtp"
+message.send.backend.host = "smtp.office365.com"
+message.send.backend.port = 587
+message.send.backend.encryption.type = "start-tls"
+message.send.backend.login = "enrico@binaryplease.com"
+message.send.backend.auth.type = "oauth2"
+message.send.backend.auth.method = "xoauth2"
+message.send.backend.auth.client-id = "9e5f94bc-e8a4-4e73-b8be-63364c29d753"
+message.send.backend.auth.auth-url = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+message.send.backend.auth.token-url = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+message.send.backend.auth.pkce = true
+message.send.backend.auth.scopes = ["https://outlook.office.com/IMAP.AccessAsUser.All", "https://outlook.office.com/SMTP.Send", "offline_access"]
+message.send.backend.auth.redirect-host = "localhost"
+message.send.backend.auth.redirect-port = 9093
+message.send.backend.auth.access-token.keyring = "himalaya-binaryplease-smtp-access-token"
+message.send.backend.auth.refresh-token.keyring = "himalaya-binaryplease-smtp-refresh-token"
