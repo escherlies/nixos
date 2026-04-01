@@ -69,6 +69,7 @@ in
     ffmpeg
     broot
     viu
+    serie
   ];
 
   services.nextcloud-client.enable = true;

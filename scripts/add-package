@@ -38,10 +38,10 @@ for pkg in "$@"; do
   fi
 done
 
-# --- Rebuild test ---
+# --- Rebuild ---
 
 echo ""
-echo "Running: sudo nixos-rebuild test --flake $NIXOS_DIR#$HOST"
+echo "Running: sudo nixos-rebuild --flake $NIXOS_DIR#$HOST"
 echo ""
 
-sudo nixos-rebuild test --flake "$NIXOS_DIR#$HOST"
+sudo nixos-rebuild --flake "$NIXOS_DIR#$HOST"
