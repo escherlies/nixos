@@ -51,7 +51,7 @@ in
     vlc
 
     # Needs networking.firewall.checkReversePath = "loose";
-    protonvpn-gui
+    proton-vpn
 
     deja-dup
     mongodb-compass

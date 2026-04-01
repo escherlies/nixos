@@ -15,10 +15,7 @@
       user.name = "Enrico Scherlies";
       user.email = "e.scherlies@pm.me";
       init.defaultBranch = "main";
-    };
-
-    aliases = {
-      graph = "log --graph --oneline --all --decorate";
+      alias.graph = "log --graph --oneline --all --decorate";
     };
 
     lfs.enable = true;
