@@ -16,7 +16,6 @@
     ../../modules/desktops/gnome.nix
     ../../modules/ollama.nix
     ../../modules/webui.nix
-    ../../modules/opencode.nix
     ../../configs/ai-agents.nix
     ../../modules/machines.nix
 
@@ -118,19 +117,6 @@
   # Enable Caddy for reverse proxy
   services.caddy.enable = true;
 
-  # Enable OpenCode server + web UI
-  services.opencode.enable = true;
-  services.opencode.caddy.enable = true;
-  services.opencode.caddy.dns = config.network.services.opencode-desktop.dns;
-  services.opencode.environmentFile = config.age.secrets.opencode-env.path;
-
-  age.secrets.opencode-env = {
-    file = ../../secrets/opencode.env.age;
-    owner = config.services.opencode.user;
-    group = config.services.opencode.group;
-    mode = "0400";
-  };
-
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
     80
@@ -203,7 +189,4 @@
 
   services.hardware.openrgb.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    opencode
-  ];
 }
