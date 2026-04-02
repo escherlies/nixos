@@ -171,19 +171,6 @@
   # Enable Caddy for reverse proxy
   services.caddy.enable = true;
 
-  # Enable OpenCode server + web UI
-  services.opencode.enable = true;
-  services.opencode.caddy.enable = true;
-  services.opencode.caddy.dns = config.network.services.opencode-framework.dns;
-  services.opencode.environmentFile = config.age.secrets.opencode-env.path;
-
-  age.secrets.opencode-env = {
-    file = ../../secrets/opencode.env.age;
-    owner = config.services.opencode.user;
-    group = config.services.opencode.group;
-    mode = "0400";
-  };
-
   # For fingerprint support
   # To enroll prints: `sudo fprintd-enroll <username>`
   services.fprintd.enable = true;

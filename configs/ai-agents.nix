@@ -5,7 +5,6 @@
     crush
     aichat
     claude-code
-    opencode
     gemini-cli
     file
   ];
