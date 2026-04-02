@@ -35,6 +35,7 @@
     keybindings = {
       "ctrl+shift+enter" = "launch --cwd=current";
       "ctrl+shift+t" = "launch --type=tab --cwd=~/Developer";
+      "ctrl+shift+n" = "launch --type=os-window --cwd=~/Developer";
     };
   };
 
