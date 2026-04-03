@@ -189,4 +189,5 @@
 
   services.hardware.openrgb.enable = true;
 
+  programs.nix-ld.enable = true;
 }
