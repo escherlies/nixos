@@ -36,4 +36,7 @@ in
   "wg-framework.key.age".publicKeys = framework;
   "wg-laptop.key.age".publicKeys = [ laptop ];
 
+  # ProtonVPN WireGuard private key — only home-server needs it
+  "protonvpn.key.age".publicKeys = [ home-server ];
+
 }

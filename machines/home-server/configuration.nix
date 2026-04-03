@@ -6,6 +6,7 @@
     ../../modules/blocky.nix
     ../../modules/monitoring.nix
     ../../modules/machines.nix
+    ../../modules/protonvpn.nix
   ];
 
   boot.loader.grub = {
@@ -52,8 +53,35 @@
   # Enable Caddy for reverse proxy
   services.caddy.enable = true;
 
-  # Enable WireGuard VPN
+  # Enable WireGuard VPN mesh
   vpn.enable = true;
+
+  # ProtonVPN gateway — routes all LAN traffic through ProtonVPN
+  # To enable:
+  # 1. Go to https://account.protonvpn.com/ > Downloads > WireGuard > Platform: Router
+  # 2. Generate a config and extract the values below
+  # 3. Create the secret:
+  #    echo "YOUR_PRIVATE_KEY" | ragenix -e secrets/protonvpn.key.age
+  # 4. Fill in address, publicKey, and endpoint below, set enable = true
+  # 5. On Fritz.Box: set home-server (192.168.178.134) as the default gateway
+  #    for LAN devices (Network > Network Settings > IPv4 Routes)
+  protonvpn = {
+    enable = false; # Set to true after completing steps above
+    privateKeyFile = config.age.secrets.protonvpn.path;
+    address = "CHANGE_ME"; # e.g. "10.2.0.2/32" — from ProtonVPN config [Interface] Address
+    peer = {
+      publicKey = "CHANGE_ME"; # from ProtonVPN config [Peer] PublicKey
+      endpoint = "0.0.0.0:51820"; # e.g. "185.159.158.1:51820" — from ProtonVPN config [Peer] Endpoint
+    };
+    lanInterface = "eno1";
+    lanSubnet = "192.168.178.0/24";
+  };
+
+  # Uncomment when protonvpn.enable = true
+  # age.secrets.protonvpn = {
+  #   file = ../../secrets/protonvpn.key.age;
+  #   mode = "0400";
+  # };
 
   networking.firewall.allowedTCPPorts = [
     80
