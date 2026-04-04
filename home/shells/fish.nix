@@ -16,6 +16,10 @@ in
     '';
 
     interactiveShellInit = ''
+      if test "$PWD" = "$HOME"
+        cd ~/Developer
+      end
+
       # Enable starship transient prompt, but not in VSCode (shell integration conflict)
       if test "$TERM_PROGRAM" != "vscode"
         function starship_transient_prompt_func
