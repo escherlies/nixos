@@ -89,6 +89,7 @@
   users.users.enrico = {
     isNormalUser = true;
     description = "enrico";
+    shell = pkgs.fish;
     extraGroups = [
       "networkmanager"
       "wheel"
