@@ -70,6 +70,7 @@ in
     broot
     viu
     serie
+    gitui
   ];
 
   services.nextcloud-client.enable = true;
