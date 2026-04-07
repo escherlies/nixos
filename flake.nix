@@ -147,8 +147,7 @@
               home-manager.extraSpecialArgs = { inherit repoSubdir; };
               home-manager.users.enrico = ./home/default.nix;
 
-              # Disabled for now. Let home-manager fail so i know i had some dotfiles flying around
-              # home-manager.backupFileExtension = "_bk";
+              home-manager.backupFileExtension = "_bk";
             }
           ];
         };
@@ -170,7 +169,7 @@
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit repoSubdir; };
               home-manager.users.enrico = ./home/default.nix;
-              # home-manager.backupFileExtension = "_bk";
+              home-manager.backupFileExtension = "_bk";
             }
           ];
         };
@@ -199,7 +198,7 @@
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit repoSubdir; };
               home-manager.users.enrico = ./home/default.nix;
-              # home-manager.backupFileExtension = "_bk";
+              home-manager.backupFileExtension = "_bk";
             }
           ];
         };
