@@ -27,5 +27,5 @@
     };
   };
 
-  programs.difftastic.enable = false;
+  programs.difftastic.enable = true;
 }
