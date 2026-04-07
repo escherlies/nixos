@@ -35,4 +35,7 @@ in
   home.file.".config/kitty/light-theme.auto.conf".source =
     projectRoot "config/kitty/light-theme.auto.conf";
 
+  # MIME type associations (bidirectional -- editable from ~/.config or the repo)
+  home.file.".config/mimeapps.list".source = projectRoot "config/mimeapps.list";
+
 }
