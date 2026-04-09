@@ -1,4 +1,3 @@
-
 [Default Applications]
 text/html=brave-browser.desktop
 x-scheme-handler/http=brave-browser.desktop
@@ -37,3 +36,7 @@ text/css=dev.zed.Zed.desktop;zed.desktop
 text/x-sql=dev.zed.Zed.desktop;zed.desktop
 application/x-yaml=dev.zed.Zed.desktop;zed.desktop
 text/x-yaml=dev.zed.Zed.desktop;zed.desktop
+application/x-zerosize=dev.zed.Zed.desktop
+
+[Added Associations]
+application/x-zerosize=dev.zed.Zed.desktop;
