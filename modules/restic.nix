@@ -58,8 +58,15 @@ in
       # RESTIC_REPOSITORY, RESTIC_PASSWORD, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
       environmentFile = config.age.secrets.restic-env.path;
 
+      # Find files in Downloads larger than 1GB and write them to a temporary exclude file
+      # Ignore find errors if files are moved/deleted during the run
+      backupPrepareCommand = ''
+        ${pkgs.findutils}/bin/find /home/enrico/Downloads -type f -size +1G > /run/restic-large-downloads.exclude || true
+      '';
+
       extraBackupArgs = [
         "--exclude-file=${../config/restic-excludes}"
+        "--exclude-file=/run/restic-large-downloads.exclude"
         "--exclude-caches"
         "--one-file-system"
       ];

@@ -66,6 +66,7 @@
 .cache/spago-nodejs
 .cache/elm
 .elm
+**/elm-stuff
 
 
 # =============================================================================
@@ -80,6 +81,8 @@
 **/.parcel-cache
 **/.turbo
 **/.angular
+**/.astro
+**/.vinxi
 
 
 # =============================================================================
@@ -199,6 +202,9 @@ core
 # Steam games (re-downloadable; save files are in Steam Cloud)
 .local/share/Steam
 
+# Videos and Movies
+Videos/Movies
+
 # Flatpak
 .local/share/flatpak
 .var/app/*/cache
@@ -225,9 +231,13 @@ core
 
 
 # =============================================================================
-# 10. NEXTCLOUD CLIENT METADATA (synced files ARE backed up)
+# 10. NEXTCLOUD CLIENT METADATA AND SYNCED FILES
 # =============================================================================
 
+# Exclude entire Nextcloud directory
+Nextcloud
+
+# Exclude client metadata
 .local/share/Nextcloud
 **/.sync_*.db
 **/.sync_*.db-shm
