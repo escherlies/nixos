@@ -28,6 +28,9 @@
   # Enable WireGuard VPN
   vpn.enable = true;
 
+  # Enable restic backup to S3
+  services.restic-backup.enable = true;
+
   hardware.amdgpu.opencl.enable = true;
 
   # Bootloader.

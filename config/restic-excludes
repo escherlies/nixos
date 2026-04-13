@@ -1,0 +1,235 @@
+# =============================================================================
+# Restic exclude patterns — developer workstation home directory
+#
+# Used by the restic module (modules/restic.nix) via --exclude-file.
+# The backup also uses --exclude-caches to honor CACHEDIR.TAG files.
+#
+# Strategy: back up everything, exclude only reproducible garbage.
+# When in doubt, keep it — disk is cheap, lost data is not.
+# =============================================================================
+
+
+# =============================================================================
+# 1. PACKAGE MANAGER CACHES AND ARTIFACTS
+# =============================================================================
+
+# Node.js — fully reproducible from lockfiles
+**/node_modules
+
+# Bun global install cache
+.bun/install/cache
+
+# npm/yarn/pnpm caches
+.npm/_cacache
+.cache/yarn
+.cache/pnpm
+.local/share/pnpm/store
+
+# Nix / direnv — symlinks into /nix/store
+**/.direnv
+**/result
+**/result-*
+.cache/nix
+.cache/nix-index
+.nix-defexpr
+.nix-profile
+
+# Python
+.cache/pip
+.cache/uv
+.local/lib/python*
+**/.venv
+**/venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+
+# Go
+.cache/go-build
+.cache/goimports
+.cache/gopls
+
+# Rust
+.cargo/registry
+.cargo/git
+**/target/debug
+**/target/release
+
+# Deno
+.cache/deno
+.deno
+
+# Elm, misc
+.cache/biome
+.cache/spago-nodejs
+.cache/elm
+.elm
+
+
+# =============================================================================
+# 2. BUILD OUTPUT DIRECTORIES
+# =============================================================================
+
+**/dist
+**/.next
+**/.nuxt
+**/.output
+**/.svelte-kit
+**/.parcel-cache
+**/.turbo
+**/.angular
+
+
+# =============================================================================
+# 3. CONTAINER AND VM DATA
+# =============================================================================
+
+# Rootless docker/podman
+.local/share/docker
+.local/share/containers
+
+# libvirt/qemu VM disk images
+.local/share/libvirt
+.config/libvirt/qemu/log
+
+VirtualBox VMs
+
+
+# =============================================================================
+# 4. BROWSER CACHES (profiles/bookmarks are kept)
+# =============================================================================
+
+.cache/BraveSoftware
+.cache/chromium
+.cache/mozilla
+.mozilla/firefox/*/cache2
+.mozilla/firefox/*/minidumps
+.mozilla/firefox/*/startupCache
+.cache/thunderbird
+.cache/epiphany
+
+
+# =============================================================================
+# 5. SYSTEM AND APPLICATION CACHES
+# =============================================================================
+
+# GNOME / GTK
+.cache/thumbnails
+.cache/gnome-calculator
+.cache/gnome-desktop-thumbnailer
+.cache/tracker3
+.cache/gstreamer-1.0
+.cache/gtk-4.0
+.cache/glycin
+.cache/shumate
+.cache/yelp
+.local/share/gvfs-metadata
+.local/share/recently-used.xbel
+
+# GPU shader caches
+.cache/mesa_shader_cache
+.cache/mesa_shader_cache_db
+.cache/qtshadercache*
+.cache/radv_builtin_shaders
+.nv
+
+# Electron
+.cache/electron
+.cache/electron-builder
+
+# VS Code
+.config/Code/CachedData
+.config/Code/CachedExtensions
+.config/Code/logs
+.config/Code/User/workspaceStorage
+
+# Font / input / misc app caches
+.cache/fontconfig
+.cache/ibus
+.cache/matplotlib
+.cache/obexd
+.cache/evolution
+.cache/folks
+.cache/libgweather
+.cache/media-art
+.cache/tealdeer
+.cache/org.gnome.NautilusPreviewer
+
+
+# =============================================================================
+# 6. TRASH
+# =============================================================================
+
+.local/share/Trash
+
+
+# =============================================================================
+# 7. TEMPORARY AND LOG FILES
+# =============================================================================
+
+core
+**/*.core
+**/*.swp
+**/*.swo
+**/*~
+**/.*.swp
+**/*.tsbuildinfo
+**/.DS_Store
+**/.Thumbs.db
+.xsession-errors
+.Xauthority
+.ICEauthority
+
+
+# =============================================================================
+# 8. LARGE REPRODUCIBLE / RE-DOWNLOADABLE DATA
+# =============================================================================
+
+# Ollama models — `ollama pull` restores
+.ollama/models
+
+# Hugging Face model cache
+.cache/huggingface
+
+# Playwright browser binaries
+.cache/ms-playwright
+
+# Steam games (re-downloadable; save files are in Steam Cloud)
+.local/share/Steam
+
+# Flatpak
+.local/share/flatpak
+.var/app/*/cache
+
+# Proton compatibility layer
+.cache/Proton
+
+# AI tool caches
+.cache/claude-cli-nodejs
+.cache/opencode
+
+
+# =============================================================================
+# 9. NIX-SPECIFIC REPRODUCIBLE PATHS
+# =============================================================================
+
+# Nix profile generations (symlinks to /nix/store)
+.local/state/nix
+.local/state/home-manager
+
+# mise tool versions (re-installable)
+.cache/mise
+.local/share/mise
+
+
+# =============================================================================
+# 10. NEXTCLOUD CLIENT METADATA (synced files ARE backed up)
+# =============================================================================
+
+.local/share/Nextcloud
+**/.sync_*.db
+**/.sync_*.db-shm
+**/.sync_*.db-wal
+**/.owncloudsync.log

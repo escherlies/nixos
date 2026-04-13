@@ -29,6 +29,9 @@ in
     desktop
   ];
 
+  # Restic backup credentials (S3 + repo password)
+  "restic.env.age".publicKeys = framework;
+
   # WireGuard private keys — each machine can only decrypt its own key
   "wg-vpn-gateway.key.age".publicKeys = [ vpn-gateway ];
   "wg-home-server.key.age".publicKeys = [ home-server ];

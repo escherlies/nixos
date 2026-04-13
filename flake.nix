@@ -191,6 +191,7 @@
             ./modules/wireguard.nix
             ./modules/opencode.nix
             ./modules/caddy-pki.nix
+            ./modules/restic.nix
 
             home-manager.nixosModules.home-manager
             {
