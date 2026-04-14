@@ -192,6 +192,19 @@
   environment.systemPackages = with pkgs; [
     uv
     mpi
+    framework-tool
   ];
+
+  # Persist Framework battery charge limit (e.g. 80%)
+  systemd.services.framework-charge-limit = {
+    description = "Set Framework battery charge limit";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.framework-tool}/bin/framework_tool --charge-limit 80";
+    };
+  };
+
   programs.nix-ld.enable = true;
 }
