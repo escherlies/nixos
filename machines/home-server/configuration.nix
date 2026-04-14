@@ -34,10 +34,7 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILIsi0Q1fnYWAmJwPT/FeNqShZgn4z/23APCpazZmTcQ enrico@framework"
   ];
 
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-  };
+  # helix is provided by modules/editors/helix.nix (via modules/default.nix)
 
   # Wake-on-LAN: allows waking desktop from remote machines via VPN
   environment.systemPackages = [ pkgs.wakeonlan ];

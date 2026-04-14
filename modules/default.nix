@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
-    ./editors/nvim.nix
+    ./editors/helix.nix
     ./ssh.nix
     ./server-metadata.nix
     ./service-data.nix
@@ -25,7 +25,7 @@
   environment.systemPackages = with pkgs; [
     # Core utilities
     fish
-    # neovim is configured via programs.neovim in editors/nvim.nix
+    # helix is configured via editors/helix.nix
     git
 
     # Documentation & system info

@@ -56,7 +56,7 @@ in
 
       o = "open";
       q = "exit";
-      v = "nvim";
+      v = "hx";
     };
 
     shellAliases = rec {
