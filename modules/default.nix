@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
-    ./editors/helix.nix
+    ./editors/micro.nix
     ./ssh.nix
     ./server-metadata.nix
     ./service-data.nix
@@ -25,7 +25,7 @@
   environment.systemPackages = with pkgs; [
     # Core utilities
     fish
-    # helix is configured via editors/helix.nix
+    # micro is configured via editors/micro.nix
     git
 
     # Documentation & system info
