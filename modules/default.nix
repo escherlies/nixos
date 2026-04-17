@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
-    ./editors/micro.nix
+    ./editors/fresh.nix
     ./ssh.nix
     ./server-metadata.nix
     ./service-data.nix
@@ -25,7 +25,7 @@
   environment.systemPackages = with pkgs; [
     # Core utilities
     fish
-    # micro is configured via editors/micro.nix
+    # fresh is configured via editors/fresh.nix
     git
 
     # Documentation & system info

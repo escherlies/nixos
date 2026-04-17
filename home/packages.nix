@@ -41,8 +41,6 @@ in
     yt-dlp # Command-line tool to download videos from YouTube.com and other sites (youtube-dl fork)
     scdl # Download Music from Soundcloud
 
-    micro
-
     tor-browser
     gh
     biome

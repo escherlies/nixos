@@ -30,6 +30,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    fresh = {
+      url = "github:sinelaw/fresh";
+    };
+
   };
 
   outputs =
@@ -112,7 +116,7 @@
         };
 
         home-server = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit repoSubdir; };
+          specialArgs = { inherit inputs repoSubdir; };
           system = "x86_64-linux";
           modules = [
             inputs.disko.nixosModules.disko
@@ -126,7 +130,7 @@
         };
 
         desktop = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit repoSubdir; };
+          specialArgs = { inherit inputs repoSubdir; };
           system = "x86_64-linux";
           modules = [
             { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
@@ -153,7 +157,7 @@
         };
 
         laptop = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit repoSubdir; };
+          specialArgs = { inherit inputs repoSubdir; };
           system = "x86_64-linux";
           modules = [
             inputs.agenix.nixosModules.default
@@ -176,7 +180,7 @@
 
         framework = nixpkgs.lib.nixosSystem {
           specialArgs = inputs // {
-            inherit repoSubdir;
+            inherit inputs repoSubdir;
           };
           system = "x86_64-linux";
           modules = [
