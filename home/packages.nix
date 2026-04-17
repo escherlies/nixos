@@ -64,7 +64,6 @@ in
     (himalaya.override {
       withFeatures = [ "oauth2" ];
     })
-    matrix-commander-rs
     ffmpeg
     broot
     viu
