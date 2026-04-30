@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Restore a path from the latest restic backup (restic-backups-home).
+#
+# Usage:
+#   restic-restore <path> [snapshot-id]
+#   restic-restore --list [N]              # list latest N snapshots (default 5)
+#   restic-restore --dry-run <path> [id]   # preview without writing
+#
+# Examples:
+#   restic-restore ~/.local/share/nightshift
+#   restic-restore --dry-run /home/enrico/Documents
+#   restic-restore ~/notes abc12345
+
+RESTIC_BIN="$(systemctl cat restic-backups-home.service 2>/dev/null \
+  | grep -oE '/nix/store/[^ ]+/bin/restic' | head -1)"
+RESTIC_BIN="${RESTIC_BIN:-restic}"
+ENV_FILE="/run/agenix/restic-env"
+CACHE_DIR="/var/cache/restic-backups-home"
+
+if [[ $EUID -ne 0 ]]; then
+  exec sudo -E "$0" "$@"
+fi
+
+if [[ ! -r "$ENV_FILE" ]]; then
+  echo "error: cannot read $ENV_FILE" >&2
+  exit 1
+fi
+
+set -a
+# shellcheck disable=SC1090
+. "$ENV_FILE"
+set +a
+export RESTIC_CACHE_DIR="$CACHE_DIR"
+
+run_restic() { "$RESTIC_BIN" "$@"; }
+
+if [[ "${1:-}" == "--list" ]]; then
+  n="${2:-5}"
+  run_restic snapshots --latest "$n"
+  exit 0
+fi
+
+dry_run=0
+if [[ "${1:-}" == "--dry-run" ]]; then
+  dry_run=1
+  shift
+fi
+
+if [[ $# -lt 1 ]]; then
+  sed -n '3,20p' "$0"
+  exit 1
+fi
+
+target_path="$1"
+snapshot="${2:-latest}"
+
+# Resolve to absolute path without requiring it to exist
+case "$target_path" in
+  /*) abs="$target_path" ;;
+  *)  abs="$(realpath -m "$target_path")" ;;
+esac
+
+echo "restic:    $RESTIC_BIN"
+echo "snapshot:  $snapshot"
+echo "include:   $abs"
+echo "target:    /  (restoring to original absolute paths)"
+[[ $dry_run -eq 1 ]] && echo "mode:      DRY RUN"
+echo
+
+args=(restore "$snapshot" --target / --include "$abs")
+[[ $dry_run -eq 1 ]] && args+=(--dry-run --verbose)
+
+run_restic "${args[@]}"
