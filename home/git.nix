@@ -8,6 +8,7 @@
       ".notes"
       "**/__ignore__*"
       ".claude"
+      ".playwright-cli/"
 
     ];
 
