@@ -36,8 +36,8 @@
       "ctrl+shift+enter" = "launch --cwd=current";
       "ctrl+shift+t" = "launch --type=tab --cwd=~/Developer";
       "ctrl+shift+n" = "launch --type=os-window --cwd=~/Developer";
-      "ctrl+shift+equal" = "change_font_size current +2.0";
-      "ctrl+shift+minus" = "change_font_size current -2.0";
+      "ctrl+shift+equal" = "change_font_size current +1.0";
+      "ctrl+shift+minus" = "change_font_size current -1.0";
       "ctrl+shift+0" = "change_font_size current 0";
     };
   };
