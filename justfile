@@ -10,6 +10,9 @@ rebuild-framework:
 rebuild-desktop:
     nixos-rebuild switch --flake .#desktop --target-host root@192.168.178.87
 
+boot-desktop:
+    nixos-rebuild boot --flake .#desktop --target-host root@192.168.178.87
+
 rebuild-home-server:
     nixos-rebuild switch --flake .#home-server --target-host root@192.168.178.134
 
