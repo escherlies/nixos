@@ -62,7 +62,7 @@ in
     drawio
     mise
     (himalaya.override {
-      withFeatures = [ "oauth2" ];
+      buildFeatures = [ "oauth2" ];
     })
     ffmpeg
     broot
