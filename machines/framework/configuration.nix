@@ -109,7 +109,7 @@
       "docker"
       "dialout" # Needed for serial access to devices like Arduino
       "keyd"
-
+      "input"
     ];
     packages = [
       #  thunderbird
