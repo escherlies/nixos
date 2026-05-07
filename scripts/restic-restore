@@ -7,10 +7,14 @@ set -euo pipefail
 #   restic-restore <path> [snapshot-id]
 #   restic-restore --list [N]              # list latest N snapshots (default 5)
 #   restic-restore --dry-run <path> [id]   # preview without writing
+#   restic-restore --merge <path> [id]     # merge with current state
+#                                          # (only adds missing files;
+#                                          # current files are never overwritten)
 #
 # Examples:
 #   restic-restore ~/.local/share/nightshift
 #   restic-restore --dry-run /home/enrico/Documents
+#   restic-restore --merge ~/.local/share/nightshift
 #   restic-restore ~/notes abc12345
 
 RESTIC_BIN="$(systemctl cat restic-backups-home.service 2>/dev/null \
@@ -43,13 +47,17 @@ if [[ "${1:-}" == "--list" ]]; then
 fi
 
 dry_run=0
+merge=0
 if [[ "${1:-}" == "--dry-run" ]]; then
   dry_run=1
+  shift
+elif [[ "${1:-}" == "--merge" ]]; then
+  merge=1
   shift
 fi
 
 if [[ $# -lt 1 ]]; then
-  sed -n '3,20p' "$0"
+  sed -n '3,24p' "$0"
   exit 1
 fi
 
@@ -61,6 +69,38 @@ case "$target_path" in
   /*) abs="$target_path" ;;
   *)  abs="$(realpath -m "$target_path")" ;;
 esac
+
+if [[ $merge -eq 1 ]]; then
+  staging="$(mktemp -d -t restic-restore.XXXXXX)"
+  trap 'rm -rf "$staging"' EXIT
+
+  echo "restic:    $RESTIC_BIN"
+  echo "snapshot:  $snapshot"
+  echo "include:   $abs"
+  echo "target:    $abs  (merge: --ignore-existing, current files preserved)"
+  echo "staging:   $staging"
+  echo
+
+  run_restic restore "$snapshot" --target "$staging" --include "$abs"
+
+  src="${staging}${abs}"
+  if [[ ! -e "$src" ]]; then
+    echo "error: nothing restored at $src" >&2
+    exit 1
+  fi
+
+  mkdir -p "$abs"
+  if [[ -d "$src" ]]; then
+    rsync -av --ignore-existing "$src"/ "$abs"/
+  else
+    rsync -av --ignore-existing "$src" "$abs"
+  fi
+
+  # Restore ownership to the directory's existing owner
+  owner="$(stat -c '%u:%g' "$abs")"
+  chown -R "$owner" "$abs"
+  exit 0
+fi
 
 echo "restic:    $RESTIC_BIN"
 echo "snapshot:  $snapshot"
