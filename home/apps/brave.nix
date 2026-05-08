@@ -22,6 +22,7 @@
   programs.brave.commandLineArgs = [
     "--disable-features=PasswordManagerOnboarding"
     "--disable-features=AutofillEnableAccountWalletStorage"
+    "--enable-features=TouchpadOverscrollHistoryNavigation"
   ];
 
   programs.chromium.enable = true;
