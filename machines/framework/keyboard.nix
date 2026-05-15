@@ -44,6 +44,27 @@
           }
           // common;
         };
+
+        dz60 = {
+          ids = [ "445a:2260" ];
+          settings = {
+            main = {
+              capslock = "overload(nav, backspace)";
+              leftalt = "leftcontrol";
+              leftcontrol = "leftmeta";
+              leftmeta = "leftalt";
+              rightcontrol = "rightalt";
+            };
+
+            nav = {
+              h = "left";
+              j = "down";
+              k = "up";
+              l = "right";
+            };
+          }
+          // common;
+        };
       };
     };
 }
