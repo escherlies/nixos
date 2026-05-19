@@ -69,6 +69,7 @@ in
     viu
     serie
     gitui
+    blender
   ];
 
   services.nextcloud-client.enable = true;
