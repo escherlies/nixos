@@ -145,6 +145,7 @@
     80
     443
     1234
+    5173
   ];
 
   # This value determines the NixOS release from which the default
