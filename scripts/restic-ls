@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# List files inside a restic snapshot (restic-backups-home).
+#
+# Usage:
+#   restic-ls [snapshot] [path...]
+#   restic-ls latest
+#   restic-ls latest /home/enrico/Documents
+#   restic-ls abc12345 /home/enrico/.config/nvim
+#
+# Defaults to the latest snapshot with no path filter.
+
+RESTIC_BIN="$(systemctl cat restic-backups-home.service 2>/dev/null \
+  | grep -oE '/nix/store/[^ ]+/bin/restic' | head -1)"
+RESTIC_BIN="${RESTIC_BIN:-restic}"
+ENV_FILE="/run/agenix/restic-env"
+CACHE_DIR="/var/cache/restic-backups-home"
+
+if [[ $EUID -ne 0 ]]; then
+  exec sudo -E "$0" "$@"
+fi
+
+if [[ ! -r "$ENV_FILE" ]]; then
+  echo "error: cannot read $ENV_FILE" >&2
+  exit 1
+fi
+
+set -a
+# shellcheck disable=SC1090
+. "$ENV_FILE"
+set +a
+export RESTIC_CACHE_DIR="$CACHE_DIR"
+
+snapshot="${1:-latest}"
+shift || true
+
+"$RESTIC_BIN" ls "$snapshot" "$@"

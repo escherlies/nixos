@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Mount a restic backup as a FUSE filesystem for browsing (restic-backups-home).
+#
+# Usage:
+#   restic-mount [mountpoint]
+#
+# Defaults to /mnt/restic. Snapshots appear under <mountpoint>/snapshots/.
+# Press Ctrl-C to unmount and exit.
+#
+# Examples:
+#   restic-mount
+#   restic-mount /tmp/backup
+#   # then: ls /mnt/restic/snapshots/latest/home/enrico/
+
+RESTIC_BIN="$(systemctl cat restic-backups-home.service 2>/dev/null \
+  | grep -oE '/nix/store/[^ ]+/bin/restic' | head -1)"
+RESTIC_BIN="${RESTIC_BIN:-restic}"
+ENV_FILE="/run/agenix/restic-env"
+CACHE_DIR="/var/cache/restic-backups-home"
+
+if [[ $EUID -ne 0 ]]; then
+  exec sudo -E "$0" "$@"
+fi
+
+if [[ ! -r "$ENV_FILE" ]]; then
+  echo "error: cannot read $ENV_FILE" >&2
+  exit 1
+fi
+
+set -a
+# shellcheck disable=SC1090
+. "$ENV_FILE"
+set +a
+export RESTIC_CACHE_DIR="$CACHE_DIR"
+
+mountpoint="${1:-/mnt/restic}"
+mkdir -p "$mountpoint"
+
+cleanup() {
+  echo
+  echo "unmounting $mountpoint ..."
+  fusermount -u "$mountpoint" 2>/dev/null || umount "$mountpoint" 2>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+
+echo "mounting at $mountpoint"
+echo "browse: ls $mountpoint/snapshots/latest/home/enrico/"
+echo "press Ctrl-C to unmount"
+echo
+
+"$RESTIC_BIN" mount "$mountpoint"
