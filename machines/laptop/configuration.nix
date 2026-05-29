@@ -70,6 +70,8 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  # HPLIP driver — required for HP Deskjet 2050 (uses hpcups, not rastertohp).
+  services.printing.drivers = [ pkgs.hplip ];
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -119,7 +121,7 @@
   };
 
   # Allow login with an empty password for the default user
-  security.pam.services.gdm-password.rules.auth.unix.settings.nullok = true;
+  security.pam.services.gdm-password.allowNullPassword = true;
 
   # Auto-login the default user via GDM
   services.displayManager.autoLogin = {
