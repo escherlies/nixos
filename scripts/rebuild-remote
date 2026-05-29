@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Copy this flake to a remote host via rsync and run `nixos-rebuild switch`
+# on the remote (i.e. build happens on the target, not locally).
+#
+# Usage: rebuild-remote <machine> <host>
+#
+#   <machine>  Flake attribute under nixosConfigurations (e.g. web-services)
+#   <host>     SSH target — IP or hostname. User defaults to root.
+#              Use user@host to override.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NIXOS_DIR="$(dirname "$SCRIPT_DIR")"
+
+if [ $# -ne 2 ]; then
+  echo "Usage: rebuild-remote <machine> <host>"
+  echo ""
+  echo "  <machine>  Flake attribute under nixosConfigurations"
+  echo "  <host>     SSH target — IP or hostname (root@ is assumed if no user given)"
+  exit 1
+fi
+
+MACHINE="$1"
+HOST="$2"
+
+if [[ "$HOST" != *"@"* ]]; then
+  HOST="root@$HOST"
+fi
+
+echo "🚀 Deploying $MACHINE to $HOST"
+echo ""
+
+echo "📦 Syncing $NIXOS_DIR/ -> $HOST:/etc/nixos/"
+rsync -av --chown=root:root --delete "$NIXOS_DIR/" "$HOST:/etc/nixos/"
+
+echo ""
+echo "🔧 Running nixos-rebuild switch on $HOST"
+ssh "$HOST" "nixos-rebuild switch --flake /etc/nixos/#$MACHINE"
+
+echo ""
+echo "✅ Done."
