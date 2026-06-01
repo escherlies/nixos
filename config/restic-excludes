@@ -107,9 +107,7 @@ VirtualBox VMs
 .cache/BraveSoftware
 .cache/chromium
 .cache/mozilla
-.mozilla/firefox/*/cache2
-.mozilla/firefox/*/minidumps
-.mozilla/firefox/*/startupCache
+.config/mozilla/firefox
 .cache/thunderbird
 .cache/epiphany
 
