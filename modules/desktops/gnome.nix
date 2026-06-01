@@ -12,6 +12,10 @@
     experimental-features=['scale-monitor-framebuffer', 'xwayland-native-scaling']
   '';
 
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-music
+  ];
+
   environment.systemPackages = with pkgs; [
     gnome-tweaks
 
@@ -24,5 +28,7 @@
 
     gnomeExtensions.tiling-shell
     gnomeExtensions.hide-minimized
+
+    kdePackages.elisa
   ];
 }
