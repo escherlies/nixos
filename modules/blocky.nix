@@ -72,6 +72,37 @@ in
         };
       };
 
+      # Ad, tracker, and malware blocking
+      blocking = {
+        denylists = {
+          # Ads, affiliates, trackers
+          ads = [
+            "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+            "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt"
+          ];
+          # Malware, phishing, scam, cryptojacking
+          malware = [
+            "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/tif.txt"
+            "https://urlhaus.abuse.ch/downloads/hostfile/"
+          ];
+        };
+        clientGroupsBlock = {
+          default = [
+            "ads"
+            "malware"
+          ];
+        };
+        blockType = "zeroIp";
+        blockTTL = "1m";
+        loading = {
+          refreshPeriod = "24h";
+          downloads = {
+            timeout = "60s";
+            attempts = 3;
+          };
+        };
+      };
+
       # Prometheus metrics
       prometheus = {
         enable = true;
