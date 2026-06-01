@@ -23,5 +23,6 @@
     gnomeExtensions.smile-complementary-extension
 
     gnomeExtensions.tiling-shell
+    gnomeExtensions.hide-minimized
   ];
 }
