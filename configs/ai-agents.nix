@@ -4,7 +4,6 @@
     qwen-code
     crush
     aichat
-    claude-code
     gemini-cli
     file
   ];
