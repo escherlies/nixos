@@ -179,13 +179,6 @@
   # For fingerprint support
   # To enroll prints: `sudo fprintd-enroll <username>`
   services.fprintd.enable = true;
-  services.wakapi.enable = true;
-  services.wakapi.settings = {
-    server.port = 3030;
-  };
-  services.wakapi.environmentFiles = [
-    (builtins.toFile "wakapi-env" "WAKAPI_PASSWORD_SALT=XWA37P924SFkMROG1dfE3VtvefbSdCl6")
-  ];
 
   programs.direnv.enable = true;
   programs.direnv.loadInNixShell = false;
