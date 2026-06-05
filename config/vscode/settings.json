@@ -658,5 +658,6 @@
   "chat.tools.terminal.terminalProfile.linux": {
     "path": "bash"
   },
-  "window.confirmSaveUntitledWorkspace": false
+  "window.confirmSaveUntitledWorkspace": false,
+  "diffEditor.hideUnchangedRegions.enabled": true
 }
