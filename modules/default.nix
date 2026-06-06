@@ -3,6 +3,7 @@
   imports = [
     ./editors/fresh.nix
     ./ssh.nix
+    ./hosts.nix
     ./server-metadata.nix
     ./service-data.nix
   ];
