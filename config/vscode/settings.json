@@ -510,7 +510,6 @@
     "openpencil": true,
     "git commit": true
   },
-  "workbench.preferredDarkColorTheme": "Moonspell - Amethyst",
   "chat.editing.confirmEditRequestRemoval": false,
   "chat.viewSessions.orientation": "stacked",
   "hediet.vscode-drawio.resizeImages": null,
