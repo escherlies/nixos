@@ -27,6 +27,7 @@
     gnomeExtensions.smile-complementary-extension
 
     gnomeExtensions.tiling-shell
+    gnomeExtensions.gtile
     gnomeExtensions.hide-minimized
 
     kdePackages.elisa
