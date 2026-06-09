@@ -77,4 +77,11 @@
 
   # Trust the local CA root certificate on all machines
   security.pki.certificateFiles = [ ../secrets/local_ca.crt ];
+
+  # Raise inotify limits so file-watching dev tools (editors, bundlers,
+  # dev servers) don't hit "ENOSPC: System limit for number of file watchers".
+  boot.kernel.sysctl = {
+    "fs.inotify.max_user_watches" = 524288;
+    "fs.inotify.max_user_instances" = 1024;
+  };
 }
