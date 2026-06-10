@@ -29,12 +29,6 @@ in
   # Himalaya
   home.file.".config/himalaya/config.toml".source = projectRoot "config/himalaya/config.toml";
 
-  # Kitty (additional)
-  home.file.".config/kitty/dark-theme.auto.conf".source =
-    projectRoot "config/kitty/dark-theme.auto.conf";
-  home.file.".config/kitty/light-theme.auto.conf".source =
-    projectRoot "config/kitty/light-theme.auto.conf";
-
   # MIME type associations (bidirectional -- editable from ~/.config or the repo)
   home.file.".config/mimeapps.list".source = projectRoot "config/mimeapps.list";
 

@@ -1,6 +1,5 @@
 {
   imports = [
-    ./terminals/kitty.nix
     ./terminals/alacritty.nix
     ./shells/zellij.nix
     ./shells/fish.nix
