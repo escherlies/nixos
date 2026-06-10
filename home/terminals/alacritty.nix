@@ -1,5 +1,5 @@
 {
-  # config,
+  config,
   pkgs,
   ...
 }:
@@ -9,9 +9,13 @@
 
     # https://alacritty.org/config-alacritty.html
     settings = {
+      # Theme is not hardcoded here: Alacritty has no native dark/light
+      # auto-switching, so the active theme is a separate file swapped at
+      # runtime by the `dark-mode` CLI. Alacritty live-reloads on the change.
       general.import = [
-        ./alacritty/clrs.toml
+        "${config.home.homeDirectory}/.config/alacritty/theme.toml"
       ];
+      general.live_config_reload = true;
 
       scrolling.history = 10000;
 
@@ -34,4 +38,7 @@
     };
   };
 
+  # Make the committed themes available for the `dark-mode` CLI to switch
+  # between (it copies the chosen one to ~/.config/alacritty/theme.toml).
+  xdg.configFile."alacritty/themes".source = ./alacritty;
 }

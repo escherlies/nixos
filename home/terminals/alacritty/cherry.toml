@@ -1,0 +1,38 @@
+# Theme: Cherry
+# Author: nullxception (https://github.com/nullxception/cherry-kde)
+# Dark color scheme ported from the previous kitty configuration
+
+# Default colors
+[colors.primary]
+background = '#1f1f2a'
+foreground = '#bdc3df'
+
+[colors.cursor]
+text   = '#1f1f2a'
+cursor = '#bdc3df'
+
+[colors.selection]
+text       = '#1f1f2a'
+background = '#bdc3df'
+
+# Normal colors
+[colors.normal]
+black   = '#43435a'
+red     = '#ff568e'
+green   = '#64de83'
+yellow  = '#efff73'
+blue    = '#73a9ff'
+magenta = '#946ff7'
+cyan    = '#62c6da'
+white   = '#dedeff'
+
+# Bright colors
+[colors.bright]
+black   = '#53536b'
+red     = '#ff69a2'
+green   = '#73de8a'
+yellow  = '#f3ff85'
+blue    = '#85b6ff'
+magenta = '#a481f7'
+cyan    = '#71c2d9'
+white   = '#ebebff'
