@@ -14,6 +14,7 @@
 
   environment.gnome.excludePackages = with pkgs; [
     gnome-music
+    gnome-console
   ];
 
   environment.systemPackages = with pkgs; [
