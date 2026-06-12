@@ -20,6 +20,13 @@
   environment.systemPackages = with pkgs; [
     gnome-tweaks
 
+    # Adds "Copy Path" to the Nautilus (Files) right-click menu.
+    # nautilus-python provides the loader; the package below drops the
+    # extension into share/nautilus-python/extensions (linked via the GNOME
+    # module's environment.pathsToLink).
+    nautilus-python
+    (callPackage ./nautilus-copypath { })
+
     gnomeExtensions.appindicator
     gnomeExtensions.clipboard-indicator
 
