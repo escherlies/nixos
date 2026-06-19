@@ -4,6 +4,7 @@
   "$HOME/.cargo/bin"
   "$HOME/Developer/exocortex/collections/enrico"
   "$HOME/Developer/exocortex/collections/exocortex"
+  "$HOME/Developer/exocortex/collections/integrations"
   "$HOME/Developer/exocortex/contrib/enrico"
   "$HOME/Developer/_scripts"
 ]
