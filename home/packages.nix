@@ -70,6 +70,7 @@ in
     serie
     gitui
     blender
+    gradia
   ];
 
   services.nextcloud-client.enable = true;
