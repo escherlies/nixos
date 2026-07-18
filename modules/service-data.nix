@@ -28,14 +28,6 @@
       ip = config.machines.desktop.ipv4;
       dns = "ai.lan";
     };
-    opencode-desktop = {
-      ip = config.machines.desktop.ipv4;
-      dns = "opencode.desktop.lan";
-    };
-    opencode-framework = {
-      ip = config.machines.framework.ipv4;
-      dns = "opencode.framework.lan";
-    };
     example = {
       ip = config.machines.home-server.ipv4;
       dns = "example.lan";

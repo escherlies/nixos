@@ -24,11 +24,6 @@ in
     laptop
   ];
 
-  # OpenCode environment (API keys)
-  "opencode.env.age".publicKeys = framework ++ [
-    desktop
-  ];
-
   # Restic backup credentials (S3 + repo password)
   "restic.env.age".publicKeys = framework ++ [desktop home-server];
 

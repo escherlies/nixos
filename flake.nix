@@ -25,11 +25,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    opencode = {
-      url = "github:anomalyco/opencode";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     fresh = {
       url = "github:sinelaw/fresh";
     };
@@ -133,7 +128,6 @@
           specialArgs = { inherit inputs repoSubdir; };
           system = "x86_64-linux";
           modules = [
-            { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
             inputs.agenix.nixosModules.default
             ./machines/desktop/configuration.nix
             ./machines/desktop/hardware-configuration.nix
@@ -184,7 +178,6 @@
           };
           system = "x86_64-linux";
           modules = [
-            # { nixpkgs.overlays = [ inputs.opencode.overlays.default ]; }
             inputs.agenix.nixosModules.default
             ./machines/framework/configuration.nix
             ./modules/default.nix
@@ -193,7 +186,6 @@
             ./modules/libvirt.nix
             ./modules/user-env.nix
             ./modules/wireguard.nix
-            ./modules/opencode.nix
             ./modules/caddy-pki.nix
             ./modules/restic.nix
 

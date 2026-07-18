@@ -212,7 +212,6 @@ Videos/Movies
 
 # AI tool caches
 .cache/claude-cli-nodejs
-.cache/opencode
 
 
 # =============================================================================
