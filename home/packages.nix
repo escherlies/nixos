@@ -52,7 +52,9 @@ in
     proton-vpn
 
     deja-dup
-    mongodb-compass
+    # Broken upstream: wrapGAppsHook fails with "wrapGAppsHookHasRunForOutput:
+    # bad array subscript" ($output unset when the hook runs).
+    # mongodb-compass
 
     wakeonlan
 

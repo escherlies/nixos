@@ -26,8 +26,12 @@
     };
 
     fresh = {
-      url = "github:sinelaw/fresh";
+      # Pinned: newer revs break at build time (build.rs can't find
+      # web-ui/shell.html). Unpin once upstream fixes it.
+      url = "github:sinelaw/fresh/a7928deb8bf6645600be61e882f3a0f165fde436";
     };
+
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
 
   };
 
@@ -179,6 +183,7 @@
           system = "x86_64-linux";
           modules = [
             inputs.agenix.nixosModules.default
+            inputs.nix-flatpak.nixosModules.nix-flatpak
             ./machines/framework/configuration.nix
             ./modules/default.nix
             ./configs/graphical.nix
@@ -188,6 +193,7 @@
             ./modules/wireguard.nix
             ./modules/caddy-pki.nix
             ./modules/restic.nix
+            ./modules/flatpak.nix
 
             home-manager.nixosModules.home-manager
             {
