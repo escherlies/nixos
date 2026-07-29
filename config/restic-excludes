@@ -240,3 +240,15 @@ Nextcloud
 **/.sync_*.db-shm
 **/.sync_*.db-wal
 **/.owncloudsync.log
+
+
+# =============================================================================
+# 11. SQLITE SHARED-MEMORY FILES
+# =============================================================================
+
+# The -shm file is a scratch index into the -wal, rebuilt automatically the
+# next time the database is opened. It is never needed to restore a database
+# (the -wal is), and it churns constantly. The databases listed in
+# services.restic-backup.sqliteDatabases are snapshotted consistently instead;
+# see modules/restic.nix.
+**/*-shm
