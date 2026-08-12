@@ -73,6 +73,11 @@ in
     gitui
     blender
     gradia
+
+    # Photography — Lightroom-style raw workflow (reads DNG natively).
+    # Uses the amdgpu OpenCL runtime enabled in machines/framework for
+    # accelerated darkroom processing.
+    darktable
   ];
 
   services.nextcloud-client.enable = true;
