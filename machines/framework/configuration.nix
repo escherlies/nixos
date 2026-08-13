@@ -188,6 +188,7 @@
     uv
     mpi
     framework-tool
+    openssl
   ];
 
   # Persist Framework battery charge limit (e.g. 80%)
