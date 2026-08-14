@@ -7,13 +7,23 @@
 # k10temp / amdgpu socket power / cros_ec fan RPM at 1 Hz, with an identical
 # 24-thread busy load held for 75 s:
 #
-#                    idle (150 s)                all-core load (75 s)
-#   profile      temp     SoC     fan       temp      SoC      fan    peak clk
-#   power-saver  50.3 C   3.9 W   0 rpm     67.1 C   20.1 W   4183    2018 MHz
-#   balanced     53.2 C   4.3 W   0 rpm     88.0 C   37.0 W   6182    4100 MHz
+#                  idle (150 s)          all-core load (75 s)
+#   profile      temp    SoC   fan     temp max   SoC    fan    avg clk
+#   power-saver  50.3 C  3.9 W  0 rpm   67.1 C   20.1 W  4183   1574 MHz
+#   balanced     53.2 C  4.3 W  0 rpm   88.0 C   37.0 W  6182   2364 MHz
+#   performance  58.6 C  5.9 W  0 rpm   93.4 C   38.0 W  6221   2516 MHz
 #
 # `balanced` lifts scaling_max_freq from 2.0 GHz to 5.16 GHz. That is the whole
-# difference: +21 C, +17 W and +2000 rpm of fan under load.
+# difference against power-saver: +21 C, +17 W and +2000 rpm of fan under load,
+# bought with +50 % average clock. A real trade, sometimes worth taking.
+#
+# `performance` is not. It shares balanced's 5.16 GHz ceiling and changes only
+# the governor and EPP (both to `performance`), and on this chassis that buys
+# **+6.4 % average clock for +6 C, +4 W and ~1000 rpm more fan**. The single
+# heatpipe is already saturated at balanced, so the extra power leaves as heat
+# and noise rather than as work. It also costs 8 C and 50 % more SoC power at
+# *idle* — 58.6 C / 5.9 W against 50.3 C / 3.9 W — for doing nothing at all.
+# There is no measured case for using it on this machine.
 #
 # The subtlety that shapes the fix: under a genuine all-core load the SoC is
 # power-limited to ~2364 MHz average anyway, so the top of that 5.16 GHz range

@@ -14,13 +14,32 @@ desktop session, untouched.
 
 **The ACPI platform profile is the heat.** Nothing else measured comes close.
 
-|                  | idle (150 s) |          |         | all-core load (75 s) |           |          |           |
-| ---------------- | ------------ | -------- | ------- | -------------------- | --------- | -------- | --------- |
-| profile          | temp avg/max | SoC      | fan     | temp avg/max         | SoC       | fan      | peak clock |
-| `power-saver`    | 50.3 / 51.2 C | 3.92 W  | 0 rpm   | 64.0 / **67.1 C**    | 20.1 W pk | 4183 rpm | 2018 MHz  |
-| `balanced`       | 53.2 / 60.1 C | 4.32 W  | 0 rpm   | 80.3 / **88.0 C**    | 37.0 W pk | **6182 rpm** | 4100 MHz |
+| profile       | idle temp avg/max | idle SoC avg/max | idle fan | load temp avg/max | load SoC avg/max | load fan avg/max | load avg clock |
+| ------------- | ----------------- | ---------------- | -------- | ----------------- | ---------------- | ---------------- | -------------- |
+| `power-saver` | 50.3 / 51.2 C     | 3.92 / 6.00 W    | 0 rpm    | 64.0 / **67.1 C** | 14.6 / 20.1 W    | 2071 / 4183 rpm  | 1574 MHz       |
+| `balanced`    | 53.2 / 60.1 C     | 4.32 / 13.01 W   | 0 rpm    | 80.3 / **88.0 C** | 26.1 / 37.0 W    | 3915 / 6182 rpm  | 2364 MHz       |
+| `performance` | 58.6 / 63.6 C     | 5.94 / 14.08 W   | 0 rpm    | 86.7 / **93.4 C** | 29.9 / 38.0 W    | 4871 / 6221 rpm  | 2516 MHz       |
 
-Same machine, same load, ten minutes apart: **+20.9 C, +17 W and +2000 rpm.**
+Same machine, same load, within the hour.
+
+### `performance` is a trap on this chassis
+
+`performance` shares `balanced`'s 5.16 GHz ceiling and differs only in governor
+and EPP (both `performance`). Measured, that buys **+6.4 % average clock
+(2364 → 2516 MHz) for +6.4 C, +3.8 W and +956 rpm of fan.** The single heatpipe
+is already saturated at `balanced`, so the extra power leaves as heat and noise
+instead of as work — peak clock under load was actually *lower* than balanced's
+(3758 vs 4100 MHz), because every core is pinned and there is no headroom left
+to spike into.
+
+It also costs **8.3 C and 51 % more SoC power at idle** (58.6 C / 5.94 W against
+50.3 C / 3.92 W) for doing nothing, because the `performance` governor will not
+let cores settle. There is no measured case for using this profile here.
+
+### `power-saver` → `balanced`
+
+This one is a genuine trade: **+50 % average clock (1574 → 2364 MHz)** for
++20.9 C, +12 W and +1844 rpm. Worth taking when the work justifies it.
 
 The mechanism is a single knob. `power-saver` clamps `scaling_max_freq` to
 2.0 GHz; `balanced` lifts it to the firmware ceiling of 5.16 GHz:
