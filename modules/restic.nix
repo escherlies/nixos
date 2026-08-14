@@ -196,7 +196,20 @@ in
 
       # Find files in Downloads larger than 1GB and write them to a temporary exclude file
       # Ignore find errors if files are moved/deleted during the run
+      # `restic unlock` first: an interrupted run (suspend, reboot, OOM) leaves
+      # an exclusive lock behind, and every subsequent run then fails to take
+      # its own lock. Because the unit's pre-start is `restic cat config ||
+      # restic init`, that surfaces as the *misleading* "repository master key
+      # and config already initialized" — so the real cause is invisible and
+      # the backup silently stops. This machine lost 22 days of backups that
+      # way (stale lock from 2026-07-23, found 2026-08-14), while still paying
+      # ~600 MB of SQLite-snapshot writes every hour for a run that could
+      # never succeed.
+      #
+      # `unlock` only removes locks whose owning process is gone, so it cannot
+      # disturb a genuinely concurrent run.
       backupPrepareCommand = ''
+        ${pkgs.restic}/bin/restic unlock || true
         ${pkgs.findutils}/bin/find /home/enrico/Downloads -type f -size +1G > ${largeDownloadsExclude} || true
         ${sqliteSnapshotScript}
       '';
