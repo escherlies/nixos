@@ -66,6 +66,43 @@ with **13.0 W / 60.1 C** excursions, against 2022 MHz / 6.0 W / 51.2 C on
 Those transients — not sustained work — are what produce the audible fan
 surges during ordinary use. That is what `machines/framework/power.nix` targets.
 
+## Negative result: a userspace clock cap does not work here
+
+A `scaling_max_freq` cap was tried (`machines/framework/power.nix`, since
+removed) to get a middle point between power-saver's 2.0 GHz and balanced's
+5.16 GHz. **It does nothing on this platform.** Measured with the cap live and
+applied to all 24 policies:
+
+```
+max_set=3200000  achieved_max=4906226 kHz
+max_set=3200000  achieved_max=4925200 kHz
+max_set=3200000  achieved_max=4921163 kHz          (15 samples, all ~4.90-4.93 GHz)
+```
+
+`amd_pstate status=active`, `boost=1`. In amd-pstate **active (EPP) mode with
+CPB enabled, `scaling_max_freq` is only a hint the hardware may exceed** — the
+effective ceiling is `highest_perf`, not the requested `max_perf`.
+
+What actually made `power-saver` clamp was never `scaling_max_freq`: it was the
+*firmware*. `platform_profile=low-power` lowers `cpuinfo_max_freq` itself to
+2000000, moving the hardware ceiling, which is why no core exceeded 2018 MHz
+there under full load.
+
+Consequence: **the intended 3.2 GHz middle point does not exist** in this mode.
+The only levers with real hardware effect are
+
+- `platform_profile` (via `powerprofilesctl`) — proven, and the firmware moves
+  the ceiling for you;
+- `boost=0` — a hard CPB disable, but it lands at nominal ~2.0 GHz, which is
+  power-saver's clock at balanced's power budget, so it is strictly worse than
+  just selecting power-saver;
+- `amd_pstate=guided` (kernel parameter) — in guided mode the driver does honour
+  `scaling_max_freq`, so a real middle point becomes possible. Untested here,
+  and it changes how power-profiles-daemon drives EPP, so it needs its own
+  measured evaluation before adoption.
+
+**Use the power profile. There is no free middle point to configure.**
+
 ## What is *not* the heat
 
 The brief suspected the local LLM stack. Measured, it is not:

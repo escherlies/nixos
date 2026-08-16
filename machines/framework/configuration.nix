@@ -19,7 +19,6 @@
     ../../modules/desktops/gnome.nix
     ../../modules/gaming
     ./keyboard.nix
-    ./power.nix
     ../../configs/graphical.nix
     ../../configs/ai-agents.nix
     ../../modules/playwright.nix
@@ -31,10 +30,6 @@
 
   # Enable restic backup to S3
   services.restic-backup.enable = true;
-
-  # Suppress the single-core boost transients that drive fan surges.
-  # See ./power.nix for the measurements this is calibrated against.
-  modules.thermal.limitBoostCeiling = true;
 
   hardware.amdgpu.opencl.enable = true;
 
