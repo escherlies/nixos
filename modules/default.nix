@@ -13,6 +13,18 @@
     "flakes"
   ];
 
+  # Resolve indirect flake refs (`nixpkgs#bun` in every nix-shebang script) from
+  # the local registry only. Nix otherwise downloads the global registry from
+  # channels.nixos.org before consulting any entry — even though
+  # /etc/nix/registry.json already pins `nixpkgs` to this system's nixpkgs
+  # (nixpkgs.flake.setFlakeRegistry, on by default for flake-built systems).
+  # During the 2026-08-17 channels.nixos.org outage that download cost 355s on
+  # *every* script invocation (5 retries, then fallback to the cached copy).
+  # Empty = global registry disabled; the local pin still resolves and the
+  # binary cache is unaffected (unlike `nix shell --offline`, which also
+  # disables substituters and forces local builds).
+  nix.settings.flake-registry = "";
+
   # Automatic garbage collection
   nix.gc = {
     automatic = true;

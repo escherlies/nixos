@@ -36,6 +36,9 @@
     "nix-command"
     "flakes"
   ];
+  # Duplicated from modules/default.nix, which this machine does not import.
+  # See the comment there for why the global flake registry is disabled.
+  nix.settings.flake-registry = "";
   nix.gc = {
     automatic = true;
     dates = "weekly";
