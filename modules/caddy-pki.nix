@@ -7,11 +7,12 @@
 # To generate the CA certificates:
 #   ./scripts/generate-local-ca
 #
-{ config, ... }:
+{ config, pkgs, ... }:
 
 let
   caCertPath = ../secrets/local_ca.crt;
   caKeyPath = ../secrets/local_ca.key.age;
+  certStoreDir = "/var/lib/caddy/.local/share/caddy/certificates/local";
 in
 {
   # Decrypt the CA private key with agenix
@@ -61,7 +62,38 @@ in
       restartTriggers = [ combinedHash ];
       environment.CADDY_CA_HASH = combinedHash;
 
+      path = [ pkgs.openssl ];
+
       preStart = ''
+        # Caddy's internal issuer stamps every leaf with the wall clock it sees
+        # at issuance. A boot that comes up on a skewed RTC therefore mints a
+        # certificate whose notBefore lies in the future, and every client
+        # rejects it until that moment arrives — even after NTP has corrected
+        # the clock, because the cert is cached in /var/lib/caddy. That is what
+        # took ai.lan down on 2026-08-19: boot -2 started at 00:48 CEST while it
+        # was really 23:00, so the leaf was valid from 00:48 the *next* day.
+        # Wait for a synchronised clock (bounded — caddy is not on the boot
+        # critical path, so a machine that is simply offline still comes up).
+        for _attempt in $(seq 60); do
+          if [ "$(timedatectl show --property NTPSynchronized --value)" = "yes" ]; then
+            break
+          fi
+          echo "Waiting for NTP synchronisation before issuing certificates..."
+          sleep 1
+        done
+
+        # Self-heal any leaf already minted against a skewed clock. Removing the
+        # cert makes Caddy re-issue it from the intermediate on startup.
+        for certFile in ${certStoreDir}/*/*.crt; do
+          [ -e "$certFile" ] || continue
+          notBefore=$(openssl x509 -in "$certFile" -noout -startdate | cut -d= -f2) || continue
+          notBeforeEpoch=$(date -d "$notBefore" +%s) || continue
+          if [ "$notBeforeEpoch" -gt "$(date +%s)" ]; then
+            echo "Dropping not-yet-valid certificate $certFile (notBefore $notBefore)"
+            rm -f "''${certFile%.crt}".*
+          fi
+        done
+
         STATUS_FILE="/var/lib/caddy/.local_ca_hash"
 
         if [ -f "$STATUS_FILE" ]; then
