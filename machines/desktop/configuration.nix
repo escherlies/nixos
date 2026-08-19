@@ -38,6 +38,22 @@
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
+  # This machine dual-boots Windows, which keeps the RTC in local time. NixOS
+  # reads the RTC as UTC by default, so every boot that followed Windows came up
+  # two hours ahead of real time until timesyncd corrected it — and booting
+  # Windows after NixOS showed the clock two hours early, the same skew mirrored.
+  # The window before the correction is not harmless: on 2026-08-19 Caddy minted
+  # ai.lan / ollama.lan with a notBefore two hours in the future (every client
+  # then rejected them as "not yet valid"), and WireGuard's handshake carried a
+  # future TAI64N timestamp that poisoned the hub's replay state, so the tunnel
+  # to this machine stayed dead for the rest of the evening.
+  #
+  # Agreeing with Windows removes the skew at the source. The alternative is to
+  # make Windows keep the RTC in UTC instead — the two are mutually exclusive:
+  #   reg add "HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" \
+  #     /v RealTimeIsUniversal /t REG_DWORD /d 1 /f
+  time.hardwareClockInLocalTime = true;
+
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
