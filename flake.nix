@@ -108,6 +108,10 @@
         };
 
         web-services = nixpkgs.lib.nixosSystem {
+          # modules/default.nix pulls in editors/fresh.nix, which takes `inputs`
+          # as a module argument. Every other machine passes it; without it this
+          # configuration could not be evaluated at all.
+          specialArgs = { inherit inputs repoSubdir; };
           system = "x86_64-linux";
           modules = [
             ./machines/web-services/configuration.nix
