@@ -35,7 +35,13 @@
       vpnIp = "10.100.0.3";
     };
     framework = {
-      ipv4 = "192.168.178.23";
+      # This machine has two links and takes a different DHCP lease on each:
+      # .119 on WiFi (wlp192s0, the normal state) and .23 on the USB ethernet
+      # dongle. The entry here was still .23 while nothing held that address,
+      # so `ssh framework` from any other machine stalled on a dead IP before
+      # falling back to the VPN address. A DHCP reservation on the FritzBox
+      # would remove the flapping for good.
+      ipv4 = "192.168.178.119";
       vpnIp = "10.100.0.4";
     };
     laptop = {

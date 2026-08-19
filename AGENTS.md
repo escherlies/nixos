@@ -40,5 +40,34 @@ first, because:
 
 ### Rebuilding
 
-Use `sudo nixos-rebuild switch --flake .#<host>` with the confirmed host name.
-Never guess the flake target.
+**Never write a bare `sudo nixos-rebuild switch --flake .#<host>`.** It is the
+one command in this repo that silently destroys the wrong machine: run with
+`.#desktop` while sitting at the framework and you activate desktop's
+configuration — its hostname, its hardware modules, its bootloader entries — on
+the framework. The command looks correct in isolation, which is exactly what
+makes it dangerous to paste.
+
+Every command you hand the operator must state, in the command itself, which
+machine it runs on. A reader who pastes it into the wrong terminal must get an
+error, not a deployment.
+
+Use the recipes that already exist:
+
+| Intent | Command | Why it is safe |
+| --- | --- | --- |
+| Rebuild the machine you are sitting at | `just rebuild` | Resolves `.#$(hostname)` — cannot target another machine |
+| Deploy to another machine | `just rebuild-<host>` | Deploys over SSH and refuses if the box that answers is not `<host>` |
+
+When no recipe fits and you must write the command out:
+
+- Local activation: `sudo nixos-rebuild switch --flake .#"$(hostname)"` — never
+  a literal machine name.
+- Remote activation: wrap it so the target is visible and enforced, either
+  `nixos-rebuild switch --flake .#<host> --target-host root@<host>` (the flake
+  target and the SSH target must be the same name — a mismatch is the bug) or
+  `ssh <host> 'sudo nixos-rebuild switch --flake .#"$(hostname)"'`.
+
+The same applies to anything else that changes machine state — `systemctl`,
+`rm` under `/var/lib`, `wg set`. Write it as `ssh <host> '…'`, or put the host
+on the line above it. Never present a bare command and rely on the surrounding
+prose to say where it belongs; prose does not survive a copy-paste.
