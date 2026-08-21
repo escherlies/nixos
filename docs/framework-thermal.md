@@ -103,6 +103,53 @@ The only levers with real hardware effect are
 
 **Use the power profile. There is no free middle point to configure.**
 
+## Positive result: for a single job, a cpuset is the clock cap
+
+Measured 2026-08-21. The section above is about capping the *machine*, and it
+stands. But when the goal is to stop one background job from spinning the fan,
+there is a lever that does work — and it works by choosing cores rather than by
+asking for a frequency.
+
+The HX 370 is not homogeneous. Its two core types have different *firmware*
+ceilings, which is the only kind this platform honours:
+
+```
+CPUs  0-3, 12-15   Zen5    5157 MHz     <- the cores that chase boost
+CPUs  4-11, 16-23  Zen5c   3289 MHz     <- physically cannot go higher
+```
+
+`AllowedCPUs=4-11,16-23` on a systemd unit is a cpuset: a hard scheduler
+constraint, not the hint that `scaling_max_freq` turned out to be. A unit
+confined to the Zen5c cores has a 3.29 GHz ceiling enforced by the same
+mechanism that makes `power-saver` work — the hardware — while the rest of the
+machine keeps its full 5.16 GHz range for interactive work.
+
+Measured on the hourly restic backup, same repository state, same live desktop
+session, cool-down between arms, 115 s of sampling under load:
+
+| arm                          | idle fan | load fan avg/max  | die avg/max      | fan delta   |
+| ---------------------------- | -------- | ----------------- | ---------------- | ----------- |
+| unconfined (`AllowedCPUs=0-23`) | 3485 rpm | 5545 / **6221** rpm | 98.1 / **101 C** | **+2060 rpm** |
+| pinned (`AllowedCPUs=4-11,16-23`, `CPUQuota=400%`) | 4088 rpm | 4087 / 4772 rpm   | 77.6 / 86 C      | **+0 rpm**  |
+
+**Pinned, the fan does not respond to the backup at all** — its load average is
+its idle average. Unconfined, the same work adds 2060 rpm and takes the die to
+101 C.
+
+The pin is close to free: restic drew 156 % of a core unconfined and 159 %
+pinned, so the work was never wide enough to need the fast cores. It was only
+ever *tall* — a couple of threads free to chase 5 GHz, which is exactly the
+transient this document identifies as the source of the audible surges. Note
+also that the pinned arm started from a *worse* baseline (4088 rpm / 64 C,
+inherited from the unconfined arm's 101 C run) and still produced no fan
+response.
+
+This is the shape to reach for on any scheduled background job here. It is
+applied in `modules/restic.nix` via `services.restic-backup.efficiencyCores`.
+The CPU numbering is physical and the kernel may enumerate differently after an
+update; re-derive it with `lscpu -e=CPU,CORE,MAXMHZ` and take every row at the
+lower MAXMHZ.
+
 ## What is *not* the heat
 
 The brief suspected the local LLM stack. Measured, it is not:
@@ -149,10 +196,44 @@ cause stayed invisible. Each failed attempt still ran the SQLite snapshot step:
 **686 MB read / 603 MB written per hour**, ~300 GB of pointless SSD writes
 across the outage, for a backup that could never succeed.
 
-Thermally this is minor (4.7 s CPU per run). As a backup outage it is not.
+As a backup outage this was not minor. The *snapshot step* is thermally minor
+(4.7 s CPU per run), and that is what was measured here — but see the
+correction below: the backup as a whole is not.
 `modules/restic.nix` now runs `restic unlock` in `backupPrepareCommand` so an
 interrupted run self-heals; clearing the existing lock still needs one manual
 `restic unlock` as root.
+
+### Correction, 2026-08-21: the restored backup *is* the scheduled heat
+
+With the backup working again, `restic-backups-home` became the largest
+recurring thermal event on this machine — the one that prompted "the fans go
+BRRRRRR". systemd's own accounting over eleven consecutive hourly runs:
+
+```
+Consumed 4min 22s - 4min 34s CPU time over 3min 02s - 4min 34s wall clock,
+1.2G memory peak, ~1.2G written to disk, ~300-480M uploaded.   x24/day
+```
+
+Two things about that number are worth writing down, because both contradict
+the obvious guesses:
+
+- **It is flat.** Runs that added 6 MiB and runs that added 316 MiB cost the
+  same ~4 min 25 s. The cost is walking the parent snapshot's tree for 811,000
+  files — decrypting and decompressing every tree blob — not processing new
+  data. Excluding more content is therefore the lever that would move it, not
+  backing up less often.
+- **It was never wide.** 4 min 25 s of CPU over 3 min 20 s of wall clock is
+  ~130 % — under two cores. An early reading of "25 cores" came from a sampler
+  whose own busy-wait was the load and whose arithmetic was 1000x off; it sent
+  this investigation at `forget --prune` for an hour. Prune turned out to cost
+  ~35 s CPU per run, not the bulk.
+
+So the fix was not to make restic smaller but to deny it the fast cores — see
+"a cpuset is the clock cap" above. `forget --prune` moved to its own daily
+timer anyway (`restic-backups-home-prune.timer`), which is worth doing on its
+own merits rather than thermal ones: it drops ~7 GB/day of repack upload and
+~12 GB/day of SSD writes, and hourly pruning was largely repacking the same
+packs it had repacked the hour before.
 
 ## Reproducing
 
