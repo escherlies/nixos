@@ -97,6 +97,7 @@
       ".DS_Store"
       ".notes"
       "**/__ignore__*"
+      ".playwright-cli/"
 
     ];
 
