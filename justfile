@@ -1,3 +1,19 @@
+# Where a deployed machine gets the store paths it is missing.
+#
+#   no  (default) — this machine sends them over SSH.
+#   yes           — the target substitutes what it can from cache.nixos.org
+#                   itself, and only receives what is not there.
+#
+# "no" is the right default on the home LAN. Both closures are built from the
+# same nixpkgs, so they overlap almost entirely and the delta is small; sending
+# it at 34 MB/s beats making the target re-download paths this machine already
+# holds. Set it to yes when the deploy is not the small case — a nixpkgs bump
+# is ~2200 paths, nearly all already in the public cache — or when this machine
+# is away from home and every path would climb a foreign uplink:
+#
+#   just substitute=yes rebuild-desktop
+substitute := "no"
+
 # The flake target is derived from the machine itself, so this recipe cannot
 # activate another host's configuration.
 # Rebuild the machine you are sitting at
@@ -17,17 +33,20 @@ rebuild:
 _deploy host action:
     #!/usr/bin/env bash
     set -euo pipefail
+    # Checked before the network probe so a typo costs nothing. A misspelling
+    # must not silently pick the slow half of the choice, hence no catch-all
+    # that falls back to "no".
+    case "{{ substitute }}" in
+      yes) flags=(--use-substitutes); echo "paths: {{ host }} substitutes from cache.nixos.org" ;;
+      no)  flags=();                  echo "paths: copying from $(hostname) over SSH" ;;
+      *)   echo "substitute must be 'yes' or 'no', got '{{ substitute }}'" >&2; exit 2 ;;
+    esac
     answered=$(ssh -o ConnectTimeout=5 -o BatchMode=yes root@{{ host }} hostname)
     if [ "$answered" != "{{ host }}" ]; then
       echo "refusing to deploy {{ host }}: root@{{ host }} answers as '$answered'" >&2
       exit 1
     fi
-    # --use-substitutes lets the target pull from cache.nixos.org itself instead
-    # of receiving every path over SSH from here. A nixpkgs bump is ~2200 paths,
-    # nearly all of them already in the public cache; without this flag they all
-    # travel up this machine's uplink twice. Only locally built paths — the
-    # system closure, anything from an overlay — are still copied.
-    nixos-rebuild {{ action }} --flake .#{{ host }} --target-host root@{{ host }} --use-substitutes
+    nixos-rebuild {{ action }} --flake .#{{ host }} --target-host root@{{ host }} "${flags[@]}"
 
 # Deploy laptop's configuration to laptop
 rebuild-laptop: (_deploy "laptop" "switch")
