@@ -63,9 +63,6 @@ in
     bun
     drawio
     mise
-    # No `oauth2` cargo feature since himalaya 2.0.0 — XOAUTH2/OAUTHBEARER are
-    # unconditional now, so the default feature set already covers IMAP+SMTP.
-    himalaya
     ffmpeg
     broot
     viu
