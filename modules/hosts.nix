@@ -10,7 +10,15 @@ let
   # Drops nulls and the iphone's 0.0.0.0 placeholder.
   isReachable = ip: ip != null && ip != "0.0.0.0";
 
-  machinesWithVpnIp = lib.filterAttrs (_name: machine: isReachable machine.vpnIp) remoteMachines;
+  entriesFor =
+    getIp:
+    lib.concatMapAttrs (
+      name: machine:
+      let
+        ip = getIp machine;
+      in
+      lib.optionalAttrs (isReachable ip) { ${ip} = [ name ]; }
+    ) remoteMachines;
 in
 {
   imports = [ ./machines.nix ];
@@ -19,21 +27,39 @@ in
   # Each name maps to its LAN and its VPN address, so the host answers both on
   # the home network and over WireGuard when away. This covers ping, scp, curl,
   # etc. — not just SSH.
-  #
-  # Order matters and is the reason the two address families are split across
-  # two options. getaddrinfo hands equal-scope IPv4 addresses to the caller in
-  # /etc/hosts order, and a client such as ssh walks that list serially, so the
-  # first address decides the normal case. NixOS emits `networking.hosts` (an
-  # attribute set, hence sorted by key) first and appends `networking.extraHosts`
-  # after it — putting both families in `networking.hosts` sorted "10.100.0.3"
-  # ahead of "192.168.178.87" and sent every LAN connection through the tunnel
-  # in Finland (94 ms instead of 4 ms), or made it hang for the full TCP timeout
-  # whenever the tunnel was down. LAN first, VPN as the fallback.
-  networking.hosts = lib.concatMapAttrs (
-    name: machine: lib.optionalAttrs (isReachable machine.ipv4) { ${machine.ipv4} = [ name ]; }
-  ) remoteMachines;
+  networking.hosts = entriesFor (m: m.ipv4) // entriesFor (m: m.vpnIp);
 
-  networking.extraHosts = lib.concatMapStringsSep "\n" (
-    name: "${machinesWithVpnIp.${name}.vpnIp} ${name}"
-  ) (lib.attrNames machinesWithVpnIp);
+  # Which of the two addresses a client tries *first* is not decided by
+  # /etc/hosts. glibc's getaddrinfo re-sorts every answer by RFC 6724, and its
+  # last tie-breaker (rule 9, longest prefix shared with the source address)
+  # picks the VPN address on a machine whose wg0 is up: 10.100.0.3 shares 29
+  # bits with our own 10.100.0.4, while 192.168.178.87 shares only 25 with our
+  # 192.168.178.119. So `ssh desktop` from the same room went through the hub
+  # in Finland — 82 ms instead of 1.7 ms, and 1.4 MB/s instead of 34 MB/s
+  # measured with a 40 MB pipe. A `just rebuild-desktop` copying 2218 mostly
+  # tiny store paths pays that round trip per path.
+  #
+  # Rule 6 (destination precedence) runs before rule 9, so demoting the
+  # WireGuard subnet below every other IPv4 address settles it there. The five
+  # lines above it are glibc's own defaults, restated because supplying any
+  # precedence entry discards the built-in table.
+  #
+  # The cost is paid when away from home: the LAN address is now tried first
+  # and has to fail before ssh reaches the VPN address, which is the 5 s
+  # ConnectTimeout in modules/ssh.nix. On a foreign network that also hands out
+  # 192.168.178.0/24 the address may answer as someone else's device; ssh then
+  # refuses it on the host key rather than logging in.
+  #
+  # Check this with `getent ahosts desktop`, not `getent hosts desktop`. Only
+  # the former goes through getaddrinfo and shows the order ssh will use; the
+  # latter calls gethostbyname, which does no RFC 6724 sorting at all.
+  networking.getaddrinfo.precedence = {
+    "::1/128" = 50;
+    "::/0" = 40;
+    "2002::/16" = 30;
+    "::/96" = 20;
+    "::ffff:0:0/96" = 10;
+    # The WireGuard subnet from modules/wireguard.nix (10.100.0.0/24).
+    "::ffff:10.100.0.0/120" = 5;
+  };
 }

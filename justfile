@@ -22,7 +22,12 @@ _deploy host action:
       echo "refusing to deploy {{ host }}: root@{{ host }} answers as '$answered'" >&2
       exit 1
     fi
-    nixos-rebuild {{ action }} --flake .#{{ host }} --target-host root@{{ host }}
+    # --use-substitutes lets the target pull from cache.nixos.org itself instead
+    # of receiving every path over SSH from here. A nixpkgs bump is ~2200 paths,
+    # nearly all of them already in the public cache; without this flag they all
+    # travel up this machine's uplink twice. Only locally built paths — the
+    # system closure, anything from an overlay — are still copied.
+    nixos-rebuild {{ action }} --flake .#{{ host }} --target-host root@{{ host }} --use-substitutes
 
 # Deploy laptop's configuration to laptop
 rebuild-laptop: (_deploy "laptop" "switch")
