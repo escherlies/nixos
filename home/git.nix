@@ -30,7 +30,5 @@
 
   programs.difftastic.enable = true;
 
-  programs.git.extraConfig = {
-    diff.external = "difft --display side-by-side-show-both";
-  };
+  programs.git.settings.diff.external = "difft --display side-by-side-show-both";
 }

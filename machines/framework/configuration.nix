@@ -39,6 +39,17 @@
 
   boot.initrd.luks.devices."luks-ce3e5b7f-06cb-4480-a6d1-7c07981ca357".device =
     "/dev/disk/by-uuid/ce3e5b7f-06cb-4480-a6d1-7c07981ca357";
+
+  # Trial mitigation for the recurring storage-stall panics: a stall on
+  # nvme0n1 takes out the LUKS root and the LUKS swap together and kills PID 1.
+  # Disabling APST is the standard first move, but it is NOT confirmed to be
+  # the trigger -- see docs/framework-nvme-panics.md. 10000 would keep PS3.
+  boot.kernelParams = [ "nvme_core.default_ps_max_latency_us=0" ];
+
+  # Keep PID 1 resident: a swapped-out systemd is what turns an I/O stall on
+  # that drive into a panic rather than a read-only root.
+  boot.kernel.sysctl."vm.swappiness" = 10;
+
   networking.hostName = "framework"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 

@@ -1,34 +1,14 @@
 { pkgs, ... }:
 {
-  programs.brave.enable = false;
-
-  programs.brave.extensions = [
-    # Lazily copy an extension from the store:
-    # https://github.com/escherlies/chromium-extension-to-nix-expr
-
-    { id = "eimadpbcbfnmbkopoojfekhnkhdbieeh"; } # Dark Reader
-    { id = "lnjaiaapbakfhlbjenjkhffcdpoompki"; } # Catppuccin for Web File Explorer Icons
-    { id = "gejiddohjgogedgjnonbofjigllpkmbf"; } # 1Password Nightly – Password Manager
-    { id = "cdglnehniifkbagbbombnjghhcihifij"; } # Kagi Search
-    { id = "edibdbjcniadpccecjdfdjjppcpchdlm"; } # I still don't care about cookies
-
-  ];
-
-  programs.brave.nativeMessagingHosts = [
-    pkgs.kdePackages.plasma-browser-integration
-
-  ];
-
-  programs.brave.commandLineArgs = [
-    "--disable-features=PasswordManagerOnboarding"
-    "--disable-features=AutofillEnableAccountWalletStorage"
-    "--enable-features=TouchpadOverscrollHistoryNavigation"
-  ];
+  # Brave as a package only. The extensions, nativeMessagingHosts and
+  # commandLineArgs that used to live here never applied, because
+  # `programs.brave.enable` was false -- they are dropped rather than
+  # left sitting inert.
+  home.packages = [ pkgs.brave ];
 
   programs.chromium.enable = true;
 
   programs.chromium.extensions = [
     { id = "gejiddohjgogedgjnonbofjigllpkmbf"; } # 1Password Nightly – Password Manager
   ];
-
 }
