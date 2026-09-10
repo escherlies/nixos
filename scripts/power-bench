@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Measure what each power-profiles-daemon profile costs this machine, in socket
+# power, die temperature, fan speed and achieved clock.
+#
+# This is the harness behind the table in docs/framework-thermal.md and the
+# comment in machines/framework/power.nix. Re-run it after a BIOS, kernel or
+# nixpkgs bump instead of trusting numbers measured against an older firmware —
+# the ceilings that make `power-saver` work are set by firmware, not by Linux.
+#
+# Usage:
+#   power-bench                    # all three profiles, one core per thread
+#   power-bench balanced           # only the named profile(s)
+#   LOAD_THREADS=8 power-bench     # narrower load
+#   LOAD_SECONDS=75 power-bench    # longer load phase
+#
+# Reports average and maximum for every metric. The maxima are the point:
+# averages hide the short single-core boost transients that produce the audible
+# fan surges during ordinary desktop use.
+#
+# Needs no root. Restores the profile that was selected when it started, even
+# if interrupted.
+
+loadThreads=${LOAD_THREADS:-$(nproc)}
+loadSeconds=${LOAD_SECONDS:-45}
+idleSeconds=${IDLE_SECONDS:-20}
+coolDownSeconds=${COOLDOWN_SECONDS:-30}
+
+requestedProfiles=("$@")
+if [ ${#requestedProfiles[@]} -eq 0 ]; then
+  requestedProfiles=(power-saver balanced performance)
+fi
+
+hwmonByName() {
+  local wantedName=$1
+  for hwmonDir in /sys/class/hwmon/hwmon*; do
+    if [ "$(cat "$hwmonDir/name" 2>/dev/null)" = "$wantedName" ]; then
+      echo "$hwmonDir"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Fail here rather than reporting zeroes for a sensor that moved. amdgpu
+# reports whole-APU socket power on this part, which is the number that matters
+# — the CPU and the 890M share one budget and one heatpipe.
+amdgpuHwmon=$(hwmonByName amdgpu) || {
+  echo "power-bench: no amdgpu hwmon — socket power is unreadable on this host" >&2
+  exit 1
+}
+k10tempHwmon=$(hwmonByName k10temp) || {
+  echo "power-bench: no k10temp hwmon — die temperature is unreadable on this host" >&2
+  exit 1
+}
+fanInputFile=""
+for candidate in /sys/class/hwmon/hwmon*/fan1_input; do
+  if [ -r "$candidate" ]; then
+    fanInputFile=$candidate
+    break
+  fi
+done
+
+originalProfile=$(powerprofilesctl get)
+loadPids=()
+
+stopLoad() {
+  if [ ${#loadPids[@]} -gt 0 ]; then
+    kill "${loadPids[@]}" 2>/dev/null || true
+    wait "${loadPids[@]}" 2>/dev/null || true
+    loadPids=()
+  fi
+}
+
+restore() {
+  stopLoad
+  powerprofilesctl set "$originalProfile" 2>/dev/null || true
+}
+trap restore EXIT INT TERM
+
+startLoad() {
+  loadPids=()
+  for _ in $(seq "$loadThreads"); do
+    (
+      while :; do
+        : $((RANDOM * RANDOM))
+      done
+    ) &
+    loadPids+=($!)
+  done
+}
+
+# Sample every metric at 1 Hz for the given duration and print
+# "avgPower maxPower avgTemp maxTemp avgFan maxFan avgClock maxClock".
+sampleFor() {
+  local durationSeconds=$1
+  local powerSum=0 powerMax=0 tempSum=0 tempMax=0 fanSum=0 fanMax=0
+  local clockSum=0 clockMax=0 sampleCount=0
+
+  for _ in $(seq "$durationSeconds"); do
+    local power temp fan clockAvg clockPeak
+    power=$(cat "$amdgpuHwmon/power1_average")
+    temp=$(cat "$k10tempHwmon/temp1_input")
+    fan=$([ -n "$fanInputFile" ] && cat "$fanInputFile" || echo 0)
+    read -r clockAvg clockPeak < <(
+      cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq |
+        awk '{sum += $1; if ($1 > peak) peak = $1} END {print int(sum / NR), peak}'
+    )
+
+    powerSum=$((powerSum + power))
+    tempSum=$((tempSum + temp))
+    fanSum=$((fanSum + fan))
+    clockSum=$((clockSum + clockAvg))
+    [ "$power" -gt "$powerMax" ] && powerMax=$power
+    [ "$temp" -gt "$tempMax" ] && tempMax=$temp
+    [ "$fan" -gt "$fanMax" ] && fanMax=$fan
+    [ "$clockPeak" -gt "$clockMax" ] && clockMax=$clockPeak
+    sampleCount=$((sampleCount + 1))
+    sleep 1
+  done
+
+  echo "$((powerSum / sampleCount)) $powerMax $((tempSum / sampleCount)) $tempMax" \
+    "$((fanSum / sampleCount)) $fanMax $((clockSum / sampleCount)) $clockMax"
+}
+
+printRow() {
+  local profile=$1 phase=$2
+  shift 2
+  awk -v profile="$profile" -v phase="$phase" \
+    -v pAvg="$1" -v pMax="$2" -v tAvg="$3" -v tMax="$4" \
+    -v fAvg="$5" -v fMax="$6" -v cAvg="$7" -v cMax="$8" \
+    'BEGIN {
+       printf "%-13s %-5s %5.1f / %5.1f W  %5.1f / %5.1f C  %5d / %5d rpm  %5d / %5d MHz\n",
+              profile, phase, pAvg/1e6, pMax/1e6, tAvg/1e3, tMax/1e3,
+              fAvg, fMax, cAvg/1e3, cMax/1e3
+     }'
+}
+
+benchProfile() {
+  local profile=$1
+  powerprofilesctl set "$profile"
+  sleep 3
+
+  local eppValue platformProfile
+  eppValue=$(cat /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference)
+  platformProfile=$(cat /sys/firmware/acpi/platform_profile)
+  printf '\n%s  (EPP %s, platform_profile %s, ceiling %s MHz)\n' \
+    "$profile" "$eppValue" "$platformProfile" \
+    "$(($(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq) / 1000))"
+
+  # shellcheck disable=SC2046 # word splitting is how the sample row is consumed
+  printRow "$profile" idle $(sampleFor "$idleSeconds")
+
+  startLoad
+  # shellcheck disable=SC2046
+  printRow "$profile" load $(sampleFor "$loadSeconds")
+  stopLoad
+
+  sleep "$coolDownSeconds"
+}
+
+printf '%d threads, %ds load / %ds idle per profile, sampled at 1 Hz.\n' \
+  "$loadThreads" "$loadSeconds" "$idleSeconds"
+printf 'Restoring "%s" when done.\n' "$originalProfile"
+printf '\n%-13s %-5s %15s  %15s  %17s  %17s\n' \
+  PROFILE PHASE 'SOCKET avg/max' 'DIE avg/max' 'FAN avg/max' 'CLOCK avg/max'
+
+for profile in "${requestedProfiles[@]}"; do
+  benchProfile "$profile"
+done

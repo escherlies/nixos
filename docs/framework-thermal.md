@@ -66,6 +66,34 @@ with **13.0 W / 60.1 C** excursions, against 2022 MHz / 6.0 W / 51.2 C on
 Those transients — not sustained work — are what produce the audible fan
 surges during ordinary use. That is what `machines/framework/power.nix` targets.
 
+### Re-measured 2026-09-10 — and the finding had never been deployed
+
+Kernel 6.18.48, same chassis, same 24-thread method, now via the committed
+harness `scripts/power-bench`:
+
+| profile       | idle SoC avg/max | idle die avg/max | idle peak clock | load SoC avg/max | load die avg/max | load fan avg/max | load avg clock |
+| ------------- | ---------------- | ---------------- | --------------- | ---------------- | ---------------- | ---------------- | -------------- |
+| `power-saver` | 5.4 / 8.0 W      | 61.9 / 64.8 C    | **2018 MHz**    | 14.6 / 15.0 W    | 68.2 / **69.6 C** | 3769 / 4219 rpm | 1596 MHz       |
+| `balanced`    | 9.5 / **26.1 W** | 67.9 / **84.6 C** | **5077 MHz**   | 27.0 / 33.0 W    | 83.0 / **85.4 C** | 4989 / 6221 rpm | 2510 MHz       |
+| `performance` | 12.5 / 24.0 W    | 67.9 / 76.5 C    | 5181 MHz        | 35.3 / **48.1 W** | 92.0 / **96.0 C** | 5686 / 6342 rpm | 2836 MHz       |
+
+The August table reproduces four weeks and nine kernel patch releases later.
+The idle columns make the case on their own: an *idle* desktop on `balanced`
+touches 26.1 W and 84.6 C; the identical session on `power-saver` never passes
+8.0 W or 64.8 C, because the firmware ceiling is 2.0 GHz and there is nothing
+to spike into.
+
+**What was missing was not the analysis — it was the configuration.** The
+profile lives in `/var/lib/power-profiles-daemon/state.ini` and is restored at
+boot, so the one burst to `balanced` that some earlier build needed had been
+the machine's setting ever since. It was still on `balanced` when this was
+re-measured, four weeks after the document above concluded it should not be.
+
+`machines/framework/power.nix` now selects `power.bootProfile` on every boot.
+It sets the profile the machine *starts* in and pins nothing: GNOME's
+quick-settings menu still switches it at runtime, so a build can have
+`balanced` and the next boot still comes back cool.
+
 ## Negative result: a userspace clock cap does not work here
 
 A `scaling_max_freq` cap was tried (`machines/framework/power.nix`, since
@@ -237,9 +265,20 @@ packs it had repacked the hour before.
 
 ## Reproducing
 
-The sampling harness is not committed — it is ~30 lines of `awk` over
-`/sys/class/hwmon/*`. To re-measure after a change, sample `k10temp/temp1_input`,
-`amdgpu/power1_input`, `cros_ec/fan1_input` and
-`/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq` at 1 Hz across an
-identical load, and compare peaks — averages hide exactly the transients that
-matter here.
+The sampling harness is committed as `scripts/power-bench`, and installed on
+this machine as `power-bench` by `machines/framework/power.nix`. It samples
+`k10temp/temp1_input`, `amdgpu/power1_average`, `fan1_input` and
+`/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq` at 1 Hz across an idle
+and a load phase per profile, and reports average *and* maximum for each —
+averages hide exactly the transients that matter here. It needs no root and
+restores the profile it started from, including on interrupt.
+
+```
+power-bench                                   # all three profiles, 24 threads
+power-bench balanced                          # one profile
+LOAD_THREADS=8 LOAD_SECONDS=75 power-bench    # narrower, longer
+```
+
+Re-run it after a BIOS, kernel or nixpkgs bump. The ceilings that make
+`power-saver` work are set by firmware, not by Linux, so they are exactly the
+kind of thing a BIOS update moves without announcing it.
