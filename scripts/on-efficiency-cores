@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run a command confined to the CPUs with the lower firmware frequency ceiling.
+#
+# On a heterogeneous AMD part (the HX 370 in `framework`: Zen5 at 5157 MHz,
+# Zen5c at 3289 MHz) that ceiling is set by firmware, and firmware is the only
+# ceiling this platform actually honours — `scaling_max_freq` is a hint the
+# hardware may exceed in amd-pstate active mode, which is why the clock cap
+# tried in docs/framework-thermal.md did nothing. A CPU affinity mask is not a
+# hint: a thread on a Zen5c core physically cannot reach 5 GHz.
+#
+# That makes this a per-application clock cap. Use it for work that is *tall*
+# rather than wide — one or two threads free to chase boost — which is the
+# shape that produces the audible fan surges without buying any throughput
+# worth the heat.
+#
+# Usage:
+#   on-efficiency-cores brave
+#   on-efficiency-cores --list          print the mask and exit
+#
+# The core list is derived at every launch instead of being hardcoded, because
+# the kernel is free to enumerate CPUs differently after an update and a stale
+# hardcoded mask fails silently — it would still run, just on the wrong cores.
+# On a homogeneous CPU there is nothing to confine and the command runs
+# unchanged.
+
+listOnly=false
+if [ "${1:-}" = "--list" ]; then
+  listOnly=true
+  shift
+fi
+
+if [ "$listOnly" = false ] && [ $# -eq 0 ]; then
+  echo "usage: on-efficiency-cores [--list] <command> [args...]" >&2
+  exit 64
+fi
+
+# Overridable only so the homogeneous-CPU branch can be exercised on a
+# heterogeneous machine; nothing sets it in normal use.
+cpufreqRoot=${CPUFREQ_ROOT:-/sys/devices/system/cpu}
+
+# Collect every CPU's firmware ceiling as "<kHz> <cpuNumber>".
+cpuCeilings=$(
+  for ceilingFile in "$cpufreqRoot"/cpu*/cpufreq/cpuinfo_max_freq; do
+    [ -r "$ceilingFile" ] || continue
+    cpuNumber=${ceilingFile#"$cpufreqRoot"/cpu}
+    cpuNumber=${cpuNumber%%/*}
+    echo "$(cat "$ceilingFile") $cpuNumber"
+  done
+)
+
+if [ -z "$cpuCeilings" ]; then
+  echo "on-efficiency-cores: no cpufreq data — cannot identify core types" >&2
+  exit 1
+fi
+
+distinctCeilings=$(echo "$cpuCeilings" | awk '{print $1}' | sort -un | wc -l)
+if [ "$distinctCeilings" -lt 2 ]; then
+  # Homogeneous CPU: confining to "the slow cores" would confine to all of
+  # them, which is a no-op that only obscures what is running.
+  if [ "$listOnly" = true ]; then
+    echo "homogeneous CPU — no efficiency cores to select"
+    exit 0
+  fi
+  exec "$@"
+fi
+
+lowestCeiling=$(echo "$cpuCeilings" | awk '{print $1}' | sort -n | head -1)
+efficiencyCores=$(
+  echo "$cpuCeilings" |
+    awk -v ceiling="$lowestCeiling" '$1 == ceiling {print $2}' |
+    sort -n | paste -sd,
+)
+
+if [ "$listOnly" = true ]; then
+  printf 'efficiency cores: %s  (ceiling %d MHz)\n' \
+    "$efficiencyCores" "$((lowestCeiling / 1000))"
+  exit 0
+fi
+
+exec taskset -c "$efficiencyCores" "$@"

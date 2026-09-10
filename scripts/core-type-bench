@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+# A/B a saturated browser workload against a heterogeneous CPU's two core types,
+# reporting what the page got done and what the machine paid for it.
+#
+#   fast    the renderer is unconfined and free to reach the boost cores
+#   e-core  the renderer is confined to the cores with the lower firmware
+#           frequency ceiling (see scripts/on-efficiency-cores)
+#
+# This is the harness behind the table in docs/framework-thermal.md that
+# justifies confining Brave in home/apps/brave.nix. It answers the only two
+# questions that matter for that decision together, in one window: how much
+# throughput the confinement costs, and how much heat and fan it saves.
+#
+# The page is a main-thread saturator, not a copy of any particular site. It
+# reproduces the *shape* the Pinterest profile showed -- allocation-heavy
+# JavaScript pegging one renderer thread, with GC churn -- because that shape,
+# not the site, is what chases boost clocks.
+#
+# Usage:
+#   core-type-bench                   # 1 saturated thread
+#   THREADS=3 core-type-bench         # tall and wide
+#   MEASURE_SECONDS=60 core-type-bench
+#
+# Needs no root. Leaves nothing behind but its own temporary browser profile.
+
+threadCount=${THREADS:-1}
+measureSeconds=${MEASURE_SECONDS:-40}
+settleSeconds=${SETTLE_SECONDS:-15}
+coolSeconds=${COOL_SECONDS:-60}
+debugPort=${DEBUG_PORT:-9455}
+
+braveBinary=${BRAVE:-$(command -v brave-unconfined || command -v brave || true)}
+if [ -z "$braveBinary" ]; then
+  echo "core-type-bench: no brave on PATH — set BRAVE=/path/to/brave" >&2
+  exit 1
+fi
+
+efficiencyCores=$(on-efficiency-cores --list | sed -n 's/^efficiency cores: \([0-9,]*\).*/\1/p')
+if [ -z "$efficiencyCores" ]; then
+  echo "core-type-bench: this CPU has one firmware ceiling — nothing to compare" >&2
+  exit 1
+fi
+allCores="0-$(($(nproc) - 1))"
+
+workDir=$(mktemp -d /tmp/core-type-bench.XXXXXX)
+profileDir=""
+trap 'rm -rf "$workDir"' EXIT
+
+cat >"$workDir/saturate.html" <<'PAGE'
+<!doctype html><meta charset=utf-8><title>init</title>
+<style>body{margin:0;background:#141414;color:#ddd;font:14px monospace}</style>
+<pre id=out></pre>
+<script>
+const WORKERS = +(new URLSearchParams(location.search).get('threads') || 1);
+function workUnit(seed) {
+  const values = new Array(2000);
+  for (let i = 0; i < 2000; i++) values[i] = ((seed + i) * 2654435761) % 100000;
+  values.sort((a, b) => a - b);
+  let acc = 0; const parts = [];
+  for (let i = 0; i < 2000; i++) { acc = (acc + values[i]) % 1000003; parts.push('k' + values[i]); }
+  return parts.join(',').length + acc;
+}
+let unitsDone = 0, checksum = 0;
+const startedAt = performance.now();
+const channel = new MessageChannel();
+channel.port1.onmessage = () => {
+  for (let batch = 0; batch < 20; batch++) { checksum ^= workUnit(unitsDone++); }
+  channel.port2.postMessage(0);
+};
+channel.port2.postMessage(0);
+const workerSource = `onmessage=()=>{${workUnit.toString()};let n=0,c=0;
+  for(;;){c^=workUnit(n++); if(n%400===0) postMessage(n);}}`;
+for (let w = 0; w < WORKERS - 1; w++) {
+  new Worker(URL.createObjectURL(new Blob([workerSource]))).postMessage(0);
+}
+let frameIntervals = [], previousFrame = startedAt;
+function frame(now) {
+  frameIntervals.push(now - previousFrame); previousFrame = now;
+  const elapsed = (now - startedAt) / 1000;
+  if (frameIntervals.length % 20 === 0) {
+    const recent = frameIntervals.slice(-240).slice().sort((a, b) => a - b);
+    const at = q => recent[Math.min(recent.length - 1, Math.floor(recent.length * q))];
+    const stats = {
+      s: +elapsed.toFixed(0),
+      unitsPerSec: +(unitsDone / elapsed).toFixed(1),
+      fps: +(frameIntervals.length / elapsed).toFixed(1),
+      medianFrameMs: +at(0.5).toFixed(1), p95FrameMs: +at(0.95).toFixed(1),
+      jank: frameIntervals.filter(ms => ms > 33).length,
+    };
+    document.title = JSON.stringify(stats);
+    out.textContent = JSON.stringify(stats, null, 1);
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+PAGE
+
+hwmonByName() {
+  for hwmonDir in /sys/class/hwmon/hwmon*; do
+    [ "$(cat "$hwmonDir/name" 2>/dev/null)" = "$1" ] && { echo "$hwmonDir"; return 0; }
+  done
+  return 1
+}
+amdgpuHwmon=$(hwmonByName amdgpu) || { echo "core-type-bench: no amdgpu hwmon" >&2; exit 1; }
+k10tempHwmon=$(hwmonByName k10temp) || { echo "core-type-bench: no k10temp hwmon" >&2; exit 1; }
+fanFile=$(for f in /sys/class/hwmon/hwmon*/fan1_input; do [ -r "$f" ] && echo "$f"; done | head -1)
+
+armPids() {
+  local cmdlineFile pid
+  for cmdlineFile in /proc/[0-9]*/cmdline; do
+    pid=${cmdlineFile#/proc/}
+    pid=${pid%/cmdline}
+    tr '\0' ' ' <"$cmdlineFile" 2>/dev/null | grep -q "$profileDir" && echo "$pid"
+  done
+}
+
+cpuTicks() {
+  local total=0 value
+  for pid in $(armPids); do
+    value=$(awk '{print $14+$15}' /proc/"$pid"/stat 2>/dev/null) || continue
+    total=$((total + ${value:-0}))
+  done
+  echo "$total"
+}
+
+pageStats() {
+  # The page publishes its own counters in document.title, which the DevTools
+  # target list exposes without needing a websocket client.
+  curl -s "http://127.0.0.1:$debugPort/json/list" 2>/dev/null |
+    jq -r '[.[] | select(.url | contains("saturate")) | .title][0] // ""' 2>/dev/null |
+    sed 's/&quot;/"/g'
+}
+
+runArm() {
+  local armName=$1 coreList=$2
+  printf 'cooling %ss...\n' "$coolSeconds"
+  sleep "$coolSeconds"
+  awk -v p="$(cat "$amdgpuHwmon/power1_average")" -v t="$(cat "$k10tempHwmon/temp1_input")" \
+      -v f="$(cat "$fanFile")" \
+    'BEGIN{printf "  baseline: %.1f W  %.1f C  %d rpm\n", p/1e6, t/1e3, f}'
+
+  # A profile directory unique to this arm. armPids finds the browser by this
+  # path, so reusing one across arms would let a survivor from the previous arm
+  # be counted here -- which silently doubles the measured load.
+  profileDir="$workDir/profile-$armName"
+  "$braveBinary" --user-data-dir="$profileDir" --no-first-run --no-default-browser-check \
+    --ozone-platform=wayland --remote-debugging-port="$debugPort" --window-size=1600,1000 \
+    "file://$workDir/saturate.html?threads=$threadCount" >/dev/null 2>&1 &
+  sleep 6
+
+  local pinnedCount=0
+  for pid in $(armPids); do
+    taskset -a -cp "$coreList" "$pid" >/dev/null 2>&1 && pinnedCount=$((pinnedCount + 1))
+  done
+  sleep "$settleSeconds"
+  # Renderers spawned during settle inherit the mask, but re-apply so a late
+  # process cannot quietly invalidate the arm.
+  for pid in $(armPids); do taskset -a -cp "$coreList" "$pid" >/dev/null 2>&1; done
+
+  local ticksBefore; ticksBefore=$(cpuTicks)
+  local statsBefore; statsBefore=$(pageStats)
+  local powerSum=0 powerMax=0 tempSum=0 tempMax=0 fanSum=0 fanMax=0 clockMax=0 samples=0
+  for _ in $(seq "$measureSeconds"); do
+    local power temp fan clockPeak
+    power=$(cat "$amdgpuHwmon/power1_average"); temp=$(cat "$k10tempHwmon/temp1_input")
+    fan=$(cat "$fanFile")
+    clockPeak=$(sort -n /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq | tail -1)
+    powerSum=$((powerSum + power)); tempSum=$((tempSum + temp)); fanSum=$((fanSum + fan))
+    [ "$power" -gt "$powerMax" ] && powerMax=$power
+    [ "$temp" -gt "$tempMax" ] && tempMax=$temp
+    [ "$fan" -gt "$fanMax" ] && fanMax=$fan
+    [ "$clockPeak" -gt "$clockMax" ] && clockMax=$clockPeak
+    samples=$((samples + 1)); sleep 1
+  done
+  local ticksAfter; ticksAfter=$(cpuTicks)
+
+  printf '=== arm %s (cpus %s, %d procs pinned) ===\n' "$armName" "$coreList" "$pinnedCount"
+  awk -v n="$samples" -v p="$powerSum" -v pm="$powerMax" -v t="$tempSum" -v tm="$tempMax" \
+      -v f="$fanSum" -v fm="$fanMax" -v cm="$clockMax" \
+      -v ticks="$((ticksAfter - ticksBefore))" -v secs="$measureSeconds" \
+    'BEGIN{printf "  socket %5.1f / %5.1f W   die %5.1f / %5.1f C   fan %4d / %4d rpm   peak clock %d MHz   browser %.2f cores\n",
+           p/n/1e6, pm/1e6, t/n/1e3, tm/1e3, f/n, fm, cm/1000, ticks/100/secs}'
+  printf '  page at start: %s\n  page at end:   %s\n' "$statsBefore" "$(pageStats)"
+
+  # $! is the launcher script, which has already exec'd away; kill every
+  # process that belongs to this arm's profile and confirm they are gone
+  # before the next arm starts measuring.
+  for pid in $(armPids); do kill "$pid" 2>/dev/null; done
+  sleep 3
+  for pid in $(armPids); do kill -9 "$pid" 2>/dev/null; done
+  sleep 2
+  local survivors; survivors=$(armPids | wc -l)
+  if [ "$survivors" -gt 0 ]; then
+    echo "  WARNING: $survivors processes from arm $armName survived" >&2
+  fi
+}
+
+printf 'profile=%s  threads=%s  measure=%ss  efficiency cores=%s\n' \
+  "$(powerprofilesctl get 2>/dev/null || echo unknown)" \
+  "$threadCount" "$measureSeconds" "$efficiencyCores"
+runArm fast "$allCores"
+runArm e-core "$efficiencyCores"

@@ -66,7 +66,7 @@ with **13.0 W / 60.1 C** excursions, against 2022 MHz / 6.0 W / 51.2 C on
 Those transients — not sustained work — are what produce the audible fan
 surges during ordinary use. That is what `machines/framework/power.nix` targets.
 
-### Re-measured 2026-09-10 — and the finding had never been deployed
+### Re-measured 2026-09-10 — the profile reproduces, but it is the wrong lever
 
 Kernel 6.18.48, same chassis, same 24-thread method, now via the committed
 harness `scripts/power-bench`:
@@ -83,16 +83,93 @@ touches 26.1 W and 84.6 C; the identical session on `power-saver` never passes
 8.0 W or 64.8 C, because the firmware ceiling is 2.0 GHz and there is nothing
 to spike into.
 
-**What was missing was not the analysis — it was the configuration.** The
-profile lives in `/var/lib/power-profiles-daemon/state.ini` and is restored at
-boot, so the one burst to `balanced` that some earlier build needed had been
-the machine's setting ever since. It was still on `balanced` when this was
-re-measured, four weeks after the document above concluded it should not be.
+#### Rejected: defaulting the machine to `power-saver`
 
-`machines/framework/power.nix` now selects `power.bootProfile` on every boot.
-It sets the profile the machine *starts* in and pins nothing: GNOME's
-quick-settings menu still switches it at runtime, so a build can have
-`balanced` and the next boot still comes back cool.
+Selecting `power-saver` at boot was tried on 2026-09-10 and **rejected by the
+operator after use.** The table above understates what the profile does to the
+desktop: `platform_profile=low-power` moves the *firmware* ceiling to 2.0 GHz
+for every core on the machine, a 2.6x cut against `balanced`, and it is felt as
+stutter in ordinary interactive work — not only in the builds the "genuine
+trade" paragraph above had in mind.
+
+That is the correct verdict, and it points at the real defect in the framing.
+The profile is a whole-machine knob being used to contain a problem that a
+single application thread creates. The section below measures the alternative.
+
+## The heat is one thread, and it is an application-level fix
+
+Measured 2026-09-10 with `scripts/core-type-bench`, on `balanced`, one
+saturated browser main thread (allocation-heavy JS with GC churn — the shape
+the Pinterest profile in NST11161 showed):
+
+| arm | socket avg/max | die avg/max | fan avg/max | peak clock | JS throughput | fps | p95 frame |
+| --- | -------------- | ----------- | ----------- | ---------- | ------------- | --- | --------- |
+| unconfined | 20.4 / 25.0 W | 99.8 / **100.1 C** | 4764 / **5173 rpm** | 5082 MHz | **4074 u/s** | 119.5 | 8.4 ms |
+| Zen5c only | 12.7 / 23.1 W | 76.1 / 79.4 C | 3540 / **3574 rpm** | 3630 MHz | 2930 u/s | 119.7 | 8.4 ms |
+
+**One browser thread, unconfined, takes this die to 100 °C and the fan to
+5173 rpm.** Not a build, not a backup — one tab's main thread. Both arms spent
+the same CPU time (1.14 vs 1.17 cores); the only difference is which cores the
+scheduler was allowed to use.
+
+The confinement costs **28 % of raw JS throughput** and buys **24 K and
+1600 rpm** — and 3574 rpm is this machine's idle fan speed, so the fan does not
+respond to the workload at all. Frame rate and frame pacing are unchanged
+(119.5 vs 119.7 fps, p95 frame 8.4 ms in both), which is the part that decides
+whether a browser feels fast. The fast cores were never buying scroll
+smoothness here; they were buying heat.
+
+### The limit: it works because the load is *tall*, not because it is a browser
+
+Repeating the same A/B with three saturating threads instead of one, both arms
+started from the same baseline (8.1 W / 61.9 C and 8.0 W / 62.4 C):
+
+| arm | socket avg/max | die avg/max | fan avg/max | peak clock | JS throughput |
+| --- | -------------- | ----------- | ----------- | ---------- | ------------- |
+| unconfined | 24.7 / **25.0 W** | 94.3 / 95.5 C | 5668 / 5957 rpm | 4363 MHz | 3475 u/s |
+| Zen5c only | 22.8 / **25.0 W** | 88.8 / 90.5 C | 5410 / 5748 rpm | 3628 MHz | 2911 u/s |
+
+The benefit collapses: **5.5 K and 258 rpm, for 16 % of throughput.** Both arms
+sit on the same 25.0 W socket ceiling, and once the part is power-limited it
+does not matter which cores are burning the budget — the same watts arrive at
+the same heatpipe. Confinement only removes heat while there is a *clock*
+excursion to remove, which is the narrow, bursty case.
+
+This is the same conclusion the restic pin reached from the other direction:
+that job was never wide, only tall. State the rule plainly — **an affinity mask
+is a clock cap, not a power cap.** For a genuinely wide workload the only
+levers left are less work or a lower socket limit.
+
+For the Pinterest case that started this (NST11161: 2.03 cores in the renderer,
+main thread 99.7 % busy, 8 ThreadPool threads at 84 %) the real load sits
+between these two measurements, so expect a part of the 24 K, not all of it.
+The measured lever that helps in the power-limited regime is the one that cuts
+the work itself: a narrower window took that page from 2.38 to 1.62 cores
+(−27 %), because Pinterest couples its column count to the viewport width.
+
+Compare the two levers on the same axis:
+
+```
+JS throughput, relative to unconfined browsing on `balanced`
+
+unconfined / balanced      ████████████████████  100%   100 C, 5173 rpm
+Zen5c-confined browser     ██████████████         72%    79 C, 3574 rpm
+whole machine on power-saver ███████              ~39%*  70 C, 4219 rpm
+
+* clock-derived (2.0 GHz ceiling against a 5.08 GHz observed peak), not a
+  throughput measurement -- and it applies to every process on the machine,
+  which is why it was rejected.
+```
+
+This is the same mechanism the restic pin uses, and for the same reason: a CPU
+affinity mask is a hard hardware constraint, where `scaling_max_freq` was only
+a hint. It is applied to Brave in `home/apps/brave.nix` via
+`scripts/on-efficiency-cores`, which derives the core list from
+`cpuinfo_max_freq` at every launch rather than hardcoding it, and which is a
+no-op on a CPU whose cores all share one ceiling.
+
+`brave-unconfined` is installed alongside for when the throughput is worth the
+noise.
 
 ## Negative result: a userspace clock cap does not work here
 
@@ -263,10 +340,38 @@ own merits rather than thermal ones: it drops ~7 GB/day of repack upload and
 ~12 GB/day of SSD writes, and hourly pruning was largely repacking the same
 packs it had repacked the hour before.
 
+## Still open: `amd_pstate=guided`
+
+The negative result above rules out a userspace clock cap **in amd-pstate
+active mode**. Guided mode is the one lever that would give this machine a real
+middle point — a ~3.5 GHz ceiling for everything, instead of choosing between
+`power-saver`'s 2.0 GHz stutter and `balanced`'s 5.16 GHz fan. It remains
+untested, and it is the right next experiment for anyone who wants a
+machine-wide answer rather than a per-application one.
+
+It does not need a reboot to try: the mode is switchable at runtime, and
+reversible by writing `active` back.
+
+```
+framework$ sudo sh -c 'echo guided > /sys/devices/system/cpu/amd_pstate/status'
+framework$ sudo sh -c 'for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq; do echo 3500000 > $f; done'
+framework$ power-bench balanced                       # does the ceiling hold?
+framework$ core-type-bench                            # what does it cost?
+framework$ sudo sh -c 'echo active > /sys/devices/system/cpu/amd_pstate/status'
+```
+
+The thing to check first is whether the ceiling is *real* in guided mode — read
+back `scaling_cur_freq` under full load, exactly as the negative result above
+did, and confirm no core exceeds the requested maximum. If it holds, this
+becomes a `boot.kernelParams` entry plus a declared ceiling, and the
+per-application confinement can be reconsidered.
+
 ## Reproducing
 
-The sampling harness is committed as `scripts/power-bench`, and installed on
-this machine as `power-bench` by `machines/framework/power.nix`. It samples
+The sampling harnesses are committed as `scripts/power-bench` (profiles) and
+`scripts/core-type-bench` (core types), and installed on this machine as
+`power-bench` and `core-type-bench` by `machines/framework/power.nix`.
+`power-bench` samples
 `k10temp/temp1_input`, `amdgpu/power1_average`, `fan1_input` and
 `/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq` at 1 Hz across an idle
 and a load phase per profile, and reports average *and* maximum for each —
@@ -279,6 +384,19 @@ power-bench balanced                          # one profile
 LOAD_THREADS=8 LOAD_SECONDS=75 power-bench    # narrower, longer
 ```
 
-Re-run it after a BIOS, kernel or nixpkgs bump. The ceilings that make
-`power-saver` work are set by firmware, not by Linux, so they are exactly the
-kind of thing a BIOS update moves without announcing it.
+`core-type-bench` runs the same sampling around a real browser saturating its
+own main thread, once unconfined and once on the efficiency cores, and reports
+page throughput and frame pacing beside the thermals — so the cost and the
+benefit of the confinement land in one table.
+
+```
+core-type-bench                               # one saturated thread
+THREADS=3 core-type-bench                     # tall and wide
+on-efficiency-cores --list                    # which cores, and their ceiling
+```
+
+Re-run both after a BIOS, kernel or nixpkgs bump. Every ceiling this document
+rests on is set by firmware, not by Linux, so they are exactly the kind of
+thing a BIOS update moves without announcing it. Cool the machine between arms
+and check the printed baseline: a run whose second arm starts 16 K hotter than
+its first is measuring the previous arm, not the change.
