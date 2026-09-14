@@ -18,6 +18,7 @@
     ../../modules/webui.nix
     ../../configs/ai-agents.nix
     ../../modules/machines.nix
+    ../../modules/fan-control.nix
 
   ];
 
