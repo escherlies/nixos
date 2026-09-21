@@ -55,6 +55,17 @@
   #     /v RealTimeIsUniversal /t REG_DWORD /d 1 /f
   time.hardwareClockInLocalTime = true;
 
+  # The setting above only works if the kernel has read the RTC before systemd
+  # starts. systemd applies the local-time offset once, early in boot
+  # ("RTC configured in localtime, applying delta of 120 minutes"). rtc_cmos is
+  # a module, though, and on 2026-09-21 it loaded 0.3 s after that step. Its
+  # hctosys then set the clock from the RTC read as UTC, which undid the offset
+  # and left the clock two hours ahead again. The WireGuard hub's replay state
+  # was poisoned the same way as on 2026-08-19, so `.lan` names stopped
+  # resolving and Open WebUI lost ollama.lan. Loading rtc_cmos in stage 1
+  # makes hctosys run before systemd applies the offset.
+  boot.initrd.kernelModules = [ "rtc_cmos" ];
+
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
