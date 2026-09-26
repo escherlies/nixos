@@ -118,11 +118,17 @@ let
   # Exit 1 is an ExecCondition "condition not met" code: systemd records the run
   # as skipped rather than failed, so an overlap is silent and the next timer
   # elapse picks the work back up.
+  #
+  # Both units are Type=oneshot, which sit in "activating" for their whole run
+  # and never reach "active" — `is-active --quiet` alone never matched, so the
+  # guard let prune start under a running backup (failed prune, 2026-09-26).
   skipWhileRunning =
     unit:
     toString (
       pkgs.writeShellScript "restic-skip-while-${unit}-runs" ''
-        ${config.systemd.package}/bin/systemctl is-active --quiet ${unit} && exit 1
+        case "$(${config.systemd.package}/bin/systemctl is-active ${unit})" in
+          active | activating | deactivating | reloading) exit 1 ;;
+        esac
         exit 0
       ''
     );
