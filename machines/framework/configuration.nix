@@ -59,6 +59,10 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  # The MT7925 (mt7925e) stalls for hundreds of milliseconds with power save
+  # on: on another laptop with the same chip, 214 ms average to the router with
+  # it on, 17 ms with it off (binp-nixos-infra, 2026-10-06).
+  networking.networkmanager.wifi.powersave = false;
 
   # Set your time zone.
 
@@ -156,7 +160,9 @@
     80
     443
     1234
-    5173
+    5173 # Vite dev server (ADR-0003 client port)
+    3000 # Elysia API when a dev session serves phones (expo-fullstack `mise run dev:devices`)
+    8081 # Metro / Expo dev server — Expo Go on a phone loads the app from here
   ];
 
   # This value determines the NixOS release from which the default
