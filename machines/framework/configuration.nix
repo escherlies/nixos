@@ -163,6 +163,13 @@
     5173 # Vite dev server (ADR-0003 client port)
     3000 # Elysia API when a dev session serves phones (expo-fullstack `mise run dev:devices`)
     8081 # Metro / Expo dev server — Expo Go on a phone loads the app from here
+    8162 # voice-agent Metro (`mise run dev:devices`) — Expo Go loads the app from here
+  ];
+
+  # voice-agent API under `mise run dev:devices`: 3862, or the next free port when the
+  # daemon holds 3862 (it binds loopback only, so opening 3862 exposes nothing).
+  networking.firewall.allowedTCPPortRanges = [
+    { from = 3862; to = 3865; }
   ];
 
   # This value determines the NixOS release from which the default
