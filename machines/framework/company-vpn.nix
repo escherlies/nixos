@@ -4,7 +4,8 @@
 #
 # The tunnel shows up in NetworkManager and can be disconnected there
 # (hideFromNetworkManager stays at the module's default, false);
-# `sudo systemctl restart wireguard-wg-ops` or a reboot brings it back.
+# `ssh root@framework systemctl restart wireguard-wg-ops` or a reboot brings it
+# back.
 {
   config,
   inputs,
@@ -36,15 +37,24 @@ in
     privateKeyFile = config.age.secrets."wg-ops-framework".path;
   };
 
-  # Only the gateway may reach these ports through wg-ops. 3862 is already open
-  # on every interface for the LAN dev range in ./configuration.nix, so the
-  # refusal for every other wg-ops source is inserted ahead of those accepts;
-  # the accept for the gateway is appended. The hub would forward the builder
-  # (10.110.0.2) to a workstation, so this is not only belt and braces.
+  # wg-ops admits the gateway on these ports, ping, and replies to framework's
+  # own connections; everything else arriving on it is refused before the
+  # global accepts in ./configuration.nix, which are meant for the LAN. The hub
+  # forwards infrastructure (the builder, 10.110.0.2) to workstations on any
+  # port, so without this every globally open port would be open to it.
+  #
+  # Neither port is open globally, so on every other interface (LAN, wg0,
+  # docker bridges) they are refused; binding a daemon to 10.110.1.1 alone
+  # would not do that, since Linux accepts packets for its own addresses on any
+  # interface. wg-ops carries no IPv6, and the IPv6 refusal keeps it that way.
   networking.firewall.extraCommands = ''
-    iptables -w -I nixos-fw 1 -i ${opsNetwork.interfaceName} ! -s ${opsNetwork.hubAddress} \
-      -p tcp -m multiport --dports ${gatewayProxiedTcpPortList} -j nixos-fw-log-refuse
-    iptables -w -A nixos-fw -i ${opsNetwork.interfaceName} -s ${opsNetwork.hubAddress} \
+    iptables -w -I nixos-fw 1 -i ${opsNetwork.interfaceName} \
+      -m conntrack --ctstate ESTABLISHED,RELATED -j nixos-fw-accept
+    iptables -w -I nixos-fw 2 -i ${opsNetwork.interfaceName} \
+      -p icmp --icmp-type echo-request -j nixos-fw-accept
+    iptables -w -I nixos-fw 3 -i ${opsNetwork.interfaceName} -s ${opsNetwork.hubAddress} \
       -p tcp -m multiport --dports ${gatewayProxiedTcpPortList} -j nixos-fw-accept
+    iptables -w -I nixos-fw 4 -i ${opsNetwork.interfaceName} -j nixos-fw-log-refuse
+    ip6tables -w -I nixos-fw 1 -i ${opsNetwork.interfaceName} -j nixos-fw-log-refuse
   '';
 }
