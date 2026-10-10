@@ -19,6 +19,7 @@
     ../../modules/desktops/gnome.nix
     ../../modules/gaming
     ./keyboard.nix
+    ./company-vpn.nix
     ../../configs/graphical.nix
     ../../configs/ai-agents.nix
     ../../modules/playwright.nix

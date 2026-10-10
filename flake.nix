@@ -33,6 +33,11 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 
+    # The company VPN's workstation module (nixosModules.company-vpn-workstation),
+    # imported by framework. `nix flake update binp-nixos-infra` picks up a hub
+    # key or address change.
+    binp-nixos-infra.url = "git+ssh://git@github.com/binaryplease/nixos";
+
   };
 
   outputs =
