@@ -61,6 +61,8 @@
               j = "down";
               k = "up";
               l = "right";
+              u = "pageup";
+              d = "pagedown";
             };
           }
           // common;
