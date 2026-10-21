@@ -28,7 +28,15 @@
     (callPackage ./nautilus-copypath { })
 
     gnomeExtensions.appindicator
-    gnomeExtensions.clipboard-indicator
+    # Upstream has no setting for image thumbnail size (issue #508), so patch
+    # the menu thumbnails from 1.5em to 7.5em.
+    (gnomeExtensions.clipboard-indicator.overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        substituteInPlace $out/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com/stylesheet.css \
+          --replace-fail "width:1.5em;" "width:7.5em; icon-size:7.5em;" \
+          --replace-fail "height:1.5em;" "height:7.5em;"
+      '';
+    }))
 
     # Emoji picker
     smile
