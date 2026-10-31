@@ -40,9 +40,18 @@ let
       command,
       environment ? [ ],
       extraService ? { },
+      afterNightshift ? true,
     }:
     {
-      Unit.Description = description;
+      Unit = {
+        Description = description;
+      }
+      # Everything else reads nightshift at startup (voice-agent's project
+      # list is fetched once), so it starts once nightshift answers.
+      // pkgs.lib.optionalAttrs afterNightshift {
+        Wants = [ "nightshift.service" ];
+        After = [ "nightshift.service" ];
+      };
       Service = {
         WorkingDirectory = "${developer}/${directory}";
         ExecStart = "${bun} run ${command}";
@@ -69,7 +78,12 @@ in
         description = "nightshift daemon";
         directory = "nightshift";
         command = "src/index.ts serve";
+        afterNightshift = false;
         extraService = {
+          # Started means answering, which is what `After=` on the others
+          # waits for.
+          ExecStartPost = "${pkgs.bash}/bin/bash -c 'until ${pkgs.curl}/bin/curl -sf http://127.0.0.1:7377/api/status >/dev/null; do sleep 1; done'";
+          TimeoutStartSec = 120;
           # Running tasks are agent processes the daemon spawned. Stopping
           # only the daemon lets them outlive a restart, as they do under the
           # detached `daemon start`, so the restarted daemon can recover them
