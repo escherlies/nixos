@@ -38,4 +38,8 @@ in
   # Public key, for the hub's opsPeers: RA8Ch9Y5l2gUlqMceOvWzWhK6STm4mTMFUSIaRrfkX8=
   "wg-ops-framework.key.age".publicKeys = framework;
 
+  # Company VPN (wg-ops, binp-nixos-infra) key for desktop, generated on desktop.
+  # Public key, for the hub's opsPeers: dO+6umV7K3bj7tIqnVPqZKvyhD71YM5rwlAkNkr0zlE=
+  "wg-ops-desktop.key.age".publicKeys = [ desktop ];
+
 }
