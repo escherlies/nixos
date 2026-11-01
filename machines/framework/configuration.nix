@@ -169,7 +169,7 @@
 
   # voice-agent API under `mise run dev:devices` when a daemon holds 3862: the
   # next free port. 3862 itself stays closed here, the voice-agent daemon's
-  # port: the daemon runs on desktop now (../desktop/dev-server.nix), and one
+  # port: the daemon runs on desktop now (../desktop/company-vpn.nix), and one
   # started here by hand would be unauthenticated. A dev session that lands on
   # 3862 is therefore not reachable from a phone on the LAN.
   networking.firewall.allowedTCPPortRanges = [

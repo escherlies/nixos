@@ -122,6 +122,7 @@
         "caddy-with-modules": "caddy-with-modules",
         "deploy-coordinator": "deploy-coordinator",
         "disko": "disko",
+        "enc-indexer": "enc-indexer",
         "growth-dashboard": "growth-dashboard",
         "home-manager": "home-manager_3",
         "hyhealth": "hyhealth",
@@ -133,11 +134,11 @@
         "zink-staging": "zink-staging"
       },
       "locked": {
-        "lastModified": 1791632634,
-        "narHash": "sha256-s0qgvwo/cFXurFA1ttUGR4mSHcQAFqKFZKXk3WMniG8=",
+        "lastModified": 1793540458,
+        "narHash": "sha256-BN02hRlrNjdcxcsdJosV0qqUix1D/0kXtmOvp3Z7uL4=",
         "ref": "refs/heads/main",
-        "rev": "bdc13ba469b35d5ddc3c4da30bbd8838418817d3",
-        "revCount": 520,
+        "rev": "bdd585f7c4730c16626e84958b48b098f17169bb",
+        "revCount": 624,
         "type": "git",
         "url": "ssh://git@github.com/binaryplease/nixos"
       },
@@ -289,6 +290,23 @@
         "owner": "nix-community",
         "repo": "disko",
         "type": "github"
+      }
+    },
+    "enc-indexer": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1792495960,
+        "narHash": "sha256-fYXSxWgTEuwEgrHEEqpcUEaOfzw0xCSVauiaAfa7RQo=",
+        "ref": "refs/heads/workbatch/de5c9bbf",
+        "rev": "18c8e0163b0a6af4e5e3ef9a43a4c87e967fb024",
+        "revCount": 1667,
+        "type": "git",
+        "url": "ssh://git@github.com/arolsenarchives/enc-indexer.git"
+      },
+      "original": {
+        "ref": "refs/heads/workbatch/de5c9bbf",
+        "type": "git",
+        "url": "ssh://git@github.com/arolsenarchives/enc-indexer.git"
       }
     },
     "fenix": {
@@ -799,11 +817,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791283739,
-        "narHash": "sha256-iit53Jh/2VGR4RgRhc0d/Ld+9h+VV4r66gJn+RTo/wE=",
+        "lastModified": 1792577750,
+        "narHash": "sha256-3SLTgqwNJ+A4/pC+gkX0xigcMT/ZBXZzyjg94RRci5U=",
         "ref": "refs/heads/main",
-        "rev": "355d7736ccb3e29767e491fb39f34accff1453f0",
-        "revCount": 17,
+        "rev": "8d4153e9984ea3c1cb4ae50ae0ff0a42876876aa",
+        "revCount": 50,
         "type": "git",
         "url": "ssh://git@github.com/binaryplease/binp-growth-dashboard.git"
       },
