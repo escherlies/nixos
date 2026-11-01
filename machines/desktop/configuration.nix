@@ -19,6 +19,8 @@
     ../../configs/ai-agents.nix
     ../../modules/machines.nix
     ../../modules/fan-control.nix
+    ../../modules/playwright.nix
+    ../../modules/agent-skills.nix
     ./company-vpn.nix
 
   ];
