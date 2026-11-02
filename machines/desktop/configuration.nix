@@ -9,6 +9,10 @@
   ...
 }:
 
+let
+  # Radeon RX 7900 XTX (PCI 0000:03:00.0), the GPU the monitor is attached to.
+  discreteGpuVendorAndDeviceId = "1002:744c";
+in
 {
   imports = [
     # Include the results of the hardware scan.
@@ -19,6 +23,7 @@
     ../../configs/ai-agents.nix
     ../../modules/machines.nix
     ../../modules/fan-control.nix
+    ../../modules/gaming
     ../../modules/playwright.nix
     ../../modules/agent-skills.nix
     ./company-vpn.nix
@@ -222,4 +227,21 @@
   services.hardware.openrgb.enable = true;
 
   programs.nix-ld.enable = true;
+
+  modules.gaming.enable = true;
+
+  # The CPU's integrated GPU is the boot VGA device, so Mutter selects it as
+  # primary and Mesa's device-select layer lists it first for every Wayland and
+  # X11 client. The two settings below move Steam, its games and gamescope to the
+  # discrete GPU. They leave GNOME and the Ollama service as they are.
+  programs.steam.package = pkgs.steam.override {
+    extraEnv.DRI_PRIME = discreteGpuVendorAndDeviceId;
+  };
+
+  # Gamescope opens the KMS node of its Vulkan device. No monitor hangs off the
+  # integrated GPU, so the GDM Steam session needs this flag to reach the display.
+  programs.gamescope.args = [
+    "--prefer-vk-device"
+    discreteGpuVendorAndDeviceId
+  ];
 }
