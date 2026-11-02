@@ -226,6 +226,16 @@ in
 
   services.hardware.openrgb.enable = true;
 
+  # systemd-oomd watches user.slice and every slice inside a user manager. It
+  # kills a cgroup below them when memory pressure stays above the limit that
+  # the nixpkgs module sets for these slices. Services in system.slice stay
+  # unwatched.
+  systemd.oomd.enableUserSlices = true;
+
+  # 1 enables all SysRq functions. systemd's default of 16 allows only sync, so
+  # Alt+SysRq+F, which runs the kernel OOM killer once, does nothing without it.
+  boot.kernel.sysctl."kernel.sysrq" = 1;
+
   programs.nix-ld.enable = true;
 
   modules.gaming.enable = true;
