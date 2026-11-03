@@ -29,7 +29,7 @@ in
     onlyoffice-desktopeditors
 
     # Audio
-    pavucontrol
+    pwvucontrol
     comma
 
     # Wayland utils
