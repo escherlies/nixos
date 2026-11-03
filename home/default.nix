@@ -34,6 +34,15 @@
   # changes in each release.
   home.stateVersion = "24.11";
 
+  # Home Manager runs `dconf load` on every activation, so these values replace
+  # a stored user value. A schema override in
+  # services.desktopManager.gnome.extraGSettingsOverrides only changes the
+  # default, and a stored user value takes precedence over it.
+  dconf.settings."org/gnome/desktop/wm/keybindings" = {
+    switch-windows-backward = [ "<Shift><Alt>Tab" ];
+    switch-applications-backward = [ "<Shift><Super>Tab" ];
+  };
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }
