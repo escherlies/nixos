@@ -6,12 +6,19 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
 let
   # Radeon RX 7900 XTX (PCI 0000:03:00.0), the GPU the monitor is attached to.
   discreteGpuVendorAndDeviceId = "1002:744c";
+
+  zoomTweaksSource = inputs.binp-chromium-zoom-tweaks;
+  zoomTweaksVersion = (lib.importJSON "${zoomTweaksSource}/manifest.json").version;
+  zoomTweaksExtension = pkgs.runCommandLocal "binp-chromium-zoom-tweaks-${zoomTweaksVersion}" { } ''
+    cp -r ${zoomTweaksSource} $out
+  '';
 in
 {
   imports = [
@@ -237,6 +244,22 @@ in
   boot.kernel.sysctl."kernel.sysrq" = 1;
 
   programs.nix-ld.enable = true;
+
+  # Brave gets binp-chromium-zoom-tweaks through --load-extension, which needs no
+  # signing key. The other routes (External Extensions JSON, the
+  # ExtensionInstallForcelist policy) need a CRX signed with a private key.
+  # The flag sits in the wrapper script, so it applies to every Brave started
+  # from this Home Manager profile, and it is lost when another binary is used:
+  # modules/playwright.nix keeps the plain pkgs.brave. Brave derives the extension
+  # ID from the store path, so the ID changes when the pinned revision changes.
+  # hiPrio wins the bin/brave collision with the pkgs.brave in home/apps/brave.nix.
+  home-manager.users.enrico.home.packages = [
+    (lib.hiPrio (
+      pkgs.brave.override {
+        commandLineArgs = "--load-extension=${zoomTweaksExtension}";
+      }
+    ))
+  ];
 
   modules.gaming.enable = true;
 

@@ -116,6 +116,23 @@
         "type": "github"
       }
     },
+    "binp-chromium-zoom-tweaks": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784372121,
+        "narHash": "sha256-Xk/F0YsbK3rmEDWTdvcoem43hkWl0ch7U8bNT8JzGQI=",
+        "owner": "binaryplease",
+        "repo": "binp-chromium-zoom-tweaks",
+        "rev": "d191390384dbb7761ec0e78bae654e58e2fce790",
+        "type": "github"
+      },
+      "original": {
+        "owner": "binaryplease",
+        "repo": "binp-chromium-zoom-tweaks",
+        "rev": "d191390384dbb7761ec0e78bae654e58e2fce790",
+        "type": "github"
+      }
+    },
     "binp-nixos-infra": {
       "inputs": {
         "agenix": "agenix_2",
@@ -1284,6 +1301,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "binp-chromium-zoom-tweaks": "binp-chromium-zoom-tweaks",
         "binp-nixos-infra": "binp-nixos-infra",
         "disko": "disko_2",
         "fresh": "fresh",

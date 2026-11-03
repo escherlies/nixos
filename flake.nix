@@ -38,6 +38,12 @@
     # key or address change.
     binp-nixos-infra.url = "git+ssh://git@github.com/binaryplease/nixos";
 
+    # Source of the Brave extension that machines/desktop/configuration.nix loads.
+    binp-chromium-zoom-tweaks = {
+      url = "github:binaryplease/binp-chromium-zoom-tweaks/d191390384dbb7761ec0e78bae654e58e2fce790";
+      flake = false;
+    };
+
   };
 
   outputs =
