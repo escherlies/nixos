@@ -41,6 +41,7 @@
   dconf.settings."org/gnome/desktop/wm/keybindings" = {
     switch-windows-backward = [ "<Shift><Alt>Tab" ];
     switch-applications-backward = [ "<Shift><Super>Tab" ];
+    move-to-center = [ "<Super>c" ];
   };
 
   # Let Home Manager install and manage itself.
