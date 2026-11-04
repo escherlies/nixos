@@ -4,9 +4,8 @@
 
   services.keyd =
     let
-      common = {
-        leftalt.backspace = "delete";
-      };
+      sharedKeymaps = import ../../modules/keyd-keymaps.nix;
+      common = sharedKeymaps.commonSettings;
     in
     {
       enable = true;
@@ -45,28 +44,7 @@
           // common;
         };
 
-        dz60 = {
-          ids = [ "445a:2260" ];
-          settings = {
-            main = {
-              capslock = "overload(nav, backspace)";
-              leftalt = "leftcontrol";
-              leftcontrol = "leftmeta";
-              leftmeta = "leftalt";
-              rightcontrol = "rightalt";
-            };
-
-            nav = {
-              h = "left";
-              j = "down";
-              k = "up";
-              l = "right";
-              u = "pageup";
-              d = "pagedown";
-            };
-          }
-          // common;
-        };
+        dz60 = sharedKeymaps.dz60;
       };
     };
 }

@@ -100,8 +100,22 @@ in
   services.xserver.xkb = {
     layout = "us";
     variant = "altgr-intl";
-    options = "ctrl:swap_lwin_lctl";
   };
+
+  # The DZ60 gets the keymap framework uses. Only this keyboard is listed, so
+  # keyd leaves every other keyboard on this machine alone.
+  services.keyd = {
+    enable = true;
+    keyboards.dz60 = (import ../../modules/keyd-keymaps.nix).dz60;
+  };
+
+  # The user's dconf database held xkb-options = ['ctrl:swap_lwin_lctl'], and
+  # GNOME applies that value after keyd, which exchanges keyd's left Ctrl and left
+  # Super output. Home Manager's `dconf load` replaces the stored value on every
+  # activation. The value equals the default of services.xserver.xkb.options.
+  home-manager.users.enrico.dconf.settings."org/gnome/desktop/input-sources".xkb-options = [
+    "terminate:ctrl_alt_bksp"
+  ];
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
