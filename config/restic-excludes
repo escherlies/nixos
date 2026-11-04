@@ -197,8 +197,11 @@ core
 # Playwright browser binaries
 .cache/ms-playwright
 
-# Steam games (re-downloadable; save files are in Steam Cloud)
-.local/share/Steam
+# Steam library and Proton prefixes: too large, and games are re-downloadable.
+# Steam Cloud does not sync Satisfactory blueprints and a recreated Proton prefix
+# lost them, so section 12 re-includes that folder. The /* is required: restic
+# does not descend into an excluded directory.
+.local/share/Steam/*
 
 # Videos and Movies
 Videos/Movies
@@ -252,3 +255,37 @@ Nextcloud
 # services.restic-backup.sqliteDatabases are snapshotted consistently instead;
 # see modules/restic.nix.
 **/*-shm
+
+
+# =============================================================================
+# 12. SATISFACTORY BLUEPRINTS (exception to the Steam exclude in section 8)
+# =============================================================================
+
+# Keep this section last: the last matching pattern wins, so no exclude above can
+# drop a blueprint file. A !pattern also re-includes everything below its
+# directory, so a /* after each one excludes that directory's other children.
+!.local/share/Steam/steamapps
+.local/share/Steam/steamapps/*
+!.local/share/Steam/steamapps/compatdata
+.local/share/Steam/steamapps/compatdata/*
+!.local/share/Steam/steamapps/compatdata/526870
+.local/share/Steam/steamapps/compatdata/526870/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx
+.local/share/Steam/steamapps/compatdata/526870/pfx/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved/SaveGames
+.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved/SaveGames/*
+!.local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved/SaveGames/blueprints

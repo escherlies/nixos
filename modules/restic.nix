@@ -215,7 +215,29 @@ in
         This is a physical CPU numbering and the kernel is free to enumerate
         differently after an update. Re-derive with:
           lscpu -e=CPU,CORE,MAXMHZ
-        and take the CPU column of every row at the *lower* MAXMHZ.
+        and take the CPU column of every row at the *lower* MAXMHZ. On a CPU
+        with one core type every row has the same MAXMHZ, so list all CPUs.
+      '';
+    };
+
+    pruneRepository = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Whether this host runs the daily `forget --prune`. Set it on one host of
+        a shared repository: `restic forget` groups snapshots by host and paths,
+        so that host's prune applies retention to every host's snapshots. While
+        it is offline the repository grows and no unit fails.
+      '';
+    };
+
+    repositoryLockRetry = lib.mkOption {
+      type = lib.types.str;
+      default = "30m";
+      description = ''
+        restic `--retry-lock` duration for backup and `forget --prune`, because
+        the ExecCondition guard cannot see another host's lock. A waiting prune
+        makes that guard skip this host's backup, so keep this under one hour.
       '';
     };
 
@@ -306,7 +328,11 @@ in
     systemd.tmpfiles.rules = [ "d ${cfg.sqliteSnapshotDir} 0755 root root -" ];
 
     services.restic.backups.home = {
-      initialize = true;
+      # `initialize` adds `restic cat config || restic init` to the pre-start.
+      # `cat config` takes a lock and gets no --retry-lock, so under another
+      # host's prune the pre-start would fail before the backup could wait. A
+      # new repository needs a manual `restic init`; restic exits 10 without it.
+      initialize = false;
 
       paths = [
         "/home/enrico"
@@ -321,16 +347,14 @@ in
       # Ignore find errors if files are moved/deleted during the run
       # `restic unlock` first: an interrupted run (suspend, reboot, OOM) leaves
       # an exclusive lock behind, and every subsequent run then fails to take
-      # its own lock. Because the unit's pre-start is `restic cat config ||
-      # restic init`, that surfaces as the *misleading* "repository master key
-      # and config already initialized" — so the real cause is invisible and
-      # the backup silently stops. This machine lost 22 days of backups that
-      # way (stale lock from 2026-07-23, found 2026-08-14), while still paying
-      # ~600 MB of SQLite-snapshot writes every hour for a run that could
-      # never succeed.
+      # its own lock. framework lost 22 days of backups that way (stale lock
+      # from 2026-07-23, found 2026-08-14), while still paying ~600 MB of
+      # SQLite-snapshot writes every hour for a run that could never succeed.
       #
-      # `unlock` only removes locks whose owning process is gone, so it cannot
-      # disturb a genuinely concurrent run.
+      # `unlock` removes a lock in two cases: its process on this host is gone,
+      # or its timestamp on any host is older than 30 minutes. A running restic
+      # refreshes its lock every 5 minutes, so a live run on another host keeps
+      # its lock as long as the two clocks agree to within about 25 minutes.
       backupPrepareCommand = ''
         ${pkgs.restic}/bin/restic unlock || true
         ${pkgs.findutils}/bin/find /home/enrico/Downloads -type f -size +1G > ${largeDownloadsExclude} || true
@@ -343,6 +367,7 @@ in
         "--exclude-file=${sqliteExclude}"
         "--exclude-caches"
         "--one-file-system"
+        "--retry-lock=${cfg.repositoryLockRetry}"
       ];
 
       # Prune runs on its own timer — see services.restic-backup.pruneTimerConfig.
@@ -357,15 +382,15 @@ in
     # backup command and no preStart, so this unit's ExecStart is exactly
     # `restic unlock` followed by `restic forget --prune` — the same pair it
     # would have appended to the backup unit, on a schedule of its own.
-    services.restic.backups.home-prune = {
+    services.restic.backups.home-prune = lib.mkIf cfg.pruneRepository {
       initialize = false;
       paths = [ ];
       environmentFile = config.age.secrets.restic-env.path;
-      pruneOpts = cfg.pruneOpts;
+      pruneOpts = cfg.pruneOpts ++ [ "--retry-lock=${cfg.repositoryLockRetry}" ];
       timerConfig = cfg.pruneTimerConfig;
     };
 
-    systemd.services.restic-backups-home-prune = {
+    systemd.services.restic-backups-home-prune = lib.mkIf cfg.pruneRepository {
       environment = {
         GOMAXPROCS = toString cfg.maxWorkerThreads;
 
@@ -379,15 +404,23 @@ in
       serviceConfig = resticResourceLimits // {
         CacheDirectory = lib.mkForce "restic-backups-home";
         ExecCondition = skipWhileRunning "restic-backups-home.service";
+
+        # Exit 11: no lock within repositoryLockRetry, because another host's
+        # backup holds a shared lock for its whole run (a first upload takes
+        # hours). This counts as a skip and the next daily elapse tries again.
+        # `unlock` runs first, so a lock older than 30 minutes cannot cause it.
+        SuccessExitStatus = 11;
       };
     };
 
     systemd.services.restic-backups-home = {
       environment.GOMAXPROCS = toString cfg.maxWorkerThreads;
 
-      serviceConfig = resticResourceLimits // {
-        ExecCondition = skipWhileRunning "restic-backups-home-prune.service";
-      };
+      serviceConfig =
+        resticResourceLimits
+        // lib.optionalAttrs cfg.pruneRepository {
+          ExecCondition = skipWhileRunning "restic-backups-home-prune.service";
+        };
     };
 
     # Make restic CLI available for manual operations (snapshots, restore, etc.)

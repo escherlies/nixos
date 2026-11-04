@@ -156,6 +156,7 @@
             ./modules/caddy-pki.nix
             ./modules/user-env.nix
             ./modules/wireguard.nix
+            ./modules/restic.nix
 
             home-manager.nixosModules.home-manager
             {

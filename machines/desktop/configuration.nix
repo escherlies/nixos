@@ -261,6 +261,15 @@ in
     ))
   ];
 
+  # Hourly restic backup of /home/enrico, in the repository framework also uses.
+  services.restic-backup = {
+    enable = true;
+    # Ryzen 7 7800X3D: CPUs 0-15 share one core type and one MAXMHZ.
+    efficiencyCores = "0-15";
+    # framework prunes for both hosts; see pruneRepository in modules/restic.nix.
+    pruneRepository = false;
+  };
+
   modules.gaming.enable = true;
 
   # The CPU's integrated GPU is the boot VGA device, so Mutter selects it as
