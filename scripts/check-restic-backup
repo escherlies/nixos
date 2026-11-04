@@ -1,0 +1,315 @@
+#!/usr/bin/env bash
+# Regression check for the restic backup on desktop. It uses the pinned restic and
+# throwaway repositories under mktemp -d, and it never contacts the real repository.
+# The real home is read with --dry-run only. The exit code decides.
+#
+# Run from the repo root. The optional argument is another flake, as path:<dir>.
+set -euo pipefail
+
+flake="${1:-.}"
+tree="${flake#path:}"
+desktop="nixosConfigurations.desktop"
+backups_attr="$desktop.config.services.restic.backups.home"
+unit_attr="$desktop.config.systemd.services.restic-backups-home.serviceConfig.ExecStart"
+blueprints_rel=".local/share/Steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved/SaveGames/blueprints"
+real_home=/home/enrico
+
+restic="$(nix build --no-link --print-out-paths "$flake#$desktop.pkgs.restic")/bin/restic"
+jq="$(nix build --no-link --print-out-paths "$flake#$desktop.pkgs.jq.bin")/bin/jq"
+"$restic" version
+
+scratch="$(mktemp -d)"
+trap 'chmod -R u+w "$scratch"; rm -rf "$scratch"' EXIT
+
+# Only the throwaway repository. Nothing here can reach S3.
+unset RESTIC_PASSWORD_FILE RESTIC_PASSWORD_COMMAND RESTIC_REPOSITORY_FILE RESTIC_HOST AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+export RESTIC_REPOSITORY="$scratch/repo" RESTIC_PASSWORD=scratch-only RESTIC_CACHE_DIR="$scratch/cache"
+"$restic" init --quiet
+
+# ---------------------------------------------------------------------------
+# Exclude arguments, taken from the unit's ExecStart. The two /run files are
+# written by the unit's pre-start, so they become empty local files here.
+# ---------------------------------------------------------------------------
+exec_start="$(nix eval --raw "$flake#$unit_attr" --apply builtins.head)"
+read -ra exec_words <<<"$exec_start"
+exclude_args=()
+for word in "${exec_words[@]}"; do
+  case "$word" in
+    --exclude-file=/run/*)
+      runtime_file="$scratch/run-$(basename "${word#--exclude-file=}")"
+      : >"$runtime_file"
+      exclude_args+=("--exclude-file=$runtime_file")
+      ;;
+    --exclude-file=* | --exclude-caches | --one-file-system) exclude_args+=("$word") ;;
+  esac
+done
+printf 'unit exclude argument: %s\n' "${exclude_args[@]}"
+store_excludes="$(printf '%s\n' "${exclude_args[@]}" | sed -n 's|^--exclude-file=\(/nix/store/.*restic-excludes\)$|\1|p')"
+cmp "$store_excludes" "$tree/config/restic-excludes"
+test "${#exclude_args[@]}" -eq 5
+
+# ---------------------------------------------------------------------------
+# Fixture: the snapshot's file set must equal must_keep exactly.
+# ---------------------------------------------------------------------------
+fake_home="$scratch/home/enrico"
+steam=".local/share/Steam"
+saved="$steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved"
+
+# Names in the blueprints folder also match excludes from other sections on purpose.
+must_keep=(
+  "$blueprints_rel/top.sbp"
+  "$blueprints_rel/.hidden.sbp"
+  "$blueprints_rel/Session 1/2 Assemblers.sbp"
+  "$blueprints_rel/Session 1/2 Assemblers.sbpcfg"
+  "$blueprints_rel/Erntedankfest/nested/deep folder/gw.sbp"
+  "$blueprints_rel/core"
+  "$blueprints_rel/result"
+  "$blueprints_rel/name~"
+  "$blueprints_rel/name-shm"
+  "$blueprints_rel/dist/in-dist.sbp"
+  "$blueprints_rel/node_modules/in-node-modules.sbp"
+  "$blueprints_rel/Nextcloud/in-nextcloud.sbp"
+  "Documents/keep.txt"
+  ".local/share/other-app/keep.txt"
+  "Developer/project/src/keep.ts"
+  ".ssh/id_ed25519.pub"
+  ".ssh/known_hosts"
+  ".ssh/known_hosts.old"
+  ".ssh/config"
+  ".ssh/authorized_keys"
+  ".config/gh/config.yml"
+)
+
+must_drop=(
+  "$steam/steam.sh"
+  "$steam/userdata/1/config.vdf"
+  "$steam/steamapps/libraryfolders.vdf"
+  "$steam/steamapps/appmanifest_526870.acf"
+  "$steam/steamapps/common/Satisfactory/FactoryGame.pak"
+  "$steam/steamapps/common/Satisfactory/SaveGames/blueprints/in-common.sbp"
+  "$steam/steamapps/compatdata/version"
+  "$steam/steamapps/compatdata/526870/version"
+  "$steam/steamapps/compatdata/526870/pfx.lock"
+  "$steam/steamapps/compatdata/526870/pfx/system.reg"
+  "$steam/steamapps/compatdata/526870/pfx/drive_c/autorun.inf"
+  "$steam/steamapps/compatdata/526870/pfx/drive_c/windows/system32/kernel32.dll"
+  "$steam/steamapps/compatdata/526870/pfx/drive_c/users/Public/public.txt"
+  "$steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/Documents/doc.txt"
+  "$steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Roaming/app.ini"
+  "$steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/OtherGame/blueprints/other.sbp"
+  "$steam/steamapps/compatdata/526870/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/game.log"
+  "$saved/Logs/FactoryGame.log"
+  "$saved/SaveGames/ServerManager_V2.sav"
+  "$saved/SaveGames/TelemetrySettings.sav"
+  "$saved/SaveGames/76561197978562286/world.sav"
+  "$saved/SaveGames/blueprints-old/old.sbp"
+  "$steam/steamapps/compatdata/999999/pfx/drive_c/users/steamuser/AppData/Local/FactoryGame/Saved/SaveGames/blueprints/other-game.sbp"
+  ".local/share/Trash/files/deleted.txt"
+  "Developer/project/node_modules/pkg/index.js"
+  "node_modules/top-level.js"
+  "Nextcloud/document.txt"
+  "Nextcloud/Sub Folder/image.png"
+  # Audit A1: private keys and login tokens.
+  ".ssh/id_ed25519"
+  ".ssh/id_rsa"
+  ".ssh/deploy_key"
+  "Backup/old-home/.ssh/id_ed25519"
+  ".config/gh/hosts.yml"
+  ".config/hcloud/cli.toml"
+  ".docker/config.json"
+  ".claude/.credentials.json"
+  # Audit A8: Steam files outside .local/share/Steam.
+  ".steam/steam.token"
+  ".steam/registry.vdf"
+)
+
+for relative_path in "${must_keep[@]}" "${must_drop[@]}"; do
+  mkdir -p "$fake_home/$(dirname "$relative_path")"
+  printf 'content of %s\n' "$relative_path" >"$fake_home/$relative_path"
+done
+
+"$restic" backup --quiet "${exclude_args[@]}" "$fake_home"
+"$restic" ls --json latest >"$scratch/nodes.json"
+
+node_paths() { "$jq" -r --arg type "$1" 'select(.struct_type == "node" and .type == $type) | .path' "$scratch/nodes.json" | sed "s|^$fake_home/||"; }
+
+printf '%s\n' "${must_keep[@]}" | LC_ALL=C sort >"$scratch/expected_files"
+node_paths file | LC_ALL=C sort >"$scratch/actual_files"
+diff "$scratch/expected_files" "$scratch/actual_files"
+
+# Under the Steam directory only the walk to blueprints and its contents may exist.
+outside_walk() {
+  while IFS= read -r directory; do
+    case "$directory" in
+      "$steam"*) ;;
+      *) continue ;;
+    esac
+    case "$blueprints_rel/" in "$directory"/*) continue ;; esac
+    case "$directory/" in "$blueprints_rel"/*) continue ;; esac
+    printf '%s\n' "$directory"
+  done
+}
+stray_dirs="$(node_paths dir | outside_walk)"
+if [ -n "$stray_dirs" ]; then
+  printf 'stray directory in snapshot: %s\n' "$stray_dirs" >&2
+  exit 1
+fi
+echo "fixture: $(wc -l <"$scratch/actual_files") files in snapshot, ${#must_drop[@]} excluded fixture files absent"
+
+# ---------------------------------------------------------------------------
+# Real folders, --dry-run only.
+# ---------------------------------------------------------------------------
+real_steam="$real_home/$steam"
+real_blueprints="$real_home/$blueprints_rel"
+data_size_before="$(du -sb "$scratch/repo/data" | cut -f1)"
+"$restic" backup --dry-run --json -vv --host check-real "${exclude_args[@]}" "$real_steam" >"$scratch/real.json"
+test "$data_size_before" = "$(du -sb "$scratch/repo/data" | cut -f1)"
+
+"$jq" -r 'select(.message_type == "verbose_status" and .action == "new") | .item' "$scratch/real.json" >"$scratch/real_items"
+grep -v '/$' "$scratch/real_items" | LC_ALL=C sort >"$scratch/real_actual_files"
+find "$real_blueprints" -type f | LC_ALL=C sort >"$scratch/real_expected_files"
+diff "$scratch/real_expected_files" "$scratch/real_actual_files"
+stray_real_dirs="$(grep '/$' "$scratch/real_items" | sed -e 's|/$||' -e "s|^$real_home/||" | outside_walk)"
+if [ -n "$stray_real_dirs" ]; then
+  printf 'stray real directory: %s\n' "$stray_real_dirs" >&2
+  exit 1
+fi
+"$jq" -e --argjson limit 10485760 'select(.message_type == "summary") | .dry_run == true and .total_bytes_processed < $limit' "$scratch/real.json" >/dev/null
+"$jq" -r 'select(.message_type == "summary") | "real blueprints dry-run: \(.total_files_processed) files, \(.total_bytes_processed) bytes, dry_run=\(.dry_run)"' "$scratch/real.json"
+
+# Audit A1: no file with a private key header and no listed token may enter. The
+# targets are directories because restic does not apply excludes to a file named
+# as a target, and the unit's target is the whole home directory.
+credential_dirs=()
+for relative_path in .ssh .steam .config/gh .config/hcloud .docker; do
+  if [ -e "$real_home/$relative_path" ]; then credential_dirs+=("$real_home/$relative_path"); fi
+done
+"$restic" backup --dry-run --json -vv --host check-real "${exclude_args[@]}" "${credential_dirs[@]}" >"$scratch/credentials.json"
+"$jq" -r 'select(.message_type == "verbose_status" and .action == "new") | .item' "$scratch/credentials.json" | grep -v '/$' >"$scratch/credential_items" || true
+while IFS= read -r item; do
+  # grep -l prints only the name, so no key material reaches the output.
+  if grep -l 'PRIVATE KEY' "$item" >&2; then
+    echo "private key would enter the snapshot: $item" >&2
+    exit 1
+  fi
+done <"$scratch/credential_items"
+if [ -d "$real_home/.claude" ]; then
+  "$restic" backup --dry-run --json -vv --host check-real "${exclude_args[@]}" "$real_home/.claude" >"$scratch/claude.json"
+  "$jq" -r 'select(.message_type == "verbose_status" and .action == "new") | .item' "$scratch/claude.json" | grep -v '/$' >>"$scratch/credential_items" || true
+fi
+while IFS= read -r item; do
+  case "$item" in
+    */.config/gh/hosts.yml | */.config/hcloud/* | */.docker/config.json | */.claude/.credentials.json | */.steam/*)
+      echo "token file would enter the snapshot: $item" >&2
+      exit 1
+      ;;
+  esac
+done <"$scratch/credential_items"
+echo "real credential dry-run: $(wc -l <"$scratch/credential_items") files would enter, none with a private key or listed token"
+
+# ---------------------------------------------------------------------------
+# Audit A3: run the generated SQLite snapshot script with restic credentials in
+# its environment. runuser needs root, so a shim records the environment that
+# runuser would receive and then runs sqlite3 under this user.
+# ---------------------------------------------------------------------------
+nix build --no-link "$flake#$desktop.config.system.build.toplevel"
+prepare_command="$(nix eval --raw "$flake#$backups_attr.backupPrepareCommand")"
+snapshot_script="$(grep -o '/nix/store/[^ ]*-restic-sqlite-snapshot' <<<"$prepare_command")"
+sqlite3_bin="$(grep -o '/nix/store/[^ ]*/bin/sqlite3' "$snapshot_script" | head -1)"
+env_bin="$(command -v env)"
+bash_bin="$(command -v bash)"
+
+mkdir -p "$scratch/dbs"
+"$sqlite3_bin" "$scratch/dbs/app.sqlite" 'create table marker(value); insert into marker values (42);'
+
+cat >"$scratch/runuser-shim" <<EOF
+#!$bash_bin
+"$env_bin" >"$scratch/sqlite-env"
+shift 3
+exec "\$@"
+EOF
+chmod +x "$scratch/runuser-shim"
+
+sed -e "s|^dest=.*|dest=\"$scratch/sqlite-out\"|" \
+  -e "s|^exclude=.*|exclude=\"$scratch/sqlite.exclude\"|" \
+  -e "s|^patterns=.*|patterns=('$scratch/dbs/*.sqlite')|" \
+  -e "s|[^ ]*runuser -u|$scratch/runuser-shim -u|" \
+  "$snapshot_script" >"$scratch/snapshot-under-test"
+grep -q "$scratch/runuser-shim -u" "$scratch/snapshot-under-test"
+
+"$env_bin" RESTIC_REPOSITORY=audit-marker RESTIC_PASSWORD=audit-marker \
+  AWS_ACCESS_KEY_ID=audit-marker AWS_SECRET_ACCESS_KEY=audit-marker \
+  bash "$scratch/snapshot-under-test"
+
+if grep -E '^(RESTIC_|AWS_)|audit-marker' "$scratch/sqlite-env" >&2; then
+  echo "restic credentials reach the process running as the database owner" >&2
+  exit 1
+fi
+test "$("$sqlite3_bin" "$scratch/sqlite-out$scratch/dbs/app.sqlite" 'select value from marker')" = 42
+grep -qx "$scratch/dbs/app.sqlite" "$scratch/sqlite.exclude"
+echo "sqlite snapshot: runuser environment holds no restic or AWS variable, snapshot readable"
+
+# ---------------------------------------------------------------------------
+# Audit CR-1: restore scripts must pick this host's snapshot. Run inside a user
+# namespace, because the scripts re-exec through sudo unless EUID is 0.
+# ---------------------------------------------------------------------------
+cat >"$scratch/host-filter-test" <<'EOF'
+set -euo pipefail
+declare -A script_sources
+script_sources[restic-restore]="$(cat "$tree/scripts/restic-restore")"
+script_sources[restic-ls]="$(cat "$tree/scripts/restic-ls")"
+
+# restic restores the metadata of parent directories too. The host's /tmp belongs
+# to a uid this namespace does not map, so the test gets its own tmpfs /tmp, which
+# disappears with the namespace.
+"$mount_bin" -t tmpfs tmpfs /tmp
+scratch=/tmp/host-test
+mkdir -p "$scratch"
+trap 'tail -n 5 "$scratch"/*.log >&2 || true' ERR
+
+bin="$scratch/bin"
+mkdir -p "$bin"
+# The scripts read the restic path from the unit, which may not be active yet.
+printf '#!%s\necho "ExecStart=%s"\n' "$(command -v bash)" "$restic" >"$bin/systemctl"
+chmod +x "$bin/systemctl"
+export PATH="$bin:$PATH"
+
+printf 'RESTIC_REPOSITORY=%s\nRESTIC_PASSWORD=host-test\n' "$scratch/host-repo" >"$scratch/host.env"
+for script in restic-restore restic-ls; do
+  printf '%s\n' "${script_sources[$script]}" | sed -e "s|^ENV_FILE=.*|ENV_FILE=\"$scratch/host.env\"|" \
+    -e "s|^CACHE_DIR=.*|CACHE_DIR=\"$scratch/host-cache\"|" >"$scratch/$script"
+done
+
+export RESTIC_REPOSITORY="$scratch/host-repo" RESTIC_PASSWORD=host-test RESTIC_CACHE_DIR="$scratch/host-cache"
+"$restic" init --quiet
+target="$scratch/restore-target"
+mkdir -p "$target"
+this_host="$(hostname)"
+echo this-host-version >"$target/data.txt"
+"$restic" backup --quiet --host "$this_host" "$target"
+echo other-host-version >"$target/data.txt"
+"$restic" backup --quiet --host other-host "$target"
+this_snapshot="$("$restic" snapshots --json --host "$this_host" | "$jq" -r '.[0].short_id')"
+rm "$target/data.txt"
+unset RESTIC_REPOSITORY RESTIC_PASSWORD RESTIC_CACHE_DIR
+
+bash "$scratch/restic-restore" --merge "$target" >"$scratch/merge.log" 2>&1
+test "$(cat "$target/data.txt")" = this-host-version
+bash "$scratch/restic-restore" --dry-run "$target" >"$scratch/dry.log" 2>&1
+bash "$scratch/restic-restore" --list 5 >"$scratch/list.log" 2>&1
+if grep -q other-host "$scratch/list.log"; then
+  echo "restic-restore --list shows another host" >&2
+  exit 1
+fi
+bash "$scratch/restic-ls" latest "$target" >"$scratch/ls.log" 2>&1
+grep -q "snapshot $this_snapshot" "$scratch/ls.log"
+EOF
+util_linux="$(nix build --no-link --print-out-paths "$flake#$desktop.pkgs.util-linux.bin")"
+if ! restic="$restic" jq="$jq" tree="$tree" mount_bin="$util_linux/bin/mount" \
+  "$util_linux/bin/unshare" -r -m bash "$scratch/host-filter-test"; then
+  echo "restore scripts picked another host's snapshot or failed" >&2
+  exit 1
+fi
+echo "restore scripts: latest resolves to this host's snapshot for --merge, --list and restic-ls"
+
+echo "check-restic-backup passed"

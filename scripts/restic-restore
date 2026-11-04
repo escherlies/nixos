@@ -38,6 +38,12 @@ set -a
 set +a
 export RESTIC_CACHE_DIR="$CACHE_DIR"
 
+# Hosts share this repository, and restic resolves `latest` across all of them
+# unless RESTIC_HOST is set. Without this a restore can overwrite local files
+# with another host's data. An explicit snapshot ID still reaches any host.
+RESTIC_HOST="$(hostname)"
+export RESTIC_HOST
+
 run_restic() { "$RESTIC_BIN" "$@"; }
 
 if [[ "${1:-}" == "--list" ]]; then

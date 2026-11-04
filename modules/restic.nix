@@ -70,8 +70,11 @@ let
         chown "$owner" "$outdir" && chmod 0700 "$outdir" || continue
         rm -f "$tmp" "$tmp-wal" "$tmp-shm"
 
-        # Absolute path: runuser goes through PAM and may reset the environment
-        if runuser -u "$owner" -- ${pkgs.sqlite}/bin/sqlite3 -readonly "$db" ".backup '$tmp'"; then
+        # `env -i`: `runuser -u` keeps the caller's environment, which holds the
+        # restic credentials from EnvironmentFile. Without it any process of the
+        # owner's uid could read them from sqlite3's /proc/<pid>/environ.
+        # Absolute paths because `env -i` also clears PATH.
+        if ${pkgs.coreutils}/bin/env -i ${lib.getExe' pkgs.util-linux "runuser"} -u "$owner" -- ${pkgs.sqlite}/bin/sqlite3 -readonly "$db" ".backup '$tmp'"; then
           mv -f "$tmp" "$out"
           rm -f "$tmp-wal" "$tmp-shm"
           # Snapshot succeeded, so skip the live files entirely
@@ -109,11 +112,11 @@ let
     Nice = 19;
   };
 
-  # Restic takes an exclusive repository lock while pruning, so a backup that
-  # starts underneath one fails outright — the failure mode that cost this
-  # machine 22 days of backups (docs/framework-thermal.md). Splitting prune onto
-  # its own timer reintroduces that possibility, so each unit stands down if the
-  # other is mid-run.
+  # Restic takes an exclusive repository lock while pruning, and a backup without
+  # --retry-lock that starts underneath one fails — the failure mode that cost
+  # framework 22 days of backups (docs/framework-thermal.md). On one host each
+  # unit stands down if the other is mid-run. Between hosts this guard sees
+  # nothing, so repositoryLockRetry covers that case.
   #
   # Exit 1 is an ExecCondition "condition not met" code: systemd records the run
   # as skipped rather than failed, so an overlap is silent and the next timer

@@ -199,9 +199,11 @@ core
 
 # Steam library and Proton prefixes: too large, and games are re-downloadable.
 # Steam Cloud does not sync Satisfactory blueprints and a recreated Proton prefix
-# lost them, so section 12 re-includes that folder. The /* is required: restic
+# lost them, so section 13 re-includes that folder. The /* is required: restic
 # does not descend into an excluded directory.
 .local/share/Steam/*
+# ~/.steam holds symlinks and login tokens (steam.token), which Steam recreates.
+.steam
 
 # Videos and Movies
 Videos/Movies
@@ -258,7 +260,26 @@ Nextcloud
 
 
 # =============================================================================
-# 12. SATISFACTORY BLUEPRINTS (exception to the Steam exclude in section 8)
+# 12. PRIVATE KEYS AND RE-ISSUABLE LOGIN TOKENS
+# =============================================================================
+
+# All hosts share one repository credential, so anything stored here is readable
+# from every host. desktop's id_ed25519 has no passphrase, opens root on other
+# hosts and decrypts the infra repo's secrets. Generate new keys and log in again
+# after a restore.
+.ssh/*
+!.ssh/*.pub
+!.ssh/authorized_keys
+!.ssh/config
+!.ssh/known_hosts*
+.config/gh/hosts.yml
+.config/hcloud
+.docker/config.json
+.claude/.credentials.json
+
+
+# =============================================================================
+# 13. SATISFACTORY BLUEPRINTS (exception to the Steam exclude in section 8)
 # =============================================================================
 
 # Keep this section last: the last matching pattern wins, so no exclude above can

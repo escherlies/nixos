@@ -32,6 +32,11 @@ set -a
 set +a
 export RESTIC_CACHE_DIR="$CACHE_DIR"
 
+# Hosts share this repository, and restic resolves `latest` across all of them
+# unless RESTIC_HOST is set. An explicit snapshot ID still reaches any host.
+RESTIC_HOST="$(hostname)"
+export RESTIC_HOST
+
 snapshot="${1:-latest}"
 shift || true
 
