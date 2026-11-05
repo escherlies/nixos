@@ -112,7 +112,9 @@ in
   # The user's dconf database held xkb-options = ['ctrl:swap_lwin_lctl'], and
   # GNOME applies that value after keyd, which exchanges keyd's left Ctrl and left
   # Super output. Home Manager's `dconf load` replaces the stored value on every
-  # activation. The value equals the default of services.xserver.xkb.options.
+  # activation. gsd-keyboard copies localed's X11Options into this key when it has
+  # no user value, so a host on the default services.xserver.xkb.options stores
+  # this same value.
   home-manager.users.enrico.dconf.settings."org/gnome/desktop/input-sources".xkb-options = [
     "terminate:ctrl_alt_bksp"
   ];
