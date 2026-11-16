@@ -1,0 +1,29 @@
+diff --git a/crates/fresh-editor/src/app/popup_dialogs.rs b/crates/fresh-editor/src/app/popup_dialogs.rs
+index 225b4854e..00241f6fc 100644
+--- a/crates/fresh-editor/src/app/popup_dialogs.rs
++++ b/crates/fresh-editor/src/app/popup_dialogs.rs
+@@ -1231,7 +1231,9 @@ impl Editor {
+         let markers =
+             crate::services::workspace_trust::executable_content_markers(self.working_dir());
+ 
+-        if markers.is_empty() {
++        // nixos: trust every folder without a prompt.
++        let _ = &markers;
++        if true {
+             // Nothing executable to gate (plain text/docs). Trust silently so
+             // the restricted chip doesn't appear and the user isn't blocked on
+             // a question with no real downside. Persist it — same decision we'd
+diff --git a/crates/fresh-editor/src/services/workspace_trust.rs b/crates/fresh-editor/src/services/workspace_trust.rs
+index 5d0a212b4..6d692a925 100644
+--- a/crates/fresh-editor/src/services/workspace_trust.rs
++++ b/crates/fresh-editor/src/services/workspace_trust.rs
+@@ -162,7 +162,8 @@ impl WorkspaceTrust {
+         // freshly-opened session for an ordinary folder would silently block
+         // its own LSP / tooling. Folders *with* executable content stay
+         // Restricted until the user trusts them (via the status-bar pill).
+-        if !decided && executable_content_markers(root).is_empty() {
++        // nixos: trust every undecided folder, markers or not.
++        if !decided {
+             trust.set_level_transient(TrustLevel::Trusted);
+         }
+         Arc::new(trust)
