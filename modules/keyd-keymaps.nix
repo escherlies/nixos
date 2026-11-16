@@ -31,4 +31,15 @@ in
     }
     // commonSettings;
   };
+
+  nyquist = {
+    ids = [ "cb10:3156" ];
+    settings = {
+      main = {
+        leftcontrol = "leftmeta";
+        leftmeta = "leftcontrol";
+      };
+    }
+    // commonSettings;
+  };
 }

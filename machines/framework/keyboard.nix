@@ -33,17 +33,7 @@
           // common;
         };
 
-        nyquist = {
-          ids = [ "cb10:3156" ];
-          settings = {
-            main = {
-              leftcontrol = "leftmeta";
-              leftmeta = "leftcontrol";
-            };
-          }
-          // common;
-        };
-
+        nyquist = sharedKeymaps.nyquist;
         dz60 = sharedKeymaps.dz60;
       };
     };

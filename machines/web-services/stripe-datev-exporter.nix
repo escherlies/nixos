@@ -1,11 +1,17 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
-  # Shorter name to access final settings a 
+  # Shorter name to access final settings a
   # user of stripe-datev-exporter.nix module HAS ACTUALLY SET.
   # cfg is a typical convention.
   cfg = config.services.stripe-datev-exporter;
-in {
+in
+{
   # Declare what settings a user of this "stripe-datev-exporter.nix" module CAN SET.
   options.services.stripe-datev-exporter = {
     enable = mkEnableOption "stripe-datev-exporter service";

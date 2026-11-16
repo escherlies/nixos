@@ -173,7 +173,10 @@
   # started here by hand would be unauthenticated. A dev session that lands on
   # 3862 is therefore not reachable from a phone on the LAN.
   networking.firewall.allowedTCPPortRanges = [
-    { from = 3863; to = 3865; }
+    {
+      from = 3863;
+      to = 3865;
+    }
   ];
 
   # This value determines the NixOS release from which the default

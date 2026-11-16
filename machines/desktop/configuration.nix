@@ -41,6 +41,13 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Test for GPU hangs in Satisfactory on the RX 7900 XTX under 6.18.48: "ring
+  # gfx_0.0.0 timeout" + "Illegal opcode in command stream", then "MES failed to
+  # respond" forces a full reset that takes the GNOME session down with it.
+  # Reproduced 2026-11-05 on Proton Experimental and 10.0, with and without mesh
+  # shaders; stable under Windows on this hardware. Remove if 7.2 does not help.
+  boot.kernelPackages = pkgs.linuxPackages_7_2;
+
   networking.hostName = "desktop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -102,12 +109,19 @@ in
     variant = "altgr-intl";
   };
 
-  # The DZ60 gets the keymap framework uses. Only this keyboard is listed, so
-  # keyd leaves every other keyboard on this machine alone.
-  services.keyd = {
-    enable = true;
-    keyboards.dz60 = (import ../../modules/keyd-keymaps.nix).dz60;
-  };
+  # The DZ60 and Nyquist get the keymaps framework uses. Only these keyboards are
+  # listed, so keyd leaves every other keyboard on this machine alone.
+  services.keyd =
+    let
+      sharedKeymaps = import ../../modules/keyd-keymaps.nix;
+    in
+    {
+      enable = true;
+      keyboards = {
+        dz60 = sharedKeymaps.dz60;
+        nyquist = sharedKeymaps.nyquist;
+      };
+    };
 
   # The user's dconf database held xkb-options = ['ctrl:swap_lwin_lctl'], and
   # GNOME applies that value after keyd, which exchanges keyd's left Ctrl and left
@@ -279,7 +293,7 @@ in
 
   # Hourly restic backup of /home/enrico, in the repository framework also uses.
   services.restic-backup = {
-    enable = true;
+    enable = false;
     # Ryzen 7 7800X3D: CPUs 0-15 share one core type and one MAXMHZ.
     efficiencyCores = "0-15";
     # framework prunes for both hosts; see pruneRepository in modules/restic.nix.
