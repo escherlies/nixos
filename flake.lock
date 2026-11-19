@@ -151,11 +151,11 @@
         "zink-staging": "zink-staging"
       },
       "locked": {
-        "lastModified": 1794921155,
-        "narHash": "sha256-SGpmEJ/nZE/sJ24uEOTN0Yiv/Ml8H34pdFvFKbO/ClY=",
+        "lastModified": 1795100736,
+        "narHash": "sha256-cs3p3e4UimrUleBO5rPLyWyBTmBFI84YIEXdwEgSDxw=",
         "ref": "refs/heads/main",
-        "rev": "09981563b79ac2397a0597cc3d8a10ebd80388da",
-        "revCount": 687,
+        "rev": "55a99f55383b249dfc819b231d4c1a3d1638416f",
+        "revCount": 697,
         "type": "git",
         "url": "ssh://git@github.com/binaryplease/nixos"
       },
